@@ -1,0 +1,241 @@
+//
+//  MasterViewController.swift
+//  MileWallet
+//
+//  Created by denis svinarchuk on 07.06.2018.
+//  Copyright © 2018 Karma.red. All rights reserved.
+//
+
+import UIKit
+import APIKit
+import JSONRPCKit
+import KeychainAccess
+import SnapKit
+
+class MasterViewController: UITableViewController {
+    
+    var detailViewController: DetailViewController? = nil
+    var newWalletViewController: NewWalletViewController? = nil
+    
+    var reloadTimer:Timer?
+    
+    var keychain:Keychain {
+        return Keychain(service: Config.walletService) 
+        //.authenticationPrompt(" ???") //.synchronizable(Config.isWalletKeychainSynchronizable)
+    }
+    
+    var keychainItems:[[String : Any]] {
+        return keychain.authenticationPrompt(" ???").allItems()
+    }
+    
+    @objc func update(timer:Timer)  {
+        self.tableView.reloadData()
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()                                               
+        
+        // Do any additional setup after loading the view, typically from a nib.
+        navigationItem.leftBarButtonItem = editButtonItem
+
+        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(insertNewObject(_:)))
+        
+        navigationItem.rightBarButtonItem = addButton
+        
+        if let split = splitViewController {
+            let controllers = split.viewControllers
+            detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
+        }
+        
+        newWalletViewController = storyboard?.instantiateViewController(withIdentifier: "NewWalletViewControllerId") as? NewWalletViewController                             
+    }
+    
+    var isAppeared = false
+    var itemsUpdated:Int = 0
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        reloadTimer?.invalidate()
+        reloadTimer = nil
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        itemsUpdated = 0
+        isAppeared = false
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        clearsSelectionOnViewWillAppear = splitViewController!.isCollapsed
+        super.viewWillAppear(animated)
+        
+        isAppeared = true
+        tableView.reloadData()
+        
+        if reloadTimer == nil {
+            reloadTimer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.update(timer:)), userInfo: nil, repeats: true)
+        }
+    }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+    }
+    
+    private var chainInfo:Chain?
+    
+    func mileInfoUpdate(complete:@escaping ((_ chain:Chain)->Void))  {        
+        
+        if chainInfo == nil {
+            Chain.update(error: { (error) in
+                
+            }) { (chain) in
+                self.chainInfo = chain
+                complete(self.chainInfo!)
+            }
+        }
+        
+        guard let chain = chainInfo else {
+            return
+        }
+        
+        complete(chain)
+    }
+    
+    @objc
+    func insertNewObject(_ sender: Any) {
+        present(newWalletViewController!, animated: true) { }
+    }
+
+    // MARK: - Segues
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showDetail" {
+            if let indexPath = tableView.indexPathForSelectedRow {
+                
+                let items = self.keychainItems
+                let item = items[indexPath.row]
+                                
+                let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
+
+                if let value = item["value"] as? String { 
+                    controller.wallet = Wallet(JSONString: value)
+                }
+
+                detailViewController?.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
+                detailViewController?.navigationItem.leftItemsSupplementBackButton = true
+            }
+        }
+    }
+
+    // MARK: - Table View
+
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 80
+    }
+    
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return self.keychainItems.count > 0 ? 1 : 0 
+    }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.keychainItems.count
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+                
+        let items = self.keychainItems
+        let item = items[indexPath.row]
+                
+        let titleLabel = tableView.viewWithTag(999) as! UILabel
+        let assetNameLabel = tableView.viewWithTag(1000) as! UILabel
+        let amountLabel = tableView.viewWithTag(1001) as! UILabel
+        
+        titleLabel.text = item["key"] as? String
+                
+        if assetNameLabel.text == nil {
+            assetNameLabel.text = "-"
+        }
+        if amountLabel.text == nil || itemsUpdated < items.count { 
+            amountLabel.text = ""
+        }
+        
+        var activiti:UIActivityIndicatorView?
+        
+        if itemsUpdated < items.count {
+            activiti = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+            activiti?.hidesWhenStopped = true
+            
+            activiti?.startAnimating()
+            
+            cell.contentView.addSubview(activiti!)
+            
+            activiti?.snp.makeConstraints { (make) in
+                make.height.equalTo(amountLabel)
+                make.width.equalTo(amountLabel)
+                make.center.equalTo(amountLabel.snp.center)
+            }
+        } 
+        
+        mileInfoUpdate { (chain) in
+            if let value =  item["value"] as? String, 
+                let wallet = Wallet(JSONString: value) {    
+                
+                Balance.update(wallet: wallet, error: { (error) in
+                    
+                    Swift.print("Get.... Error: \(String(describing: error))")
+                    
+                    activiti?.stopAnimating()
+                    self.itemsUpdated += 1
+                    
+                }, complete: { (balance) in
+                    var assets = "XDR"
+                    var ammounts = "0.0000"
+                    for k in balance.balance.keys {
+                        if chain.assets[k] == "XDR" {
+                            assets = chain.assets[k] ?? "?"
+                            let a = String(format: "%.4f", (Float(balance.balance[k] ?? "0") ?? 0.0))
+                            ammounts = a
+                        }
+                    }    
+                                        
+                    assetNameLabel.text = assets
+                    amountLabel.text = ammounts
+
+                    activiti?.stopAnimating()
+                    self.itemsUpdated += 1
+                })
+            }
+        }
+        
+        return cell
+    }
+
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+                
+        if editingStyle == .delete {
+            
+            let keychain = self.keychain
+            let items = keychain.allItems()
+            guard let key = items[indexPath.row]["key"] as? String else { return }
+            
+            do{ 
+                try keychain.remove(key)
+            }
+            catch let error {
+                Swift.print("Error: remove: \(error)")
+            }
+            
+            if items.count == 1 {
+                tableView.deleteSections(IndexSet(integer: indexPath.section), with: .automatic)
+            } else {
+                tableView.deleteRows(at: [indexPath], with: .automatic)
+            }
+        } 
+    }
+}
+
