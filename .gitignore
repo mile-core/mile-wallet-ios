@@ -1,0 +1,14 @@
+Breakpoints_v2.xcbkptlist
+Podfile.lock
+Pods
+Build
+Index
+*/**/*.xcuserstate
+*/**/*.xcbkptlist
+*.xcbkptlist
+*.xcuserstate
+*xcshareddata
+*.xccheckout
+DegradrFilterTest.xcscheme
+*/**/Build
+*/**/Checkouts
