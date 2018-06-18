@@ -14,4 +14,5 @@ target 'MileWallet' do
     pod 'SnapKit'
     pod 'EFQRCode', '~> 4.2.2'
     pod 'QRCodeReader.swift', '~> 8.2.0'
+    pod 'MileKit', :path => '../../mile-cpp-api'
 end

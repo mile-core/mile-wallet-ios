@@ -3,6 +3,7 @@
 import Foundation
 import simd
 
+
 let w=10
 let h=7
 
