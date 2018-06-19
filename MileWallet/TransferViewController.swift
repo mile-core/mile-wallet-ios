@@ -89,6 +89,7 @@ class TransferViewController: Controller {
                         self.messageArea.text = error?.whatResponse
                         self.loaderStop()
                         
+                        
         }) { (transfer) in
             self.loaderStop()
             self.dismiss(animated: true) { }    
