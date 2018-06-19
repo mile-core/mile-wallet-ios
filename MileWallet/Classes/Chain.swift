@@ -13,11 +13,12 @@ import ObjectMapper
 
 public struct Chain {
     
+    public static var shared:Chain? { return _shared}
+
     public var version:String { return _version }
     public var transactions:[String] { return _transactions}
     public var assets:[String:String] { return _assets }
-    
-    
+        
     public init(version:String, transactions:[String], assets:[String:String]){
         self._version = version
         self._transactions = transactions
@@ -27,9 +28,13 @@ public struct Chain {
     public static func update(error: @escaping ((_ error: SessionTaskError?)-> Void),  
                        complete: @escaping ((_ chain: Chain)->Void)) {
         
+        if let chain = Chain._shared {
+            complete(chain)                
+            return
+        }
+        
         let batchFactory = BatchFactory(version: "2.0", idGenerator: NumberIdGenerator())
         
-        //let request = MileAddressState(publicKey: publicKey)
         let request = MileInfo()
         
         let batch = batchFactory.create(request)
@@ -41,6 +46,8 @@ public struct Chain {
             case .success(let response):
                                                                 
                 guard let assets = response["supported_assets"] as? NSArray else {
+                    Chain._shared = nil
+                    error(.responseError(ResponseError.unexpectedObject(response)))
                     return
                 }
                 
@@ -54,15 +61,26 @@ public struct Chain {
                     }
                 } 
                 
-                guard let v = response["version"] as? String else  { return } 
+                guard let v = response["version"] as? String else  {
+                    Chain._shared = nil
+                    error(.responseError(ResponseError.unexpectedObject(response)))
+                    return                     
+                } 
                 
-                guard let trx = response["supported_transactions"] as? NSArray as? Array<String> else { return }                                
-                                                                
-                complete(Chain(version: v, 
-                               transactions: trx, 
-                               assets: newAssets))                
+                guard let trx = response["supported_transactions"] as? NSArray as? Array<String> else {
+                    Chain._shared = nil
+                    error(.responseError(ResponseError.unexpectedObject(response)))
+                    return                     
+                }                                                             
                 
-            case .failure(let er):                
+                Chain._shared = Chain(version: v, 
+                                transactions: trx, 
+                                assets: newAssets)
+                
+                complete(Chain._shared!)                
+                
+            case .failure(let er):  
+                Chain._shared = nil
                 error(er)
             }
         }     
@@ -72,6 +90,8 @@ public struct Chain {
     fileprivate var _transactions:[String] = []
     fileprivate var _assets:[String:String] = [:]
     
+    private static var _shared:Chain?
+
 }
 
 extension Chain:Mappable {

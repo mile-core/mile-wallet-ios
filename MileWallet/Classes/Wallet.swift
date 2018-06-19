@@ -33,14 +33,15 @@ public struct Wallet {
     public static func create(name:String, secretPhrase:String,
                                           error: @escaping ((_ error: SessionTaskError?)-> Void),  
                                           complete: @escaping ((_ wallet: Wallet)->Void)) {
-        
+                    
+
         let batchFactory = BatchFactory(version: "2.0", idGenerator: NumberIdGenerator())
         
         let request = MileKeys(wallet_name: name, password: secretPhrase) 
         
         let batch = batchFactory.create(request)
         let httpRequest = MileServiceRequest(batch: batch)
-                
+                        
         Session.send(httpRequest) { (result) in
             switch result {
             case .success(let response):

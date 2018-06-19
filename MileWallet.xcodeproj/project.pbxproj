@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		31144EAE20CA738E00A8E6B4 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31144EAD20CA738E00A8E6B4 /* Utils.swift */; };
 		31144EB020CA8AA400A8E6B4 /* NewWalletViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31144EAF20CA8AA400A8E6B4 /* NewWalletViewController.swift */; };
-		31144EB220CAB8CF00A8E6B4 /* MileAddressState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31144EB120CAB8CF00A8E6B4 /* MileAddressState.swift */; };
 		31144EB420CABA9200A8E6B4 /* Chain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31144EB320CABA9200A8E6B4 /* Chain.swift */; };
 		3164FD8120C950ED00294A9F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3164FD8020C950ED00294A9F /* AppDelegate.swift */; };
 		3164FD8320C950ED00294A9F /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3164FD8220C950ED00294A9F /* MasterViewController.swift */; };
@@ -19,7 +18,6 @@
 		3164FD8D20C950ED00294A9F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3164FD8B20C950ED00294A9F /* LaunchScreen.storyboard */; };
 		3182CDC320D1C462000C3C68 /* HTMLTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3182CDC220D1C462000C3C68 /* HTMLTemplate.swift */; };
 		3182CDC520D1C481000C3C68 /* PDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3182CDC420D1C481000C3C68 /* PDF.swift */; };
-		3182CDC720D1C7BD000C3C68 /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3182CDC620D1C7BD000C3C68 /* Controller.swift */; };
 		3182CDC920D2AA9E000C3C68 /* PrintPaymentTemplate.html in Resources */ = {isa = PBXBuildFile; fileRef = 3182CDC820D2AA9D000C3C68 /* PrintPaymentTemplate.html */; };
 		3182CDCB20D2AF0D000C3C68 /* PaymentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3182CDCA20D2AF0C000C3C68 /* PaymentController.swift */; };
 		31A77C8A20C9527500462923 /* MileServiceRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A77C8220C9527500462923 /* MileServiceRequest.swift */; };
@@ -34,6 +32,8 @@
 		31D8CB9420CB1A01006C7B8D /* Transfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31D8CB9320CB1A01006C7B8D /* Transfer.swift */; };
 		31D8CB9620CB2272006C7B8D /* MileSendTrx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31D8CB9520CB2272006C7B8D /* MileSendTrx.swift */; };
 		31DC4D0220CAD2930041A7E9 /* Balance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31DC4D0120CAD2930041A7E9 /* Balance.swift */; };
+		31E6BF4020D91A6D00C40A80 /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E6BF3F20D91A6D00C40A80 /* Controller.swift */; };
+		31E6BF4220D9283B00C40A80 /* MileWalletState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E6BF4120D9283B00C40A80 /* MileWalletState.swift */; };
 		31F2CFE520D177A000C1770B /* PrintSecretTemplate.html in Resources */ = {isa = PBXBuildFile; fileRef = 31F2CFE420D177A000C1770B /* PrintSecretTemplate.html */; };
 		6C7F0151E2AF0722F86A75E3 /* Pods_MileWallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B76307F7CB9436B9776FCFD2 /* Pods_MileWallet.framework */; };
 /* End PBXBuildFile section */
@@ -42,7 +42,6 @@
 		3104930B20CC05D5006AB772 /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		31144EAD20CA738E00A8E6B4 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		31144EAF20CA8AA400A8E6B4 /* NewWalletViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewWalletViewController.swift; sourceTree = "<group>"; };
-		31144EB120CAB8CF00A8E6B4 /* MileAddressState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MileAddressState.swift; sourceTree = "<group>"; };
 		31144EB320CABA9200A8E6B4 /* Chain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chain.swift; sourceTree = "<group>"; };
 		3164FD7D20C950ED00294A9F /* MileWallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MileWallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3164FD8020C950ED00294A9F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -54,7 +53,6 @@
 		3164FD8E20C950ED00294A9F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3182CDC220D1C462000C3C68 /* HTMLTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLTemplate.swift; sourceTree = "<group>"; };
 		3182CDC420D1C481000C3C68 /* PDF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDF.swift; sourceTree = "<group>"; };
-		3182CDC620D1C7BD000C3C68 /* Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
 		3182CDC820D2AA9D000C3C68 /* PrintPaymentTemplate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = PrintPaymentTemplate.html; sourceTree = "<group>"; };
 		3182CDCA20D2AF0C000C3C68 /* PaymentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentController.swift; sourceTree = "<group>"; };
 		31A77C8220C9527500462923 /* MileServiceRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MileServiceRequest.swift; sourceTree = "<group>"; };
@@ -69,6 +67,8 @@
 		31D8CB9320CB1A01006C7B8D /* Transfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transfer.swift; sourceTree = "<group>"; };
 		31D8CB9520CB2272006C7B8D /* MileSendTrx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MileSendTrx.swift; sourceTree = "<group>"; };
 		31DC4D0120CAD2930041A7E9 /* Balance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Balance.swift; sourceTree = "<group>"; };
+		31E6BF3F20D91A6D00C40A80 /* Controller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
+		31E6BF4120D9283B00C40A80 /* MileWalletState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MileWalletState.swift; sourceTree = "<group>"; };
 		31F2CFE420D177A000C1770B /* PrintSecretTemplate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = PrintSecretTemplate.html; sourceTree = "<group>"; };
 		49204292349409323B45A4FE /* Pods-MileWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MileWallet.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MileWallet/Pods-MileWallet.debug.xcconfig"; sourceTree = "<group>"; };
 		7B728D4241C0E56F3425037D /* Pods-MileWallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MileWallet.release.xcconfig"; path = "Pods/Target Support Files/Pods-MileWallet/Pods-MileWallet.release.xcconfig"; sourceTree = "<group>"; };
@@ -113,6 +113,7 @@
 				31A77C8120C9527500462923 /* Classes */,
 				3164FD8020C950ED00294A9F /* AppDelegate.swift */,
 				3164FD8220C950ED00294A9F /* MasterViewController.swift */,
+				31E6BF3F20D91A6D00C40A80 /* Controller.swift */,
 				3164FD8420C950ED00294A9F /* DetailViewController.swift */,
 				31144EAF20CA8AA400A8E6B4 /* NewWalletViewController.swift */,
 				31D8CB8F20CAEA9A006C7B8D /* TransferViewController.swift */,
@@ -146,7 +147,6 @@
 				31A77C8220C9527500462923 /* MileServiceRequest.swift */,
 				31A77C8F20C960B200462923 /* Config.swift */,
 				31144EAD20CA738E00A8E6B4 /* Utils.swift */,
-				3182CDC620D1C7BD000C3C68 /* Controller.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -154,10 +154,10 @@
 		31A77C8320C9527500462923 /* JSON-RPC */ = {
 			isa = PBXGroup;
 			children = (
+				31E6BF4120D9283B00C40A80 /* MileWalletState.swift */,
 				31A77C8420C9527500462923 /* CastError.swift */,
 				31A77C8520C9527500462923 /* MileInfo.swift */,
 				31A77C8720C9527500462923 /* MileKeys.swift */,
-				31144EB120CAB8CF00A8E6B4 /* MileAddressState.swift */,
 				31A77C9120C9612200462923 /* MileAddress.swift */,
 				31D8CB9120CB14C1006C7B8D /* MilePrepareTrx.swift */,
 				31D8CB9520CB2272006C7B8D /* MileSendTrx.swift */,
@@ -333,11 +333,11 @@
 				31D8CB9620CB2272006C7B8D /* MileSendTrx.swift in Sources */,
 				3182CDC320D1C462000C3C68 /* HTMLTemplate.swift in Sources */,
 				31A77C9220C9612200462923 /* MileAddress.swift in Sources */,
-				3182CDC720D1C7BD000C3C68 /* Controller.swift in Sources */,
+				31E6BF4020D91A6D00C40A80 /* Controller.swift in Sources */,
 				31144EAE20CA738E00A8E6B4 /* Utils.swift in Sources */,
 				31144EB420CABA9200A8E6B4 /* Chain.swift in Sources */,
+				31E6BF4220D9283B00C40A80 /* MileWalletState.swift in Sources */,
 				31D8CB9020CAEA9A006C7B8D /* TransferViewController.swift in Sources */,
-				31144EB220CAB8CF00A8E6B4 /* MileAddressState.swift in Sources */,
 				31A77C9020C960B200462923 /* Config.swift in Sources */,
 				31A77C8C20C9527500462923 /* MileInfo.swift in Sources */,
 				31D8CB9420CB1A01006C7B8D /* Transfer.swift in Sources */,
