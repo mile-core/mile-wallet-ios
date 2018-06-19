@@ -7,11 +7,15 @@
 //
 
 import UIKit
+import QRCodeReader
+import AVFoundation
 
 class Controller: UIViewController {
     
+    public lazy var qrCodeReader:QRReader = {return QRReader(controller: self)}() 
+    
     private let activiti = UIActivityIndicatorView(activityIndicatorStyle: .gray)
-    private lazy var dimView = UIView(frame: self.view.bounds)
+    private lazy var dimView = UIView(frame: self.view.bounds)        
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -92,6 +96,5 @@ class Controller: UIViewController {
                 }                    
             }
         }
-    }
-    
+    }    
 }

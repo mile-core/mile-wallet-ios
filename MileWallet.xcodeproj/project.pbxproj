@@ -25,15 +25,14 @@
 		31A77C8C20C9527500462923 /* MileInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A77C8520C9527500462923 /* MileInfo.swift */; };
 		31A77C8E20C9527500462923 /* MileKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A77C8720C9527500462923 /* MileKeys.swift */; };
 		31A77C9020C960B200462923 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A77C8F20C960B200462923 /* Config.swift */; };
-		31A77C9220C9612200462923 /* MileAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A77C9120C9612200462923 /* MileAddress.swift */; };
 		31A77C9420C9626E00462923 /* Wallet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A77C9320C9626E00462923 /* Wallet.swift */; };
 		31D8CB9020CAEA9A006C7B8D /* TransferViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31D8CB8F20CAEA9A006C7B8D /* TransferViewController.swift */; };
-		31D8CB9220CB14C1006C7B8D /* MilePrepareTrx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31D8CB9120CB14C1006C7B8D /* MilePrepareTrx.swift */; };
 		31D8CB9420CB1A01006C7B8D /* Transfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31D8CB9320CB1A01006C7B8D /* Transfer.swift */; };
-		31D8CB9620CB2272006C7B8D /* MileSendTrx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31D8CB9520CB2272006C7B8D /* MileSendTrx.swift */; };
+		31D8CB9620CB2272006C7B8D /* MileTransferAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31D8CB9520CB2272006C7B8D /* MileTransferAsset.swift */; };
 		31DC4D0220CAD2930041A7E9 /* Balance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31DC4D0120CAD2930041A7E9 /* Balance.swift */; };
 		31E6BF4020D91A6D00C40A80 /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E6BF3F20D91A6D00C40A80 /* Controller.swift */; };
 		31E6BF4220D9283B00C40A80 /* MileWalletState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E6BF4120D9283B00C40A80 /* MileWalletState.swift */; };
+		31E6BF4420D94C5800C40A80 /* QRReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E6BF4320D94C5800C40A80 /* QRReader.swift */; };
 		31F2CFE520D177A000C1770B /* PrintSecretTemplate.html in Resources */ = {isa = PBXBuildFile; fileRef = 31F2CFE420D177A000C1770B /* PrintSecretTemplate.html */; };
 		6C7F0151E2AF0722F86A75E3 /* Pods_MileWallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B76307F7CB9436B9776FCFD2 /* Pods_MileWallet.framework */; };
 /* End PBXBuildFile section */
@@ -60,15 +59,14 @@
 		31A77C8520C9527500462923 /* MileInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MileInfo.swift; sourceTree = "<group>"; };
 		31A77C8720C9527500462923 /* MileKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MileKeys.swift; sourceTree = "<group>"; };
 		31A77C8F20C960B200462923 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
-		31A77C9120C9612200462923 /* MileAddress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MileAddress.swift; sourceTree = "<group>"; };
 		31A77C9320C9626E00462923 /* Wallet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wallet.swift; sourceTree = "<group>"; };
 		31D8CB8F20CAEA9A006C7B8D /* TransferViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferViewController.swift; sourceTree = "<group>"; };
-		31D8CB9120CB14C1006C7B8D /* MilePrepareTrx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MilePrepareTrx.swift; sourceTree = "<group>"; };
 		31D8CB9320CB1A01006C7B8D /* Transfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transfer.swift; sourceTree = "<group>"; };
-		31D8CB9520CB2272006C7B8D /* MileSendTrx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MileSendTrx.swift; sourceTree = "<group>"; };
+		31D8CB9520CB2272006C7B8D /* MileTransferAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MileTransferAsset.swift; sourceTree = "<group>"; };
 		31DC4D0120CAD2930041A7E9 /* Balance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Balance.swift; sourceTree = "<group>"; };
 		31E6BF3F20D91A6D00C40A80 /* Controller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
 		31E6BF4120D9283B00C40A80 /* MileWalletState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MileWalletState.swift; sourceTree = "<group>"; };
+		31E6BF4320D94C5800C40A80 /* QRReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRReader.swift; sourceTree = "<group>"; };
 		31F2CFE420D177A000C1770B /* PrintSecretTemplate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = PrintSecretTemplate.html; sourceTree = "<group>"; };
 		49204292349409323B45A4FE /* Pods-MileWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MileWallet.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MileWallet/Pods-MileWallet.debug.xcconfig"; sourceTree = "<group>"; };
 		7B728D4241C0E56F3425037D /* Pods-MileWallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MileWallet.release.xcconfig"; path = "Pods/Target Support Files/Pods-MileWallet/Pods-MileWallet.release.xcconfig"; sourceTree = "<group>"; };
@@ -147,6 +145,7 @@
 				31A77C8220C9527500462923 /* MileServiceRequest.swift */,
 				31A77C8F20C960B200462923 /* Config.swift */,
 				31144EAD20CA738E00A8E6B4 /* Utils.swift */,
+				31E6BF4320D94C5800C40A80 /* QRReader.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -158,9 +157,7 @@
 				31A77C8420C9527500462923 /* CastError.swift */,
 				31A77C8520C9527500462923 /* MileInfo.swift */,
 				31A77C8720C9527500462923 /* MileKeys.swift */,
-				31A77C9120C9612200462923 /* MileAddress.swift */,
-				31D8CB9120CB14C1006C7B8D /* MilePrepareTrx.swift */,
-				31D8CB9520CB2272006C7B8D /* MileSendTrx.swift */,
+				31D8CB9520CB2272006C7B8D /* MileTransferAsset.swift */,
 			);
 			path = "JSON-RPC";
 			sourceTree = "<group>";
@@ -320,6 +317,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				31A77C9420C9626E00462923 /* Wallet.swift in Sources */,
+				31E6BF4420D94C5800C40A80 /* QRReader.swift in Sources */,
 				31DC4D0220CAD2930041A7E9 /* Balance.swift in Sources */,
 				31A77C8A20C9527500462923 /* MileServiceRequest.swift in Sources */,
 				3182CDCB20D2AF0D000C3C68 /* PaymentController.swift in Sources */,
@@ -329,10 +327,8 @@
 				3164FD8520C950ED00294A9F /* DetailViewController.swift in Sources */,
 				31A77C8E20C9527500462923 /* MileKeys.swift in Sources */,
 				3164FD8320C950ED00294A9F /* MasterViewController.swift in Sources */,
-				31D8CB9220CB14C1006C7B8D /* MilePrepareTrx.swift in Sources */,
-				31D8CB9620CB2272006C7B8D /* MileSendTrx.swift in Sources */,
+				31D8CB9620CB2272006C7B8D /* MileTransferAsset.swift in Sources */,
 				3182CDC320D1C462000C3C68 /* HTMLTemplate.swift in Sources */,
-				31A77C9220C9612200462923 /* MileAddress.swift in Sources */,
 				31E6BF4020D91A6D00C40A80 /* Controller.swift in Sources */,
 				31144EAE20CA738E00A8E6B4 /* Utils.swift in Sources */,
 				31144EB420CABA9200A8E6B4 /* Chain.swift in Sources */,

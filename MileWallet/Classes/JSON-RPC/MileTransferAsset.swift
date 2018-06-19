@@ -1,5 +1,5 @@
 //
-//  MilePrepareTrx.swift
+//  MileTransferAsset.swift
 //  MileWallet
 //
 //  Created by denis svinarchuk on 08.06.2018.
@@ -10,22 +10,18 @@ import Foundation
 import JSONRPCKit
 import ObjectMapper
 
-public struct MilePrepareTrx: JSONRPCKit.Request{
+public struct MileTransferAsset: JSONRPCKit.Request{
     
-    public typealias Response = [String:Any]
+    public typealias Response = Bool
     
-    public var asset: String
-    public var amount: String
-    public var from: String
-    public var to: String
-    public var privateKey: String
+    public var transaction_data: String
     
     public var method: String {
-        return "get-transfer-assets-transaction"
+        return "send-signed-transaction"
     }
     
     public var parameters: Any? {
-        return Mapper<MilePrepareTrx>().toJSON(self) 
+        return Mapper<MileTransferAsset>().toJSON(self) 
     }
     
     public func response(from resultObject: Any) throws -> Response {
@@ -37,16 +33,12 @@ public struct MilePrepareTrx: JSONRPCKit.Request{
     }
 }
 
-extension MilePrepareTrx: Mappable {
+extension MileTransferAsset: Mappable {
     public init?(map: Map) {
         return nil
     }    
     public mutating func mapping(map: Map) {
-        asset <- map["asset"]
-        amount  <- map["amount"]    
-        from  <- map["from"]    
-        to  <- map["to"]   
-        privateKey <- map["private_key"]
+        transaction_data <- map["transaction_data"]
     }
 }
 

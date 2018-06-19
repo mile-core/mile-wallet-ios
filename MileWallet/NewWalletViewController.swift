@@ -12,56 +12,17 @@ import JSONRPCKit
 import KeychainAccess
 import ObjectMapper
 
-extension JSONRPCKit.JSONRPCError {
-    var what:String {                
-        switch self {
-        case .responseError(_, let message, _):
-            return message
-        case .responseNotFound(_,_):
-            return NSLocalizedString("Response not found...", comment: "")
-        case .resultObjectParseError(_):
-            return NSLocalizedString("Result object parse error", comment: "")
-        case .unsupportedVersion(_):
-            return NSLocalizedString("API Unsupported version", comment: "")
-        case .unexpectedTypeObject(_), .missingBothResultAndError(_), .nonArrayResponse(_), .errorObjectParseError(_):
-            return NSLocalizedString("Result object parse fail", comment: "")
-        }
-    }    
-}
-
-extension SessionTaskError {
-    var whatResponse:String? {        
-        let error = self         
-        var jsonrpcError:JSONRPCKit.JSONRPCError?
-        
-        switch error {
-        case .responseError(let error), .connectionError(let error), .requestError(let error): 
-            jsonrpcError = error as? JSONRPCKit.JSONRPCError               
-        }
-        
-        guard let responseError = jsonrpcError else { return nil }
-        
-        return responseError.what
-    }    
-}
-
-class NewWalletViewController: UIViewController {
-        
+class NewWalletViewController: Controller {
+                
     var keychain:Keychain {
         return Keychain(service: Config.walletService).synchronizable(Config.isWalletKeychainSynchronizable)
-    }
-    
-    @IBOutlet weak var createNewButton: UIButton!
+    }    
     
     @IBOutlet weak var messageArea: UITextView!
     
-    @IBOutlet weak var progress: UIProgressView!
-    
-    @IBOutlet weak var name: UITextField!
-    
-    @IBOutlet weak var secretPhrase: UITextField!
+    @IBOutlet weak var createNewButton: UIButton!
         
-    @IBOutlet weak var secretPhraseRepeted: UITextField!
+    @IBOutlet weak var name: UITextField!
     
     @IBAction func cancelHandler(_ sender: UIButton) {
         dismiss(animated: true) {}
@@ -77,77 +38,23 @@ class NewWalletViewController: UIViewController {
             createNewButton.isUserInteractionEnabled = true            
         }
     }
-    
-    @IBAction func secretChanging(_ sender: UITextField) {
-        guard let text = sender.text else {
-            appear()
-            okEnabled(enable: false)
-            return             
-        }
-        if sender === secretPhrase {
-            if text.count < 6 {
-                progress.trackTintColor = UIColor.red
-            }
-            else if text.count >= 6 && text.count <= 10 {
-                progress.trackTintColor = UIColor.orange
-            }
-            else if text.count > 10 {
-                progress.trackTintColor = UIColor.green
-            }
-        }
-        if secretPhrase.text != secretPhraseRepeted.text {
-            secretPhraseRepeted.backgroundColor = UIColor.red.withAlphaComponent(0.3)
-            okEnabled(enable: false)
-        }
-        else {
-            secretPhraseRepeted.backgroundColor = UIColor.green.withAlphaComponent(0.3)
-            okEnabled(enable: true)
-        }          
-        guard let nameWallet = name.text else {
-            okEnabled(enable: false)
-            return
-        }  
-        if nameWallet.isEmpty {
-            okEnabled(enable: false)
-        }
-    }
-    
-    @discardableResult func testSecret() -> Bool {
-        guard let phrase  = secretPhrase.text else { return false }
-        guard let phrase2 = secretPhraseRepeted.text else { return false }
-        guard let name = name.text else { return false }
-        
-        if phrase != phrase2 || name.isEmpty || phrase.count < 6 {
-            okEnabled(enable: false)
-            return false
-        }
-        
-        okEnabled(enable: true)
-        
-        return true
-    }
-    
-    @IBAction func secretChanged(_ sender: UITextField) {
-        testSecret()
-    }
-    
-    
-    @IBAction func addWalletBySecret(_ sender: UITextField) {
-        guard let text = name.text else { return }
-        if sender === secretPhraseRepeted && text.count > 0{
-            sender.resignFirstResponder()
-        }        
-    }
+            
     
     @IBAction func addWalletHandler(_ sender: UIButton) {        
         addWallet()
     }
     
-    func addWallet()  {
+    @IBAction func nameChanging(_ sender: UITextField) {
+        if let c = sender.text?.count, c >= 3 {
+            okEnabled(enable: true)
+        } 
+        else {
+            okEnabled(enable: false)
+        }
+    }
     
-        guard testSecret() else { return }
-        
-        guard let phrase  = secretPhrase.text else { return }
+    func addWallet()  {
+            
         guard let name = name.text else { return }
                        
         let activiti = UIActivityIndicatorView(activityIndicatorStyle: .gray)
@@ -175,7 +82,7 @@ class NewWalletViewController: UIViewController {
         }
         
         
-        Wallet.create(name: name, secretPhrase: phrase, error: { error in             
+        Wallet.create(name: name, secretPhrase: nil, error: { error in             
             
             self.messageArea.text = error?.whatResponse            
             
@@ -214,7 +121,13 @@ class NewWalletViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard))
+        self.view.addGestureRecognizer(tapGesture)
     }    
+    
+    @objc func dismissKeyboard (_ sender: UITapGestureRecognizer) {
+        name.resignFirstResponder()
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -223,12 +136,7 @@ class NewWalletViewController: UIViewController {
     }
     
     func appear()  {
+        messageArea.text = ""           
         okEnabled(enable: false)
-        messageArea.text = ""
-        secretPhraseRepeted.text = nil
-        secretPhrase.text = nil
-        progress.trackTintColor = UIColor.gray
-        secretPhraseRepeted.backgroundColor = UIColor.clear
-        secretPhrase.backgroundColor = UIColor.clear
     }
 }

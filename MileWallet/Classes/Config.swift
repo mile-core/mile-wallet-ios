@@ -9,7 +9,7 @@
 import UIKit
 
 struct Config {
-    public static let mileHosts = ["https://wallet.mile.global", "https://mile-wallet.karma.red", "http://localhost:4000", "https://149.28.162.70:4000"]
+    public static let mileHosts = ["https://wallet.mile.global", "http://localhost:4000", "https://mile-wallet.karma.red", "https://149.28.162.70:4000"]
     
     public static let walletService = "karma.red.milek.wallet"
     
@@ -18,6 +18,7 @@ struct Config {
     public static let publicKeyQrPrefix    = "MILE:PUB:"
     public static let privateKeyQrPrefix   = "MILE:PRIV:"
     public static let noteQrPrefix         = "MILE:NOTE:"
+    public static let nameQrPrefix         = "MILE:NOTE:NAME:"
     public static let secretPhraseQrPrefix = "MILE:SECRET:"
     public static let amountQrPrefix       = "MILE:AMOUNT:"
     public static let paymentQrPrefix      = "MILE:PAYMENT:"

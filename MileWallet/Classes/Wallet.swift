@@ -11,6 +11,7 @@ import APIKit
 import JSONRPCKit
 import ObjectMapper
 import EFQRCode 
+import MileCsaLight
 
 public struct Wallet {    
 
@@ -19,7 +20,7 @@ public struct Wallet {
     public var publicKey:String? { return _publicKey }    
     public var privateKey:String? { return _privateKey }    
 
-    public var nameQRImage:UIImage? { return name?.qrCodeImage(with: Config.noteQrPrefix+":NAME:") }
+    public var nameQRImage:UIImage? { return name?.qrCodeImage(with: Config.nameQrPrefix) }
     public var secretPhraseQRImage:UIImage? { return secretPhrase?.qrCodeImage(with: Config.noteQrPrefix)}
     public var publicKeyQRImage:UIImage? { return publicKey?.qrCodeImage(with: Config.publicKeyQrPrefix) }    
     public var privateKeyQRImage:UIImage? { return privateKey?.qrCodeImage(with: Config.privateKeyQrPrefix) }    
@@ -30,52 +31,11 @@ public struct Wallet {
         return a.qrCodeImage(with: Config.paymentQrPrefix)
     }
     
-    public static func create(name:String, secretPhrase:String,
+    public static func create(name:String, secretPhrase:String?,
                                           error: @escaping ((_ error: SessionTaskError?)-> Void),  
-                                          complete: @escaping ((_ wallet: Wallet)->Void)) {
-                    
-
-        let batchFactory = BatchFactory(version: "2.0", idGenerator: NumberIdGenerator())
-        
-        let request = MileKeys(wallet_name: name, password: secretPhrase) 
-        
-        let batch = batchFactory.create(request)
-        let httpRequest = MileServiceRequest(batch: batch)
-                        
-        Session.send(httpRequest) { (result) in
-            switch result {
-            case .success(let response):
-                
-                if let pubk = response["public_key"] as? String,
-                    let privk = response["private_key"] as? String {
-                    complete(Wallet(name: name, publicKey: pubk, privateKey: privk, password: secretPhrase))
-                }
-                
-            case .failure(let er):                
-                
-                Swift.print("Create passwd = \(er)")
-                
-                let batchFactory = BatchFactory(version: "2.0", idGenerator: NumberIdGenerator())
-                
-                let request = MileAddress(wallet_name: name, password: secretPhrase) 
-                
-                let batch = batchFactory.create(request)
-                let httpRequest = MileServiceRequest(batch: batch)
-                
-                Session.send(httpRequest) { (result) in
-                    switch result {
-                    case .success(let response):
-                        
-                        if let pubk = response["public_key"] as? String,
-                            let privk = response["private_key"] as? String {
-                            complete(Wallet(name: name, publicKey: pubk, privateKey: privk, password: secretPhrase))
-                        }
-                    case .failure(let er):                
-                        error(er)
-                    }
-                }                
-            }
-        }                        
+                                          complete: @escaping ((_ wallet: Wallet)->Void)) {                            
+        let keys = MileCsa.generateKeys()         
+        complete(Wallet(name: name, publicKey: keys.publicKey, privateKey: keys.privateKey, password: secretPhrase))        
     }
         
     public init(name:String, publicKey:String, privateKey:String, password:String?){

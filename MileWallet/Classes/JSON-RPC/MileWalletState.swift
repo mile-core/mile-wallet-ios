@@ -1,5 +1,5 @@
 //
-//  MileAddressInfo.swift
+//  MileWalletState.swift
 //  MileWallet
 //
 //  Created by denis svinarchuk on 08.06.2018.
