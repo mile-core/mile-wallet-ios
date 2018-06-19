@@ -10,7 +10,7 @@ import Foundation
 import JSONRPCKit
 import ObjectMapper
 
-public struct MileAddressState: JSONRPCKit.Request{
+public struct MileWalletState: JSONRPCKit.Request{
     
     public typealias Response = [String:Any]
     
@@ -21,7 +21,7 @@ public struct MileAddressState: JSONRPCKit.Request{
     }
     
     public var parameters: Any? {
-        return Mapper<MileAddressState>().toJSON(self) 
+        return Mapper<MileWalletState>().toJSON(self) 
     }
     
     public func response(from resultObject: Any) throws -> Response {
@@ -33,7 +33,7 @@ public struct MileAddressState: JSONRPCKit.Request{
     }
 }
 
-extension MileAddressState: Mappable {
+extension MileWalletState: Mappable {
     public init?(map: Map) {
         return nil
     }    

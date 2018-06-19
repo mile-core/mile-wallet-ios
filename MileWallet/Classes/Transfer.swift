@@ -10,19 +10,25 @@ import Foundation
 import APIKit
 import JSONRPCKit
 import ObjectMapper
+import MileCsaLight
 
 public struct Transfer {
-    
+        
     public var transactionData:String? { return _transactionData }    
     public var result:Bool { return _result }    
-    
-//    public init(balance:[String:String]){
-//        self._balance = balance
-//    }
-    
-    public static func send(asset: String, amount: String, from: Wallet, to: Wallet, 
+        
+    public static func send(asset: String, 
+                            amount: String, 
+                            from: Wallet, to: Wallet, 
                             error: @escaping ((_ error: SessionTaskError?)-> Void),  
-                            complete: @escaping ((_ chain: Transfer)->Void)) {
+                            complete: @escaping ((_: Transfer)->Void)) {
+        
+        
+        Chain.update(error: { (err) in
+            error(err)
+        }) { (chain) in
+            Swift.print(chain.assets)
+        }
         
         let batchFactory = BatchFactory(version: "2.0", idGenerator: NumberIdGenerator())
         
@@ -30,12 +36,7 @@ public struct Transfer {
         guard let to_key = to.publicKey else { return }
         guard let from_private_key = from.privateKey else { return }
                 
-        let request = MilePrepareTrx(asset: asset, 
-                                     amount: amount, 
-                                     from: from_key, 
-                                     to: to_key, 
-                                     privateKey: from_private_key) 
-        
+        let request = MileWalletState(publicKey: from_key)
                 
         let batch = batchFactory.create(request)
         let httpRequest = MileServiceRequest(batch: batch)
@@ -44,17 +45,28 @@ public struct Transfer {
             switch result {                
             case .success(let response):
                 
-                guard let data = response["transaction_data"]  else {
+                
+                guard let trxId = response["last_transaction_id"] else {
+                    error(.responseError(ResponseError.unexpectedObject(response)))
                     return
                 }
-                                
+                
+                let data = MileCsa.createTransfer(MileCsaKeys(from_key, privateKey: from_private_key), 
+                                                              destPublicKey: to_key, 
+                                                              transactionId: "\(trxId)", 
+                                                              assets: 1, 
+                                                              amount: amount)
+                                                
                 let batchFactory = BatchFactory(version: "2.0", idGenerator: NumberIdGenerator())
                 
-                let request = MileSendTrx(transaction_data: "\(data)")
+                let request = MileSendTrx(transaction_data: data)
+                
                 
                 let batch = batchFactory.create(request)
                 let httpRequest = MileServiceRequest(batch: batch)
                 
+                Swift.print("MileSendTrx : \(httpRequest)")
+
                 Session.send(httpRequest) { (result) in
                     switch result {    
                         

@@ -20,13 +20,13 @@ public struct Balance {
     }
     
     public static func update(wallet: Wallet, error: @escaping ((_ error: SessionTaskError?)-> Void),  
-                              complete: @escaping ((_ chain: Balance)->Void)) {
+                              complete: @escaping ((_: Balance)->Void)) {
         
         let batchFactory = BatchFactory(version: "2.0", idGenerator: NumberIdGenerator())
         
         guard let pk = wallet.publicKey else { return }
         
-        let request = MileAddressState(publicKey: pk)
+        let request = MileWalletState(publicKey: pk)
     
         
         let batch = batchFactory.create(request)

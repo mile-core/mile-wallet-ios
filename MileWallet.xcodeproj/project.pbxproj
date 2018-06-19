@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		31144EAE20CA738E00A8E6B4 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31144EAD20CA738E00A8E6B4 /* Utils.swift */; };
 		31144EB020CA8AA400A8E6B4 /* NewWalletViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31144EAF20CA8AA400A8E6B4 /* NewWalletViewController.swift */; };
-		31144EB220CAB8CF00A8E6B4 /* MileAddressState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31144EB120CAB8CF00A8E6B4 /* MileAddressState.swift */; };
+		31144EB220CAB8CF00A8E6B4 /* MileWalletState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31144EB120CAB8CF00A8E6B4 /* MileWalletState.swift */; };
 		31144EB420CABA9200A8E6B4 /* Chain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31144EB320CABA9200A8E6B4 /* Chain.swift */; };
 		3164FD8120C950ED00294A9F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3164FD8020C950ED00294A9F /* AppDelegate.swift */; };
 		3164FD8320C950ED00294A9F /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3164FD8220C950ED00294A9F /* MasterViewController.swift */; };
@@ -42,7 +42,7 @@
 		3104930B20CC05D5006AB772 /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		31144EAD20CA738E00A8E6B4 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		31144EAF20CA8AA400A8E6B4 /* NewWalletViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewWalletViewController.swift; sourceTree = "<group>"; };
-		31144EB120CAB8CF00A8E6B4 /* MileAddressState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MileAddressState.swift; sourceTree = "<group>"; };
+		31144EB120CAB8CF00A8E6B4 /* MileWalletState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MileWalletState.swift; sourceTree = "<group>"; };
 		31144EB320CABA9200A8E6B4 /* Chain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chain.swift; sourceTree = "<group>"; };
 		3164FD7D20C950ED00294A9F /* MileWallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MileWallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3164FD8020C950ED00294A9F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -112,6 +112,7 @@
 				31F2CFE320D1772800C1770B /* Resources */,
 				31A77C8120C9527500462923 /* Classes */,
 				3164FD8020C950ED00294A9F /* AppDelegate.swift */,
+				3182CDC620D1C7BD000C3C68 /* Controller.swift */,
 				3164FD8220C950ED00294A9F /* MasterViewController.swift */,
 				3164FD8420C950ED00294A9F /* DetailViewController.swift */,
 				31144EAF20CA8AA400A8E6B4 /* NewWalletViewController.swift */,
@@ -143,10 +144,9 @@
 				31DC4D0120CAD2930041A7E9 /* Balance.swift */,
 				31D8CB9320CB1A01006C7B8D /* Transfer.swift */,
 				31144EB320CABA9200A8E6B4 /* Chain.swift */,
-				31A77C8220C9527500462923 /* MileServiceRequest.swift */,
 				31A77C8F20C960B200462923 /* Config.swift */,
 				31144EAD20CA738E00A8E6B4 /* Utils.swift */,
-				3182CDC620D1C7BD000C3C68 /* Controller.swift */,
+				31A77C8220C9527500462923 /* MileServiceRequest.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -157,7 +157,7 @@
 				31A77C8420C9527500462923 /* CastError.swift */,
 				31A77C8520C9527500462923 /* MileInfo.swift */,
 				31A77C8720C9527500462923 /* MileKeys.swift */,
-				31144EB120CAB8CF00A8E6B4 /* MileAddressState.swift */,
+				31144EB120CAB8CF00A8E6B4 /* MileWalletState.swift */,
 				31A77C9120C9612200462923 /* MileAddress.swift */,
 				31D8CB9120CB14C1006C7B8D /* MilePrepareTrx.swift */,
 				31D8CB9520CB2272006C7B8D /* MileSendTrx.swift */,
@@ -291,7 +291,7 @@
 				"${BUILT_PRODUCTS_DIR}/EFQRCode/EFQRCode.framework",
 				"${BUILT_PRODUCTS_DIR}/JSONRPCKit/JSONRPCKit.framework",
 				"${BUILT_PRODUCTS_DIR}/KeychainAccess/KeychainAccess.framework",
-				"${BUILT_PRODUCTS_DIR}/MileKit/MileKit.framework",
+				"${BUILT_PRODUCTS_DIR}/MileCsaLight/MileCsaLight.framework",
 				"${BUILT_PRODUCTS_DIR}/ObjectMapper/ObjectMapper.framework",
 				"${BUILT_PRODUCTS_DIR}/QRCodeReader.swift/QRCodeReader.framework",
 				"${BUILT_PRODUCTS_DIR}/Result/Result.framework",
@@ -303,7 +303,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/EFQRCode.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JSONRPCKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KeychainAccess.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MileKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MileCsaLight.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectMapper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/QRCodeReader.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Result.framework",
@@ -339,7 +339,7 @@
 				31144EAE20CA738E00A8E6B4 /* Utils.swift in Sources */,
 				31144EB420CABA9200A8E6B4 /* Chain.swift in Sources */,
 				31D8CB9020CAEA9A006C7B8D /* TransferViewController.swift in Sources */,
-				31144EB220CAB8CF00A8E6B4 /* MileAddressState.swift in Sources */,
+				31144EB220CAB8CF00A8E6B4 /* MileWalletState.swift in Sources */,
 				31A77C9020C960B200462923 /* Config.swift in Sources */,
 				31A77C8C20C9527500462923 /* MileInfo.swift in Sources */,
 				31D8CB9420CB1A01006C7B8D /* Transfer.swift in Sources */,
@@ -375,7 +375,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -435,7 +435,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
