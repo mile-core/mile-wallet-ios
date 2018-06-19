@@ -17,6 +17,7 @@ public struct Transfer {
     public var transactionData:String? { return _transactionData }    
     public var result:Bool { return _result }    
         
+    
     public static func send(asset: String, 
                             amount: String, 
                             from: Wallet, to: Wallet, 
@@ -32,29 +33,7 @@ public struct Transfer {
             error(err)
         }) { (chain) in
             Swift.print(chain.assets)
-        }
-        
-//        let req = MilePrepareTrx(asset: "XDR", 
-//                       amount: amount, 
-//                       from: from_key, 
-//                       to: to_key, 
-//                       privateKey: from_private_key)
-//        
-//        let batchFactory_trx = BatchFactory(version: "2.0", idGenerator: NumberIdGenerator())
-//
-//        let batch_trx = batchFactory_trx.create(req)
-//        let httpRequest_trx = MileServiceRequest(batch: batch_trx)
-//
-//        
-//        Session.send(httpRequest_trx) { (result) in
-//            switch result {  
-//            case .success(let response):
-//                print("----> \(response)")
-//            case .failure(let err):
-//                print("====>  \(err)")
-//            }            
-//        }
-        
+        }     
         
         let batchFactory = BatchFactory(version: "2.0", idGenerator: NumberIdGenerator())
                         
@@ -67,8 +46,6 @@ public struct Transfer {
             switch result {                
             case .success(let response):
                 
-
-                Swift.print("wallet state: \(response)")
                 
                 guard let trxIdObj = response["last_transaction_id"] else {
                     error(.responseError(ResponseError.unexpectedObject(response)))
@@ -82,7 +59,7 @@ public struct Transfer {
                 
                 let data = MileCsa.createTransfer(MileCsaKeys(from_key, privateKey: from_private_key), 
                                                               destPublicKey: to_key, 
-                                                              transactionId: "\(trxId+1)", 
+                                                              transactionId: "\(trxId)", 
                                                               assets: 1, 
                                                               amount: amount)
                                                 
@@ -94,16 +71,12 @@ public struct Transfer {
                 let batch = batchFactory.create(request)
                 let httpRequest = MileServiceRequest(batch: batch)
                 
-                Swift.print("MileSendTrx : \(httpRequest)")
-
                 Session.send(httpRequest) { (result) in
                     switch result {    
                         
                     case .success(let response):
-                        
-                        Swift.print("send transaction_data: ", response)
-
-                        complete(Transfer())                     
+                                                
+                        complete(Transfer(_transactionData: data, _result: response))                     
                         
                     case .failure(let er):                
                         error(er)
