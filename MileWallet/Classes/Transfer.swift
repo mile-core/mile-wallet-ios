@@ -23,6 +23,10 @@ public struct Transfer {
                             error: @escaping ((_ error: SessionTaskError?)-> Void),  
                             complete: @escaping ((_: Transfer)->Void)) {
         
+        guard let from_key = from.publicKey else { return }
+        guard let to_key = to.publicKey else { return }
+        guard let from_private_key = from.privateKey else { return }
+
         
         Chain.update(error: { (err) in
             error(err)
@@ -30,12 +34,30 @@ public struct Transfer {
             Swift.print(chain.assets)
         }
         
-        let batchFactory = BatchFactory(version: "2.0", idGenerator: NumberIdGenerator())
+//        let req = MilePrepareTrx(asset: "XDR", 
+//                       amount: amount, 
+//                       from: from_key, 
+//                       to: to_key, 
+//                       privateKey: from_private_key)
+//        
+//        let batchFactory_trx = BatchFactory(version: "2.0", idGenerator: NumberIdGenerator())
+//
+//        let batch_trx = batchFactory_trx.create(req)
+//        let httpRequest_trx = MileServiceRequest(batch: batch_trx)
+//
+//        
+//        Session.send(httpRequest_trx) { (result) in
+//            switch result {  
+//            case .success(let response):
+//                print("----> \(response)")
+//            case .failure(let err):
+//                print("====>  \(err)")
+//            }            
+//        }
         
-        guard let from_key = from.publicKey else { return }
-        guard let to_key = to.publicKey else { return }
-        guard let from_private_key = from.privateKey else { return }
-                
+        
+        let batchFactory = BatchFactory(version: "2.0", idGenerator: NumberIdGenerator())
+                        
         let request = MileWalletState(publicKey: from_key)
                 
         let batch = batchFactory.create(request)
@@ -45,15 +67,22 @@ public struct Transfer {
             switch result {                
             case .success(let response):
                 
+
+                Swift.print("wallet state: \(response)")
                 
-                guard let trxId = response["last_transaction_id"] else {
+                guard let trxIdObj = response["last_transaction_id"] else {
                     error(.responseError(ResponseError.unexpectedObject(response)))
                     return
                 }
                 
+                guard let trxId = Int("\(trxIdObj)") else {
+                    error(.responseError(ResponseError.unexpectedObject(trxIdObj)))
+                    return                    
+                }
+                
                 let data = MileCsa.createTransfer(MileCsaKeys(from_key, privateKey: from_private_key), 
                                                               destPublicKey: to_key, 
-                                                              transactionId: "\(trxId)", 
+                                                              transactionId: "\(trxId+1)", 
                                                               assets: 1, 
                                                               amount: amount)
                                                 
