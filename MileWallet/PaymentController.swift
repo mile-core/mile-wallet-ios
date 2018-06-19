@@ -8,6 +8,7 @@
 
 import UIKit
 import SnapKit
+import MileWalletKit
 
 class PaymentController: Controller {   
     

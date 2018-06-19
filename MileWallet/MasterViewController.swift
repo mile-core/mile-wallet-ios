@@ -11,16 +11,21 @@ import APIKit
 import JSONRPCKit
 import KeychainAccess
 import SnapKit
+import QRCodeReader
+import ObjectMapper
+import MileWalletKit
 
 class MasterViewController: UITableViewController {
     
+    public lazy var qrCodeReader:QRReader = {return QRReader(controller: self)}() 
+
     var detailViewController: DetailViewController? = nil
     var newWalletViewController: NewWalletViewController? = nil
     
     var reloadTimer:Timer?
     
     var keychain:Keychain {
-        return Keychain(service: Config.walletService) 
+        return Keychain(service: Config.walletService).synchronizable(Config.isWalletKeychainSynchronizable)
         //.authenticationPrompt(" ???") //.synchronizable(Config.isWalletKeychainSynchronizable)
     }
     
@@ -103,12 +108,87 @@ class MasterViewController: UITableViewController {
     
     @objc
     func insertNewObject(_ sender: Any) {
-        present(newWalletViewController!, animated: true) { }
+                
+        UIAlertController(title: nil, 
+                          message: nil, 
+                          preferredStyle: .actionSheet)
+            .addAction(title: NSLocalizedString("New Wallet", comment: ""), style: .default) { (alert) in
+                self.present(self.newWalletViewController!, animated: true) { }
+            }
+            .addAction(title: NSLocalizedString("Import Wallet", comment: ""), style: .default) { (alert) in
+                self.qrCodeReader.open { (controller, result) in
+                    self.reader(controller, didScanResult: result)
+                }
+            }
+            .addAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel, handler: nil)
+            .present(by: self)
+        
     }
 
+    var currentPublicKeyQr:String?
+    var currentPrivateKeyQr:String?
+    var currentNameQr:String?
+      
+    func reader(_ reader: QRCodeReaderViewController, didScanResult result: QRCodeReaderResult) {
+        
+        if result.value.hasPrefix(Config.privateKeyQrPrefix){
+            currentPrivateKeyQr = result.value.replacingOccurrences(of: Config.privateKeyQrPrefix, with: "")            
+        } 
+
+        if result.value.hasPrefix(Config.publicKeyQrPrefix){
+            currentPublicKeyQr = result.value.replacingOccurrences(of: Config.publicKeyQrPrefix, with: "")            
+        } 
+                
+        if result.value.hasPrefix(Config.nameQrPrefix){
+            currentNameQr = result.value.replacingOccurrences(of: Config.nameQrPrefix, with: "")            
+        }
+        
+        func close(){
+            reader.dismiss(animated: true) 
+        }   
+        
+        if let privateKey = currentPublicKeyQr, 
+            let publicKey = currentPublicKeyQr,
+            let name = currentNameQr {
+            reader.stopScanning()
+         
+            let wallet = Wallet(name: name, publicKey: publicKey, privateKey: privateKey, password: nil)
+            
+            UIAlertController(title: nil, 
+                              message: "Wallet name: \(name)\nPublic Key: \(publicKey)", 
+                              preferredStyle: .alert)
+                
+                .addAction(title: "Accept", style: .default) {  [weak self]  (allert) in                    
+                    do {
+                        guard let json = Mapper<Wallet>().toJSONString(wallet) else {
+                            //Swift.print("Keychain error: \(error)")
+                            let mess = NSLocalizedString("Wallet could not be created from the secret phrase", comment: "")
+                            Swift.print("Keychain error: \(mess)")
+                            return
+                        }
+                        try self?.keychain.set(json, key: name)
+                    }
+                    catch let error {
+                        Swift.print("Keychain error: \(error)")
+                        //self.messageArea.text = error.localizedDescription
+                    }                    
+                    close()
+                } 
+                .addAction(title: "Cancel", style: .cancel) { _ in
+                    close()
+                }            
+                .present(by: reader)    
+            
+            currentPrivateKeyQr = nil
+            currentNameQr = nil
+            currentNameQr = nil
+        }
+    }
+    
     // MARK: - Segues
 
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {    
+        
         if segue.identifier == "showDetail" {
             if let indexPath = tableView.indexPathForSelectedRow {
                 

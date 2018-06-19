@@ -256,36 +256,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Type a secret phrase" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="dQG-JA-9vx">
-                                <rect key="frame" x="57" y="200" width="300" height="30"/>
-                                <nil key="textColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" enablesReturnKeyAutomatically="YES" secureTextEntry="YES" textContentType="password"/>
-                                <connections>
-                                    <action selector="secretChanged:" destination="Aid-fW-KlF" eventType="editingDidEnd" id="hso-6t-GGM"/>
-                                    <action selector="secretChanging:" destination="Aid-fW-KlF" eventType="editingChanged" id="YHh-Sk-Opn"/>
-                                </connections>
-                            </textField>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Repeat a secret phrase" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="XlB-Sh-d0D">
-                                <rect key="frame" x="57" y="250" width="300" height="30"/>
-                                <nil key="textColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" enablesReturnKeyAutomatically="YES" secureTextEntry="YES" textContentType="password"/>
-                                <connections>
-                                    <action selector="addWalletBySecret:" destination="Aid-fW-KlF" eventType="editingDidEndOnExit" id="cDm-l6-l81"/>
-                                    <action selector="secretChanged:" destination="Aid-fW-KlF" eventType="editingDidEnd" id="Xg5-il-g6s"/>
-                                    <action selector="secretChanging:" destination="Aid-fW-KlF" eventType="editingChanged" id="GnU-7v-O5v"/>
-                                </connections>
-                            </textField>
-                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2NX-ic-YZr">
-                                <rect key="frame" x="57" y="318" width="300" height="2"/>
-                            </progressView>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9dR-8o-DIA">
-                                <rect key="frame" x="57" y="344" width="300" height="285"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                            </textView>
                             <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" text="Add Wallet" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="6Ie-ZU-ujH">
                                 <rect key="frame" x="57" y="80" width="300" height="38"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -301,6 +271,9 @@
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" enablesReturnKeyAutomatically="YES" textContentType="username"/>
+                                <connections>
+                                    <action selector="nameChanging:" destination="Aid-fW-KlF" eventType="editingChanged" id="Vis-DC-9r6"/>
+                                </connections>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mPO-pn-upn">
                                 <rect key="frame" x="20" y="644" width="125" height="50"/>
@@ -323,33 +296,30 @@
                                     <action selector="addWalletHandler:" destination="Aid-fW-KlF" eventType="touchUpInside" id="5zA-CL-Hgs"/>
                                 </connections>
                             </button>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cqA-1S-i9c">
+                                <rect key="frame" x="57" y="367" width="300" height="241"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="BQ7-z8-qjQ" firstAttribute="trailing" secondItem="cqA-1S-i9c" secondAttribute="trailing" constant="57" id="2Zw-mR-9zu"/>
                             <constraint firstItem="6Ie-ZU-ujH" firstAttribute="leading" secondItem="BQ7-z8-qjQ" secondAttribute="leading" constant="57" id="3Yp-0p-Zkq"/>
                             <constraint firstItem="rd5-48-7am" firstAttribute="top" secondItem="6Ie-ZU-ujH" secondAttribute="bottom" constant="32" id="7PN-b6-bdH"/>
                             <constraint firstItem="6Ie-ZU-ujH" firstAttribute="leading" secondItem="rd5-48-7am" secondAttribute="leading" id="8cE-ma-uWv"/>
                             <constraint firstItem="mPO-pn-upn" firstAttribute="top" secondItem="UCF-bN-hQj" secondAttribute="top" id="A7E-l2-IMU"/>
-                            <constraint firstItem="dQG-JA-9vx" firstAttribute="leading" secondItem="XlB-Sh-d0D" secondAttribute="leading" id="BS8-E6-r3H"/>
                             <constraint firstItem="BQ7-z8-qjQ" firstAttribute="trailing" secondItem="UCF-bN-hQj" secondAttribute="trailing" constant="20" id="Bdu-eh-U9u"/>
                             <constraint firstItem="mPO-pn-upn" firstAttribute="leading" secondItem="BQ7-z8-qjQ" secondAttribute="leading" constant="20" id="DhD-lk-3UQ"/>
-                            <constraint firstItem="9dR-8o-DIA" firstAttribute="top" secondItem="2NX-ic-YZr" secondAttribute="bottom" constant="24" id="ETH-wp-cfH"/>
-                            <constraint firstItem="2NX-ic-YZr" firstAttribute="trailing" secondItem="9dR-8o-DIA" secondAttribute="trailing" id="FcV-Sz-7J3"/>
                             <constraint firstItem="6Ie-ZU-ujH" firstAttribute="trailing" secondItem="rd5-48-7am" secondAttribute="trailing" id="JJE-JQ-STV"/>
-                            <constraint firstItem="dQG-JA-9vx" firstAttribute="top" secondItem="rd5-48-7am" secondAttribute="bottom" constant="20" id="L4E-3N-OMg"/>
-                            <constraint firstItem="rd5-48-7am" firstAttribute="trailing" secondItem="dQG-JA-9vx" secondAttribute="trailing" id="OcJ-a6-1hP"/>
-                            <constraint firstItem="2NX-ic-YZr" firstAttribute="leading" secondItem="9dR-8o-DIA" secondAttribute="leading" id="QYZ-qN-hVS"/>
-                            <constraint firstItem="XlB-Sh-d0D" firstAttribute="leading" secondItem="2NX-ic-YZr" secondAttribute="leading" id="T7p-y6-c3L"/>
-                            <constraint firstItem="rd5-48-7am" firstAttribute="leading" secondItem="dQG-JA-9vx" secondAttribute="leading" id="Vmj-RR-wla"/>
-                            <constraint firstItem="2NX-ic-YZr" firstAttribute="top" secondItem="XlB-Sh-d0D" secondAttribute="bottom" constant="38" id="XsX-mL-yfq"/>
-                            <constraint firstItem="dQG-JA-9vx" firstAttribute="trailing" secondItem="XlB-Sh-d0D" secondAttribute="trailing" id="aMO-zo-oiM"/>
-                            <constraint firstItem="XlB-Sh-d0D" firstAttribute="trailing" secondItem="2NX-ic-YZr" secondAttribute="trailing" id="bX9-yL-QwE"/>
-                            <constraint firstItem="mPO-pn-upn" firstAttribute="top" secondItem="9dR-8o-DIA" secondAttribute="bottom" constant="15" id="bd1-q5-dIZ"/>
+                            <constraint firstItem="cqA-1S-i9c" firstAttribute="leading" secondItem="BQ7-z8-qjQ" secondAttribute="leading" constant="57" id="afD-C9-wZB"/>
+                            <constraint firstItem="cqA-1S-i9c" firstAttribute="top" secondItem="rd5-48-7am" secondAttribute="bottom" constant="187" id="bqD-DP-YXT"/>
+                            <constraint firstItem="BQ7-z8-qjQ" firstAttribute="bottom" secondItem="cqA-1S-i9c" secondAttribute="bottom" constant="128" id="hB5-v4-dDX"/>
                             <constraint firstItem="mPO-pn-upn" firstAttribute="baseline" secondItem="UCF-bN-hQj" secondAttribute="firstBaseline" id="oRw-OQ-9mR"/>
                             <constraint firstItem="6Ie-ZU-ujH" firstAttribute="centerX" secondItem="Pz6-dK-I5b" secondAttribute="centerX" id="qMU-Pr-yFs"/>
                             <constraint firstItem="BQ7-z8-qjQ" firstAttribute="bottom" secondItem="mPO-pn-upn" secondAttribute="bottom" constant="42" id="uxN-Ul-vyW"/>
                             <constraint firstItem="6Ie-ZU-ujH" firstAttribute="top" secondItem="BQ7-z8-qjQ" secondAttribute="top" constant="60" id="xYm-49-iJc"/>
-                            <constraint firstItem="XlB-Sh-d0D" firstAttribute="top" secondItem="dQG-JA-9vx" secondAttribute="bottom" constant="20" id="xZ7-Ec-hOy"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="BQ7-z8-qjQ"/>
                     </view>
@@ -357,11 +327,8 @@
                     <navigationItem key="navigationItem" title="Detail" id="gec-lq-nKE"/>
                     <connections>
                         <outlet property="createNewButton" destination="UCF-bN-hQj" id="4Ww-NX-phU"/>
-                        <outlet property="messageArea" destination="9dR-8o-DIA" id="4Ss-63-G7a"/>
+                        <outlet property="messageArea" destination="cqA-1S-i9c" id="dVd-Ik-d3y"/>
                         <outlet property="name" destination="rd5-48-7am" id="80P-nV-fYj"/>
-                        <outlet property="progress" destination="2NX-ic-YZr" id="qMj-75-qfN"/>
-                        <outlet property="secretPhrase" destination="dQG-JA-9vx" id="KVn-92-7sl"/>
-                        <outlet property="secretPhraseRepeted" destination="XlB-Sh-d0D" id="hwY-9A-257"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vxv-v2-cQs" sceneMemberID="firstResponder"/>
