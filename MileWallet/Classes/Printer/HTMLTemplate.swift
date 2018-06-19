@@ -8,6 +8,7 @@
 
 import UIKit
 import EFQRCode
+import MileWalletKit
 
 class HTMLTemplate {
     

@@ -13,6 +13,7 @@ import ObjectMapper
 import QRCodeReader
 import AVFoundation
 import SnapKit
+import MileWalletKit
 
 class TransferViewController: Controller {
     

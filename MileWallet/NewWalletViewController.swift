@@ -11,6 +11,7 @@ import APIKit
 import JSONRPCKit
 import KeychainAccess
 import ObjectMapper
+import MileWalletKit
 
 class NewWalletViewController: Controller {
                 

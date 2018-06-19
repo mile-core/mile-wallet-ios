@@ -12,6 +12,7 @@ import JSONRPCKit
 import KeychainAccess
 import ObjectMapper
 import EFQRCode 
+import MileWalletKit
 
 class DetailViewController: Controller {
     

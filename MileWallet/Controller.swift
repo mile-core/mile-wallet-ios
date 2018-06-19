@@ -9,6 +9,7 @@
 import UIKit
 import QRCodeReader
 import AVFoundation
+import MileWalletKit
 
 class Controller: UIViewController {
     

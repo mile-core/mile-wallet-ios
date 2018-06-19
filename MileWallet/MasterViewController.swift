@@ -13,6 +13,7 @@ import KeychainAccess
 import SnapKit
 import QRCodeReader
 import ObjectMapper
+import MileWalletKit
 
 class MasterViewController: UITableViewController {
     
