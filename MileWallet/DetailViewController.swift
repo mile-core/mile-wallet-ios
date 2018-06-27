@@ -16,10 +16,6 @@ import MileWalletKit
 
 class DetailViewController: Controller {
     
-    var keychain:Keychain {
-        return Keychain(service: Config.walletService).synchronizable(Config.isWalletKeychainSynchronizable)
-    }
-    
     private var chainInfo:Chain?
     
     func mileInfoUpdate(error: ((_ error: SessionTaskError?)-> Void)?=nil, 

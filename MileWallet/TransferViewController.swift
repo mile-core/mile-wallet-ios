@@ -73,7 +73,10 @@ class TransferViewController: Controller {
         guard let pkey = toPublicKey.text else { return }
                 
             
+        Swift.print("amount: \(amount) key = \(pkey)")
+
         if pkey.isEmpty {
+            self.messageArea.text = NSLocalizedString("Target address unknown...", comment: "")
             return
         }
         
@@ -81,11 +84,16 @@ class TransferViewController: Controller {
         
         let toWallet = Wallet(name: pkey, publicKey: pkey, privateKey: "", password: nil)        
         
+        print("From: \(fromWallet)")
+        print("To: \(toWallet)")
+        
         Transfer.send(asset: "XDR", 
                       amount: "\(amount)", 
                       from: fromWallet, 
                       to: toWallet, 
                       error: { (error) in
+                        
+                        Swift.print("Error: \(error)")
                         
                         self.messageArea.text = error?.whatResponse
                         self.loaderStop()

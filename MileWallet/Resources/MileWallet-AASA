@@ -1,0 +1,13 @@
+{
+    "applinks": {
+        "apps": [],
+        "details": [
+                    {
+                    "appID": "GHD7Y8FG8V.global.mile.wallet",
+                    "paths": [
+                              "*"
+                              ]
+                    }
+                    ]
+    }
+}

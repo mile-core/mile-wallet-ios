@@ -14,11 +14,7 @@ import ObjectMapper
 import MileWalletKit
 
 class NewWalletViewController: Controller {
-                
-    var keychain:Keychain {
-        return Keychain(service: Config.walletService).synchronizable(Config.isWalletKeychainSynchronizable)
-    }    
-    
+
     @IBOutlet weak var messageArea: UITextView!
     
     @IBOutlet weak var createNewButton: UIButton!

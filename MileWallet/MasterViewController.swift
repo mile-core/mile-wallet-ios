@@ -28,8 +28,7 @@ class MasterViewController: UITableViewController {
     var reloadTimer:Timer?
     
     var keychain:Keychain {
-        return Keychain(service: Config.walletService).synchronizable(Config.isWalletKeychainSynchronizable)
-        //.authenticationPrompt(" ???") //.synchronizable(Config.isWalletKeychainSynchronizable)
+        return Keychain(accessGroup: Config.walletService).synchronizable(Config.isWalletKeychainSynchronizable)
     }
     
     var keychainItems:[[String : Any]] {
@@ -44,8 +43,7 @@ class MasterViewController: UITableViewController {
         super.viewDidLoad()                                               
         
         authenticationWithTouchID()
-
-        
+              
         // Do any additional setup after loading the view, typically from a nib.
         navigationItem.leftBarButtonItem = editButtonItem
 
@@ -150,10 +148,13 @@ class MasterViewController: UITableViewController {
         }
         
         func close(){
+            currentPrivateKeyQr = nil
+            currentPublicKeyQr = nil
+            currentNameQr = nil
             reader.dismiss(animated: true) 
         }   
         
-        if let privateKey = currentPublicKeyQr, 
+        if let privateKey = currentPrivateKeyQr, 
             let publicKey = currentPublicKeyQr,
             let name = currentNameQr {
             reader.stopScanning()
@@ -183,11 +184,7 @@ class MasterViewController: UITableViewController {
                 .addAction(title: "Cancel", style: .cancel) { _ in
                     close()
                 }            
-                .present(by: reader)    
-            
-            currentPrivateKeyQr = nil
-            currentNameQr = nil
-            currentNameQr = nil
+                .present(by: reader)                
         }
     }
     
