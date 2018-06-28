@@ -44,7 +44,7 @@ class HTMLTemplate {
         return htmlContent
     }
     
-    class func getAmount(wallet: Wallet, amount: String) -> String {
+    class func getAmount(wallet: Wallet, assets:String, amount: String) -> String {
         
         guard let htmlFile = Bundle.main.url(forResource: "PrintPaymentTemplate", withExtension: "html")
             else { fatalError("Error locating HTML file.") }
@@ -52,7 +52,7 @@ class HTMLTemplate {
         guard var htmlContent = try? String(contentsOf: htmlFile)
             else { fatalError("Error getting HTML file content.") }
         
-        let data = wallet.amountQRImage(amount)  
+        let data = wallet.amountQRImage(assets: assets, amount: amount)
         
         let items = ["address": (wallet.publicKey ?? "",  ""), 
                      "amount":  (amount,                  ""), 

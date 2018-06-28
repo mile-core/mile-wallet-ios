@@ -14,6 +14,8 @@ class PaymentController: Controller {
     
     var wallet:Wallet?
 
+    var currentAssets:String = "XDR"
+    
     lazy var amountText:UITextField = {
         let text = UITextField()
         text.keyboardType = .decimalPad
@@ -61,7 +63,7 @@ class PaymentController: Controller {
     
     @objc func amounthandler(sender:UITextField){
         amount = "\((amountText.text ?? "").floatValue)"
-        amountQr.image = wallet?.amountQRImage(amount)
+        amountQr.image = wallet?.amountQRImage(assets: currentAssets, amount: amount)
     }
         
 }

@@ -339,7 +339,7 @@
         <scene sceneID="JxA-Bc-IMk">
             <objects>
                 <viewController storyboardIdentifier="TransferViewControllerId" title="Transfer" useStoryboardIdentifierAsRestorationIdentifier="YES" id="haI-6J-Sd0" customClass="TransferViewController" customModule="MileWallet" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="s33-4e-UAl">
+                    <view key="view" contentMode="scaleToFill" restorationIdentifier="TransferViewId" id="s33-4e-UAl">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>

@@ -17,7 +17,9 @@ import MileWalletKit
 
 class TransferViewController: Controller {
     
-    var wallet:Wallet? 
+    var wallet:Wallet?     
+    
+    var currentAssets:String = "XDR"
 
     @IBOutlet weak var sendButton: UIButton!
     
@@ -73,19 +75,27 @@ class TransferViewController: Controller {
         guard let pkey = toPublicKey.text else { return }
                 
             
+        Swift.print("amount: \(amount) key = \(pkey)")
+
         if pkey.isEmpty {
+            self.messageArea.text = NSLocalizedString("Target address unknown...", comment: "")
             return
         }
         
         loaderStart()
         
-        let toWallet = Wallet(name: pkey, publicKey: pkey, privateKey: "", password: nil)        
+        let toWallet = Wallet(name: pkey, publicKey: pkey, privateKey: "", secretPhrase: nil)        
         
-        Transfer.send(asset: "XDR", 
+        print("From: \(fromWallet)")
+        print("To: \(toWallet)")
+        
+        Transfer.send(asset: currentAssets, 
                       amount: "\(amount)", 
                       from: fromWallet, 
                       to: toWallet, 
                       error: { (error) in
+                        
+                        Swift.print("Error: \(String(describing: error))")
                         
                         self.messageArea.text = error?.whatResponse
                         self.loaderStop()
@@ -93,6 +103,7 @@ class TransferViewController: Controller {
                         
         }) { (transfer) in
             self.loaderStop()
+            Swift.print("Transfer sended: \(transfer.toJSONString())")
             self.dismiss(animated: true) { }    
         }                
     }
@@ -108,6 +119,11 @@ class TransferViewController: Controller {
         amount.resignFirstResponder()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        CameraQR.shared.payment = nil
+    }
+    
     override func viewDidDisappear(_ animated: Bool) {
         super.viewWillAppear(animated)
         toPublicKey.text = ""
@@ -116,13 +132,20 @@ class TransferViewController: Controller {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        appear()
         self.title = wallet?.name
+        if let pk = CameraQR.shared.payment?.publicKey{
+            self.toPublicKey.text = pk
+        }
+        if let am = CameraQR.shared.payment?.amount, 
+            let assets = CameraQR.shared.payment?.assets {
+            self.amount.text = "\(am)"
+            self.currentAssets = assets
+        }
+        appear()
     }
     
     func appear()  {
         messageArea.text = ""
-        amount.backgroundColor = UIColor.clear
         sendEnabled()
     }
 
@@ -148,30 +171,22 @@ class TransferViewController: Controller {
                 
         var message = ""
         
-        if result.value.hasPrefix(Config.paymentQrPrefix) {
-            
-            let array = result.value.replacingOccurrences(of: Config.paymentQrPrefix, with: "").components(separatedBy: ":")                
-          
-            if array.count < 3 {
-                stop()
-                return
+        if let scanned = result.value.qrCodePayment {
+            let pk = scanned.publicKey
+            toPublicKey.text = pk
+            if let assets = scanned.assets, let _amount = scanned.amount {
+                message = "Payment Address: \(pk)\n Amount: \(_amount, assets)\n Wallet name: \(scanned.name ?? "")\n"
+                amount.text = _amount
+            }            
+            else {
+                message = "Payment Address: \(pk)\n"             
             }
-            
-            toPublicKey.text = array[0] 
-            amount.text = array[1] 
-            
-            message = "Payment Address: \(array[0])\n Amount: \(array[1] )\n Wallet name: \(array[2] )\n"             
-        }
-        else if result.value.hasPrefix(Config.publicKeyQrPrefix) {
-            let pk = result.value.replacingOccurrences(of: Config.publicKeyQrPrefix, with: "")
-            toPublicKey.text = pk            
-            message = "Payment Address: \(pk)\n"             
         }
         else {
             stop()
             return
         }
-                        
+                     
         UIAlertController(title: nil, 
                           message: message, 
                           preferredStyle: .alert)

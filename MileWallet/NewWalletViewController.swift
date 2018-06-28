@@ -14,11 +14,7 @@ import ObjectMapper
 import MileWalletKit
 
 class NewWalletViewController: Controller {
-                
-    var keychain:Keychain {
-        return Keychain(service: Config.walletService).synchronizable(Config.isWalletKeychainSynchronizable)
-    }    
-    
+
     @IBOutlet weak var messageArea: UITextView!
     
     @IBOutlet weak var createNewButton: UIButton!
@@ -93,21 +89,17 @@ class NewWalletViewController: Controller {
             
             let keychain = self.keychain            
             
-            //DispatchQueue.global().async {
             do {
                 guard let json = Mapper<Wallet>().toJSONString(wallet) else {
                     self.messageArea.text = NSLocalizedString("Wallet could not be created from the secret phrase", comment: "")
                     return
                 }
                 try keychain.synchronizable(Config.isWalletKeychainSynchronizable)
-                    //.accessibility(.whenPasscodeSetThisDeviceOnly, authenticationPolicy: .userPresence)
-                    //.authenticationPrompt("Authenticate to update your access token")
                     .set(json, key: name)
             }
             catch let error {
                 self.messageArea.text = error.localizedDescription                                              
             }
-            //}
             
             activiti.stopAnimating()
             UIView.animate(withDuration: 0.2, animations: { 

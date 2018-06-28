@@ -10,9 +10,14 @@ import UIKit
 import QRCodeReader
 import AVFoundation
 import MileWalletKit
+import KeychainAccess
 
 class Controller: UIViewController {
     
+    var keychain:Keychain {
+        return Keychain(accessGroup: Config.walletService).synchronizable(Config.isWalletKeychainSynchronizable)
+    }
+
     public lazy var qrCodeReader:QRReader = {return QRReader(controller: self)}() 
     
     private let activiti = UIActivityIndicatorView(activityIndicatorStyle: .gray)
