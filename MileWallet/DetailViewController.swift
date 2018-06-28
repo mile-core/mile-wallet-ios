@@ -18,6 +18,8 @@ class DetailViewController: Controller {
     
     private var chainInfo:Chain?
     
+    var currentAssets:String = "XDR"
+    
     func mileInfoUpdate(error: ((_ error: SessionTaskError?)-> Void)?=nil, 
                         complete:@escaping ((_ chain:Chain)->Void))  {        
         
@@ -80,15 +82,25 @@ class DetailViewController: Controller {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
+            
+        NotificationCenter.default.addObserver(self, selector: #selector(didLaunch(notification:)), name: Notification.Name("CameraQRDidUpdate"), object: nil)        
+    }
+    
+    @objc func didLaunch(notification : NSNotification) {
+        if CameraQR.shared.payment != nil && isAppeared {
+            transferButton.sendActions(for: .touchUpInside)
+        }
     }
     
     var reloadTimer:Timer? 
     
+    var isAppeared = false
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidAppear(animated)
         reloadTimer?.invalidate()
         reloadTimer = nil
-    }    
+        isAppeared = false
+    }        
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)     
@@ -98,6 +110,16 @@ class DetailViewController: Controller {
 
         reloadTimer?.invalidate()
         reloadTimer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.update(timer:)), userInfo: nil, repeats: true)
+        
+        isAppeared = true
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidLoad()   
+        Swift.print(" ##### viewDidAppear  Detail \(self): \(String(describing: CameraQR.shared.payment))")
+        if CameraQR.shared.payment != nil {
+            transferButton.sendActions(for: .touchUpInside)
+        }
     }
     
     @objc func update(timer:Timer?)  {
@@ -225,15 +247,14 @@ class DetailViewController: Controller {
     }
     
     @objc func closePayments(sender:Any){
-        paymentController.dismiss(animated: true) { 
-            
+        paymentController.dismiss(animated: true) {             
         }
     }
     
     @objc func printPayments(sender:Any){
         let pc = (paymentController.topViewController as? PaymentController)
         self.printPDF(wallet: self.wallet, 
-                      formater: { return HTMLTemplate.getAmount(wallet:$0, amount: pc?.amount ?? "0.0") }
+                      formater: { return HTMLTemplate.getAmount(wallet:$0, assets: self.currentAssets, amount: pc?.amount ?? "0.0") }
         ){ (controller, completed, error) in                                            
             if completed {
                 self.paymentController.dismiss(animated: true) 
@@ -249,7 +270,8 @@ class DetailViewController: Controller {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "transfer" {
-            (segue.destination as! TransferViewController).wallet = wallet
+            let controller = (segue.destination as! TransferViewController)
+            controller.wallet = wallet
         }
     }                      
 }

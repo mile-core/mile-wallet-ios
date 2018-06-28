@@ -7,20 +7,47 @@
 //
 
 import UIKit
+import MileWalletKit
+
+class CameraQR {
+    public var payment:(publicKey: String, assets: String?, amount: String?, name: String?)?
+    public static var shared = CameraQR()
+    private init (){}
+}
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate {
 
     var window: UIWindow?
 
+    var leftNavigationController:UINavigationController {
+        let sc = window?.rootViewController as! UISplitViewController 
+        return sc.viewControllers.first as! UINavigationController
+    }
+    
+    var detailNavigationController:UINavigationController {
+        let sc = window?.rootViewController as! UISplitViewController 
+        return sc.viewControllers.last as! UINavigationController
+    }
+    
+    var masterController:MasterViewController? {
+        return leftNavigationController.topViewController as? MasterViewController
+    }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
         let splitViewController = window!.rootViewController as! UISplitViewController
-        let navigationController = splitViewController.viewControllers[splitViewController.viewControllers.count-1] as! UINavigationController
-        navigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
         splitViewController.delegate = self
         
+        //let navigationController = splitViewController.viewControllers[splitViewController.viewControllers.count-1] as! UINavigationController
+        leftNavigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
+        
+        CameraQR.shared.payment = nil
+        
+        Swift.print(" .... didFinishLaunchingWithOptions")
+        
+
         var isUniversalLinkClick: Bool = false
 
         if let options = launchOptions {
@@ -74,13 +101,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         return false
     }
     
-    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
-        print("Continue User Activity called: ")
+    func application(_ application: UIApplication, 
+                     continue userActivity: NSUserActivity, 
+                     restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+                
         if userActivity.activityType == NSUserActivityTypeBrowsingWeb {
-            let url = userActivity.webpageURL!
-            print(url.absoluteString)
-            //handle url and open whatever page you want to open.
+            
+            guard let url = userActivity.webpageURL else {
+                return false
+            }
+
+                                
+            CameraQR.shared.payment = url.absoluteString.qrCodePayment                         
+
         }
+        
+        NotificationCenter.default.post(Notification(name: Notification.Name("CameraQRDidUpdate")))
+        
         return true
     }
 
