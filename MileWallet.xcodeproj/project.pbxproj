@@ -20,6 +20,7 @@
 		3182CDC520D1C481000C3C68 /* PDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3182CDC420D1C481000C3C68 /* PDF.swift */; };
 		3182CDC920D2AA9E000C3C68 /* PrintPaymentTemplate.html in Resources */ = {isa = PBXBuildFile; fileRef = 3182CDC820D2AA9D000C3C68 /* PrintPaymentTemplate.html */; };
 		3182CDCB20D2AF0D000C3C68 /* PaymentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3182CDCA20D2AF0C000C3C68 /* PaymentController.swift */; };
+		319AC52B20E642B000FB0D65 /* 00-03-logo-fill-blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 319AC52A20E642AF00FB0D65 /* 00-03-logo-fill-blue.png */; };
 		31A9FE9E20DBD2EB00779F60 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A9FE9D20DBD2EB00779F60 /* Config.swift */; };
 		31B18BE420E4E743005CA426 /* AuthenticationID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B18BE320E4E743005CA426 /* AuthenticationID.swift */; };
 		31D1333420D9A1E200E2E8D9 /* LocalAuthentication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31D1333320D9A1E200E2E8D9 /* LocalAuthentication.framework */; };
@@ -46,6 +47,7 @@
 		3182CDC420D1C481000C3C68 /* PDF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDF.swift; sourceTree = "<group>"; };
 		3182CDC820D2AA9D000C3C68 /* PrintPaymentTemplate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = PrintPaymentTemplate.html; sourceTree = "<group>"; };
 		3182CDCA20D2AF0C000C3C68 /* PaymentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentController.swift; sourceTree = "<group>"; };
+		319AC52A20E642AF00FB0D65 /* 00-03-logo-fill-blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "00-03-logo-fill-blue.png"; sourceTree = "<group>"; };
 		31A9FE9D20DBD2EB00779F60 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		31A9FE9F20DBD50900779F60 /* MileWallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MileWallet.entitlements; sourceTree = "<group>"; };
 		31B18BE320E4E743005CA426 /* AuthenticationID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationID.swift; sourceTree = "<group>"; };
@@ -74,6 +76,7 @@
 		3164FD7420C950ED00294A9F = {
 			isa = PBXGroup;
 			children = (
+				319AC52A20E642AF00FB0D65 /* 00-03-logo-fill-blue.png */,
 				3104930B20CC05D5006AB772 /* MyPlayground.playground */,
 				3164FD7F20C950ED00294A9F /* MileWallet */,
 				3164FD7E20C950ED00294A9F /* Products */,
@@ -235,6 +238,7 @@
 				3164FD8D20C950ED00294A9F /* LaunchScreen.storyboard in Resources */,
 				3164FD8A20C950ED00294A9F /* Assets.xcassets in Resources */,
 				3182CDC920D2AA9E000C3C68 /* PrintPaymentTemplate.html in Resources */,
+				319AC52B20E642B000FB0D65 /* 00-03-logo-fill-blue.png in Resources */,
 				31F2CFE520D177A000C1770B /* PrintSecretTemplate.html in Resources */,
 				313F13DB20E3FA900074796D /* MileWallet-AASA in Resources */,
 				3164FD8820C950ED00294A9F /* Main.storyboard in Resources */,
@@ -260,7 +264,7 @@
 		};
 		313CCAD320E554D700BF8737 /* Auto-increment the version number (only) when a project is archived */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 8;
 			files = (
 			);
 			inputPaths = (
@@ -268,7 +272,7 @@
 			name = "Auto-increment the version number (only) when a project is archived";
 			outputPaths = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "# xcode-version-bump.sh\n# @desc Auto-increment the version number (only) when a project is archived for export. \n# @usage\n# 1. Select: your Target in Xcode\n# 2. Select: Build Phases Tab\n# 3. Select: Add Build Phase -> Add Run Script\n# 4. Paste code below in to new \"Run Script\" section\n# 5. Check the checkbox \"Run script only when installing\"\n# 6. Drag the \"Run Script\" below \"Link Binaries With Libraries\"\n# 7. Insure your starting version number is in SemVer format (e.g. 1.0.0)\n\n# This splits a two-decimal version string, such as \"0.45.123\", allowing us to increment the third position.\nVERSIONNUM=$(/usr/libexec/PlistBuddy -c \"Print CFBundleShortVersionString\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\nNEWSUBVERSION=`echo $VERSIONNUM | awk -F \".\" '{print $3}'`\nNEWSUBVERSION=$(($NEWSUBVERSION + 1))\nNEWVERSIONSTRING=`echo $VERSIONNUM | awk -F \".\" '{print $1 \".\" $2 \".'$NEWSUBVERSION'\" }'`\n/usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString $NEWVERSIONSTRING\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"";
 		};

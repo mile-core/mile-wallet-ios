@@ -103,7 +103,7 @@ class TransferViewController: Controller {
                         
         }) { (transfer) in
             self.loaderStop()
-            Swift.print("Transfer sended: \(transfer.toJSONString())")
+            Swift.print("Transfer sended: \(String(describing: transfer.toJSONString()))")
             self.dismiss(animated: true) { }    
         }                
     }
