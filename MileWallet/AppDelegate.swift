@@ -101,6 +101,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         return false
     }
     
+    func application(_ app: UIApplication, open url: URL, 
+                     options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        
+        // Determine who sent the URL. 
+        let sendingAppID = options[.sourceApplication]
+        
+        // Process the URL.
+        
+        Swift.print("UIApplicationOpenURLOptionsKey : \(sendingAppID), url: \(url)")
+        
+        let newUrl = url.absoluteString.replacingOccurrences(of: Config.appSchema, with: "https:")
+        CameraQR.shared.payment = newUrl.qrCodePayment                         
+        NotificationCenter.default.post(Notification(name: Notification.Name("CameraQRDidUpdate")))
+
+        return true
+    }
+    
     func application(_ application: UIApplication, 
                      continue userActivity: NSUserActivity, 
                      restorationHandler: @escaping ([Any]?) -> Void) -> Bool {

@@ -270,12 +270,12 @@ class MasterViewController: UITableViewController, AuthenticationID {
     
     func reader(_ reader: QRCodeReaderViewController, didScanResult result: QRCodeReaderResult) {
         
-        if result.value.hasPrefix(Config.privateKeyQrPrefix){
-            currentPrivateKeyQr = result.value.replacingOccurrences(of: Config.privateKeyQrPrefix, with: "")            
+        if result.value.hasPrefix(Config.Shared.Wallet.privateKey){
+            currentPrivateKeyQr = result.value.replacingOccurrences(of: Config.Shared.Wallet.privateKey, with: "")            
         } 
         
-        if result.value.hasPrefix(Config.nameQrPrefix){
-            currentNameQr = result.value.replacingOccurrences(of: Config.nameQrPrefix, with: "")            
+        if result.value.hasPrefix(Config.Shared.Wallet.name){
+            currentNameQr = result.value.replacingOccurrences(of: Config.Shared.Wallet.name, with: "")            
         }              
         
         if let privateKey = currentPrivateKeyQr, 

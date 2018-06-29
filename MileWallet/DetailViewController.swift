@@ -65,10 +65,13 @@ class DetailViewController: Controller {
         UIAlertController(title: nil, 
                           message: nil, 
                           preferredStyle: .actionSheet)
-            .addAction(title: NSLocalizedString("Print Payment Ticket", comment: ""), style: .default) { (allert) in
+            .addAction(title: NSLocalizedString("Print Payment Ticket", comment: ""), style: .default) { (alert) in
                 self.fillPayments()
             } 
-            .addAction(title: NSLocalizedString("Print Wallet Secret Papper", comment: ""), style: .default) { (allert) in
+            .addAction(title: NSLocalizedString("Send Payment Link", comment: ""), style: .default, handler: { (alert) in
+                self.sendLink()
+            })
+            .addAction(title: NSLocalizedString("Print Wallet Secret Papper", comment: ""), style: .default) { (alert) in
                 self.printSecretPaper() 
             } 
             .addAction(title: "Cancel", style: .cancel) 
@@ -229,6 +232,13 @@ class DetailViewController: Controller {
             self.update(timer: nil)
             
         }
+    }
+    
+    func sendLink()  {
+        guard var url = wallet?.paymentLink(assets: currentAssets, amount: "0") else { return }
+        url = url.replacingOccurrences(of: "https:", with: Config.appSchema)
+        let activity = UIActivityViewController(activityItems: ["Please send your coins to the address", url], applicationActivities:nil)
+        present(activity, animated: true) 
     }
     
     lazy var paymentController:UINavigationController = {
