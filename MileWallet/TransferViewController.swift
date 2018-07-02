@@ -19,8 +19,10 @@ class TransferViewController: Controller {
     
     var wallet:Wallet?     
     
-    var currentAssets:String = "XDR"
+    var currentAssets:String = "XDR" 
 
+    @IBOutlet weak var titleLabel: UILabel!
+    
     @IBOutlet weak var sendButton: UIButton!
     
     @IBOutlet weak var messageArea: UITextView!
@@ -50,17 +52,17 @@ class TransferViewController: Controller {
     
     func sendEnabled()  {
         guard let key = toPublicKey.text, let am = amount.text else { 
-            sendButton.alpha = 0.5
-            sendButton.isUserInteractionEnabled = false   
+            //sendButton.alpha = 0.5
+            //sendButton.isUserInteractionEnabled = false   
             return
         }
         if key.isEmpty || am.isEmpty {
-            sendButton.alpha = 0.5
-            sendButton.isUserInteractionEnabled = false            
+            //sendButton.alpha = 0.5
+            //sendButton.isUserInteractionEnabled = false            
         }
         else {
-            sendButton.alpha = 1
-            sendButton.isUserInteractionEnabled = true            
+            //sendButton.alpha = 1
+            //sendButton.isUserInteractionEnabled = true            
         }
     }
     
@@ -93,7 +95,7 @@ class TransferViewController: Controller {
                       amount: "\(amount)", 
                       from: fromWallet, 
                       to: toWallet, 
-                      error: { (error) in
+                      error: { error in
                         
                         Swift.print("Error: \(String(describing: error))")
                         
@@ -104,15 +106,18 @@ class TransferViewController: Controller {
         }) { (transfer) in
             self.loaderStop()
             Swift.print("Transfer sended: \(String(describing: transfer.toJSONString()))")
-            self.dismiss(animated: true) { }    
+            //self.dismiss(animated: true) { }
+            self.navigationController?.popViewController(animated: true)
         }                
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard))
-        self.view.addGestureRecognizer(tapGesture)
+        self.view.addGestureRecognizer(tapGesture)        
         
+        let addButton = UIBarButtonItem(title: "Send", style: .plain, target: self, action: #selector(transferHandler(_:)))         
+        navigationItem.rightBarButtonItem = addButton       
     }    
     
     @objc func dismissKeyboard (_ sender: UITapGestureRecognizer) {
@@ -133,6 +138,7 @@ class TransferViewController: Controller {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.title = wallet?.name
+        titleLabel.text = "Transfer: " + currentAssets
         if let pk = CameraQR.shared.payment?.publicKey{
             self.toPublicKey.text = pk
         }
@@ -156,7 +162,7 @@ class TransferViewController: Controller {
         reader.stopScanning()      
 
         func close(){
-            self.dismiss(animated: true) 
+            self.dismiss(animated: true)
         }        
 
         func stop(){            

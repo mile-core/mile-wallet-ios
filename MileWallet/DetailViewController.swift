@@ -60,23 +60,6 @@ class DetailViewController: Controller {
         }
     }    
     
-    @IBAction func print(_ sender: UIButton) {
-        
-        UIAlertController(title: nil, 
-                          message: nil, 
-                          preferredStyle: .actionSheet)
-            .addAction(title: NSLocalizedString("Print Payment Ticket", comment: ""), style: .default) { (alert) in
-                self.fillPayments()
-            } 
-            .addAction(title: NSLocalizedString("Send Payment Link", comment: ""), style: .default, handler: { (alert) in
-                self.sendLink()
-            })
-            .addAction(title: NSLocalizedString("Print Wallet Secret Papper", comment: ""), style: .default) { (alert) in
-                self.printSecretPaper() 
-            } 
-            .addAction(title: "Cancel", style: .cancel) 
-            .present(by: self)          
-    }
     
     @IBAction func toggleQRCodeKeys(_ sender: UISegmentedControl) {
         toggelPublicKey = !toggelPublicKey
@@ -84,9 +67,38 @@ class DetailViewController: Controller {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureView()
-            
+        
+        let addButton = UIBarButtonItem(title: "Share", style: .plain, target: self, action: #selector(shareWalletInfo(_:)))         
+        navigationItem.rightBarButtonItem = addButton        
+        
+        let sendXdrTouch  = UITapGestureRecognizer(target: self, action: #selector(transferXdr(gesture:)))
+        xdrAmountLable.isUserInteractionEnabled = true
+        xdrAmountLable.addGestureRecognizer(sendXdrTouch)
+                
+        let sendMileTouch = UITapGestureRecognizer(target: self, action: #selector(transferMile(gesture:)))
+        mileAmountLable.isUserInteractionEnabled = true
+        mileAmountLable.addGestureRecognizer(sendMileTouch)
+        
+        configureView()            
         NotificationCenter.default.addObserver(self, selector: #selector(didLaunch(notification:)), name: Notification.Name("CameraQRDidUpdate"), object: nil)        
+    }
+    
+    @objc func transferXdr(gesture:UITapGestureRecognizer) {
+        currentAssets = "XDR"
+        if let c = storyboard?.instantiateViewController(withIdentifier: "TransferViewControllerId") as? TransferViewController {
+            c.currentAssets = currentAssets
+            c.wallet = wallet
+            navigationController?.pushViewController(c, animated: true)
+        }
+    }
+    
+    @objc func transferMile(gesture:UITapGestureRecognizer) {
+        currentAssets = "MILE"
+        if let c = storyboard?.instantiateViewController(withIdentifier: "TransferViewControllerId") as? TransferViewController {
+            c.currentAssets = currentAssets
+            c.wallet = wallet
+            navigationController?.pushViewController(c, animated: true)
+        }
     }
     
     @objc func didLaunch(notification : NSNotification) {
@@ -132,17 +144,14 @@ class DetailViewController: Controller {
         Balance.update(wallet: w, error: { (error) in
             
             Swift.print("Balance update error: \(String(describing: error?.whatResponse))")
-            
-            self.activiti1.stopAnimating()
-            self.activiti2.stopAnimating()
+            self.stopActivities()
             
         }, complete: { (balance) in
             
             self.xdrAmountLable.text = "0.0000"
             self.mileAmountLable.text = "0.0000"
             
-            self.activiti1.stopAnimating()
-            self.activiti2.stopAnimating()
+            self.stopActivities()
             
             for k in balance.balance.keys {
                 if chain.assets[k] == "XDR" {
@@ -191,38 +200,37 @@ class DetailViewController: Controller {
         super.didReceiveMemoryWarning()
     }
     
-    lazy var activiti1:UIActivityIndicatorView = {
+    func activityLoader(place:UIView)  -> UIActivityIndicatorView {
         let a = UIActivityIndicatorView(activityIndicatorStyle: .gray)
         a.hidesWhenStopped = true   
-        self.xdrAmountLable.addSubview(a)
+        place.addSubview(a)
         a.snp.makeConstraints { (make) in
             make.center.equalToSuperview()
         }    
-        return a
-    }() 
+        return a        
+    }
     
-    lazy var activiti2:UIActivityIndicatorView = {
-        let a = UIActivityIndicatorView(activityIndicatorStyle: .gray)
-        a.hidesWhenStopped = true        
-        self.mileAmountLable.addSubview(a)
-        a.snp.makeConstraints { (make) in
-            make.center.equalToSuperview()
-        }
-        return a
-    }() 
+    func startActivities()  {
+        for a in activities { a.startAnimating() }
+    }            
+    
+    func stopActivities()  {
+        for a in activities { a.stopAnimating() }
+    }        
+    
+    lazy var activities:[UIActivityIndicatorView] = [self.activityLoader(place: self.xdrAmountLable),
+                                                     self.activityLoader(place: self.mileAmountLable)]
         
     func configureView() {   
         
         self.title = wallet?.name        
         
-        activiti1.startAnimating()                     
-        activiti2.startAnimating()                                        
-                    
+        startActivities()
+                            
         self.mileInfoUpdate(error: { (error) in
             
-            self.activiti1.stopAnimating()
-            self.activiti2.stopAnimating()
-            
+            self.stopActivities()
+                        
             Swift.print("Info update error: \(String(describing: error?.whatResponse))")
             
         }){ (chain) in
@@ -284,4 +292,27 @@ class DetailViewController: Controller {
             controller.wallet = wallet
         }
     }                      
+}
+
+
+// MARK: - Send WalletInfo info
+extension DetailViewController {
+    
+    @objc func shareWalletInfo(_ sender: Any) {
+        
+        UIAlertController(title: nil, 
+                          message: nil, 
+                          preferredStyle: .actionSheet)
+            .addAction(title: NSLocalizedString("Print Payment Ticket", comment: ""), style: .default) { (alert) in
+                self.fillPayments()
+            } 
+            .addAction(title: NSLocalizedString("Send Payment Link", comment: ""), style: .default, handler: { (alert) in
+                self.sendLink()
+            })
+            .addAction(title: NSLocalizedString("Print Wallet Secret Papper", comment: ""), style: .default) { (alert) in
+                self.printSecretPaper() 
+            } 
+            .addAction(title: "Cancel", style: .cancel) 
+            .present(by: self)          
+    }
 }
