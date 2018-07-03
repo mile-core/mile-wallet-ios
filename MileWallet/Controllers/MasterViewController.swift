@@ -20,24 +20,16 @@ class MasterViewController: UITableViewController, AuthenticationID {
       
     public lazy var qrCodeReader:QRReader = {return QRReader(controller: self)}() 
     
-    var newWalletViewController: NewWalletViewController? = nil
+    var newWalletViewController: NewWalletViewController = NewWalletViewController()
     
     lazy var coverView:UIImageView = {
         let v = UIImageView(image: UIImage(named: "logo-fill-blue"))
         v.contentMode = .center
-        v.alpha = 0 
+        v.alpha = 1 
         return v
     }() 
     
     var reloadTimer:Timer?
-    
-    var keychain:Keychain {
-        return Keychain(accessGroup: Config.walletService).synchronizable(Config.isWalletKeychainSynchronizable)
-    }
-    
-    var keychainItems:[[String : Any]] {
-        return keychain.authenticationPrompt(" ???").allItems()
-    }
     
     @objc func update(timer:Timer)  {
         self.tableView.reloadData()
@@ -55,7 +47,7 @@ class MasterViewController: UITableViewController, AuthenticationID {
         
         navigationItem.rightBarButtonItem = addButton
                 
-        newWalletViewController = storyboard?.instantiateViewController(withIdentifier: "NewWalletViewControllerId") as? NewWalletViewController
+        //newWalletViewController = storyboard?.instantiateViewController(withIdentifier: "NewWalletViewControllerId") as? NewWalletViewController
         
         NotificationCenter.default.addObserver(self, selector: #selector(didLaunch), name: .UIApplicationDidFinishLaunching, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didLaunch), name: .UIApplicationWillEnterForeground, object: nil)
@@ -112,6 +104,15 @@ class MasterViewController: UITableViewController, AuthenticationID {
         Swift.print(" viewWillAppear \(self)")
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.tableView.reloadData()
+        
+        if self.reloadTimer == nil {
+            self.reloadTimer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.update(timer:)), userInfo: nil, repeats: true)
+        }          
+    }
+    
     func checkAuthenticate() {
         authenticate(error: { (error) in
             if (error as! LAError).code.rawValue == LAError.biometryNotEnrolled.rawValue {
@@ -149,8 +150,7 @@ class MasterViewController: UITableViewController, AuthenticationID {
                                         detailViewController?.dismiss(animated: true, completion: { 
                                             
                                         })                                    
-                                    }
-                                    
+                                    }                                    
                         }
                         .present(by: self)
                 }
@@ -167,8 +167,7 @@ class MasterViewController: UITableViewController, AuthenticationID {
             }                       
         }
     }
-    
-    
+        
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -200,7 +199,7 @@ class MasterViewController: UITableViewController, AuthenticationID {
                           message: nil, 
                           preferredStyle: .actionSheet)
             .addAction(title: NSLocalizedString("New Wallet", comment: ""), style: .default) { (alert) in
-                self.present(self.newWalletViewController!, animated: true) { }
+                self.present(self.newWalletViewController, animated: true) 
             }
             .addAction(title: NSLocalizedString("Import Wallet", comment: ""), style: .default) { (alert) in
                 self.qrCodeReader.open { (controller, result) in
@@ -243,8 +242,7 @@ class MasterViewController: UITableViewController, AuthenticationID {
                         alert.message = NSLocalizedString("Wallet could not be created from the secret phrase", comment: "")                                                                
                         return
                     }
-                    Swift.print("add wallet: \(json)")
-                    try self?.keychain.set(json, key: name)
+                    try Store.shared.keychain.set(json, key: name)
                 }
                 catch let error {
                     alert.message = error.localizedDescription
@@ -285,14 +283,13 @@ class MasterViewController: UITableViewController, AuthenticationID {
         }
     }
     
-    // MARK: - Segues
-    
+    // MARK: - Segues    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {    
         
         if segue.identifier == "showDetail" {
             if let indexPath = tableView.indexPathForSelectedRow {
                 
-                let items = self.keychainItems
+                let items = Store.shared.items
                 let item = items[indexPath.row]
                 let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
                 
@@ -304,31 +301,27 @@ class MasterViewController: UITableViewController, AuthenticationID {
                 controller.navigationItem.leftItemsSupplementBackButton = true                
             }
         }
-    }
-    
-    override func performSegue(withIdentifier identifier: String, sender: Any?) {
-        Swift.print("performSegue: \(identifier, sender)")
-        super.performSegue(withIdentifier: identifier, sender: sender)
-    }
-    
-    // MARK: - Table View
-    
+    }              
+}
+
+// MARK: - Table View
+extension MasterViewController {    
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 80
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return self.keychainItems.count > 0 ? 1 : 0 
+        return Store.shared.items.count > 0 ? 1 : 0 
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.keychainItems.count
+        return Store.shared.items.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         
-        let items = self.keychainItems
+        let items = Store.shared.items
         let item = items[indexPath.row]
         
         let titleLabel = tableView.viewWithTag(999) as! UILabel
@@ -403,7 +396,7 @@ class MasterViewController: UITableViewController, AuthenticationID {
         
         if editingStyle == .delete {
             
-            let keychain = self.keychain
+            let keychain = Store.shared.keychain
             let items = keychain.allItems()
             guard let key = items[indexPath.row]["key"] as? String else { return }
             

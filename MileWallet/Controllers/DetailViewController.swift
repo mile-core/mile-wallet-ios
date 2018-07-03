@@ -20,7 +20,7 @@ class DetailViewController: Controller {
     
     var currentAssets:String = "MILE"
     
-    func mileInfoUpdate(error: ((_ error: SessionTaskError?)-> Void)?=nil, 
+    func mileInfoUpdate(error: ((_ error: Error?)-> Void)?=nil, 
                         complete:@escaping ((_ chain:Chain)->Void))  {        
         
         if chainInfo == nil {
@@ -98,12 +98,8 @@ class DetailViewController: Controller {
         UIAlertController(title: nil, 
                           message: nil, 
                           preferredStyle: .actionSheet)
-            .addAction(title: NSLocalizedString("Send coins", comment: ""), style: .default) { (alert) in
-                if let c = self.storyboard?.instantiateViewController(withIdentifier: "TransferViewControllerId") as? TransferViewController {
-                    c.currentAssets = self.currentAssets
-                    c.wallet = self.wallet
-                    self.navigationController?.pushViewController(c, animated: true)
-                }
+            .addAction(title: NSLocalizedString("Send coins", comment: ""), style: .default) { (alert) in                
+                self.editTransfer()
             } 
             .addAction(title: NSLocalizedString("Print Payment Ticket", comment: ""), style: .default) { (alert) in
                 self.fillPayments()
@@ -117,7 +113,7 @@ class DetailViewController: Controller {
     
     @objc func didLaunch(notification : NSNotification) {
         if CameraQR.shared.payment != nil && isAppeared {
-            transferButton.sendActions(for: .touchUpInside)
+            editTransfer()
         }
     }
     
@@ -147,7 +143,7 @@ class DetailViewController: Controller {
         super.viewDidLoad()   
         Swift.print(" ##### viewDidAppear  Detail \(self): \(String(describing: CameraQR.shared.payment))")
         if CameraQR.shared.payment != nil {
-            transferButton.sendActions(for: .touchUpInside)
+            editTransfer()
         }
     }
     
@@ -157,7 +153,12 @@ class DetailViewController: Controller {
         
         Balance.update(wallet: w, error: { (error) in
             
-            Swift.print("Balance update error: \(String(describing: error?.whatResponse))")
+            UIAlertController(title: NSLocalizedString("Balance error", comment: ""),
+                              message:  error?.description, 
+                              preferredStyle: .alert)
+                .addAction(title: "Close", style: .cancel)
+                .present(by: self)
+            
             self.stopActivities()
             
         }, complete: { (balance) in
@@ -187,7 +188,7 @@ class DetailViewController: Controller {
         
         if toggelPublicKey {
             content = wallet?.publicKey
-            qrImage = wallet?.publicKeyQRImage
+            qrImage = wallet?.publicKeyQr
         }
         else {
             
@@ -197,13 +198,16 @@ class DetailViewController: Controller {
                         .authenticationPrompt("Authenticate Private Key")
                         .get(name)                    
                 } catch let error {
-                    Swift.print("error: \(String(describing: error))")
-                    // Error handling if needed...
+                    UIAlertController(title: NSLocalizedString("Keychain error", comment: ""),
+                                      message:  error.description, 
+                                      preferredStyle: .alert)
+                        .addAction(title: "Close", style: .cancel)
+                        .present(by: self)
                 }
             }
             
             content = wallet?.privateKey
-            qrImage = wallet?.privateKeyQRImage
+            qrImage = wallet?.privateKeyQr
         }
         
         address.text = content
@@ -244,15 +248,16 @@ class DetailViewController: Controller {
         self.mileInfoUpdate(error: { (error) in
             
             self.stopActivities()
-                        
-            Swift.print("Info update error: \(String(describing: error?.whatResponse))")
+
+            UIAlertController(title: NSLocalizedString("MILE blockchain error", comment: ""),
+                              message:  error?.description, 
+                              preferredStyle: .alert)
+                .addAction(title: "Close", style: .cancel)
+                .present(by: self)
             
-        }){ (chain) in
-            
-            self.chainInfo = chain
-            
-            self.update(timer: nil)
-            
+        }){ (chain) in            
+            self.chainInfo = chain            
+            self.update(timer: nil)            
         }
     }
     
@@ -261,6 +266,16 @@ class DetailViewController: Controller {
         url = url.replacingOccurrences(of: "https:", with: Config.appSchema)
         let activity = UIActivityViewController(activityItems: ["Please send your coins to the address", url], applicationActivities:nil)
         present(activity, animated: true) 
+    }
+    
+    lazy var transferController:TransferViewController = {
+        return TransferViewController()
+    }()
+    
+    func editTransfer() {
+        transferController.contentController.currentAssets = self.currentAssets
+        transferController.contentController.wallet = self.wallet
+        present(transferController, animated: true)
     }
     
     lazy var paymentController:PaymentController = {
@@ -281,13 +296,6 @@ class DetailViewController: Controller {
                     self.loaderStop()
         })                    
     }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "transfer" {
-            let controller = (segue.destination as! TransferViewController)
-            controller.wallet = wallet
-        }
-    }                      
 }
 
 
@@ -298,12 +306,6 @@ extension DetailViewController {
         UIAlertController(title: nil, 
                           message: nil, 
                           preferredStyle: .actionSheet)
-//            .addAction(title: NSLocalizedString("Print Payment Ticket", comment: ""), style: .default) { (alert) in
-//                self.fillPayments()
-//            } 
-//            .addAction(title: NSLocalizedString("Send Payment Link", comment: ""), style: .default, handler: { (alert) in
-//                self.sendLink()
-//            })
             .addAction(title: NSLocalizedString("Print Wallet Secret Papper", comment: ""), style: .default) { (alert) in
                 self.printSecretPaper() 
             } 
