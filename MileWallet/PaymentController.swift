@@ -10,11 +10,49 @@ import UIKit
 import SnapKit
 import MileWalletKit
 
-class PaymentController: Controller {   
+public class NavigationController: UINavigationController {
+}
+
+class PaymentController: NavigationController {
+    
+    let contentController = PaymentControllerImp() 
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()        
+        setViewControllers([contentController], animated: true)        
+        let close = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.closePayments(sender:)))
+        let ok = UIBarButtonItem(title: NSLocalizedString("Print", comment: ""), style: .plain, target: self, action: #selector(self.printPayments(sender:)))
+        topViewController?.navigationItem.title = NSLocalizedString("Payment Ticket", comment: "")
+        topViewController?.navigationItem.leftBarButtonItem = close
+        topViewController?.navigationItem.rightBarButtonItem = ok
+    }
+    
+    @objc func closePayments(sender:Any){
+        dismiss(animated: true) 
+    }    
+    
+    @objc func printPayments(sender:Any){
+        Printer.shared.printPDF(wallet: self.contentController.wallet, 
+                                formater: { return HTMLTemplate.getAmount(wallet:$0, assets: self.contentController.currentAssets, amount: self.contentController.amount ) }
+        ){ (controller, completed, error) in                                            
+            if completed {
+                self.dismiss(animated: true) 
+            }
+        } 
+    }
+    
+    func printSecretPaper() {                            
+        Printer.shared.printPDF(wallet:  contentController.wallet, 
+                                formater: { return HTMLTemplate.get(wallet:$0) }, 
+                                complete: nil)                    
+    }    
+}
+
+class PaymentControllerImp: Controller {   
     
     var wallet:Wallet?
-
     var currentAssets:String = "XDR"
+    var amount:String = "0.0"
     
     lazy var amountText:UITextField = {
         let text = UITextField()
@@ -29,14 +67,11 @@ class PaymentController: Controller {
     
     lazy var amountQr:UIImageView = UIImageView(image: nil)
     
-    var amount:String = "0.0"
-    
     override func viewDidLoad() {
         super.viewDidLoad()                
         
         view.addSubview(amountText)
-        view.addSubview(amountQr)
-            
+        view.addSubview(amountQr)        
         
         amountQr.snp.makeConstraints { (make) in
             make.width.equalToSuperview().offset(-40)
@@ -56,14 +91,14 @@ class PaymentController: Controller {
         tap.numberOfTouchesRequired = 1
         view.addGestureRecognizer(tap)
     }  
-   
+    
     @objc func tapHandler(gesture:UITapGestureRecognizer) {
-            amountText.resignFirstResponder()
+        amountText.resignFirstResponder()
     }
     
     @objc func amounthandler(sender:UITextField){
         amount = "\((amountText.text ?? "").floatValue)"
         amountQr.image = wallet?.amountQRImage(assets: currentAssets, amount: amount)
     }
-        
+    
 }

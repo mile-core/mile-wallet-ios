@@ -179,7 +179,7 @@ class DetailViewController: Controller {
             
             DispatchQueue.global().async {
                 do {
-                    _ = try self.keychain
+                    _ = try Store.shared.keychain
                         .authenticationPrompt("Authenticate Private Key")
                         .get(name)                    
                 } catch let error {
@@ -249,36 +249,51 @@ class DetailViewController: Controller {
         present(activity, animated: true) 
     }
     
-    lazy var paymentController:UINavigationController = {
-        let u = UINavigationController(rootViewController: PaymentController())
-        let close = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.closePayments(sender:)))
-        let ok = UIBarButtonItem(title: NSLocalizedString("Print", comment: ""), style: .plain, target: self, action: #selector(self.printPayments(sender:)))
-        u.topViewController?.navigationItem.title = NSLocalizedString("Payment Ticket", comment: "")
-        u.topViewController?.navigationItem.leftBarButtonItem = close
-        u.topViewController?.navigationItem.rightBarButtonItem = ok
-        return u
+    lazy var paymentController:PaymentController = {
+        return PaymentController()
     }()
     
+//    lazy var paymentController:UINavigationController = {
+//        let u = UINavigationController(rootViewController: PaymentController())
+//        let close = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.closePayments(sender:)))
+//        let ok = UIBarButtonItem(title: NSLocalizedString("Print", comment: ""), style: .plain, target: self, action: #selector(self.printPayments(sender:)))
+//        u.topViewController?.navigationItem.title = NSLocalizedString("Payment Ticket", comment: "")
+//        u.topViewController?.navigationItem.leftBarButtonItem = close
+//        u.topViewController?.navigationItem.rightBarButtonItem = ok
+//        return u
+//    }()
+    
     func fillPayments() {     
-        (paymentController.topViewController as? PaymentController)?.wallet = wallet 
+        //(paymentController.topViewController as? PaymentController)?.wallet = wallet
+        paymentController.contentController.wallet = wallet
         present(paymentController, animated: true)
     }
     
     @objc func closePayments(sender:Any){
-        paymentController.dismiss(animated: true) {             
-        }
+        paymentController.dismiss(animated: true) 
     }
     
     @objc func printPayments(sender:Any){
         let pc = (paymentController.topViewController as? PaymentController)
         self.printPDF(wallet: self.wallet, 
-                      formater: { return HTMLTemplate.getAmount(wallet:$0, assets: self.currentAssets, amount: pc?.amount ?? "0.0") }
+                      formater: { return HTMLTemplate.getAmount(wallet:$0, assets: self.currentAssets, amount:  "0.0") }
         ){ (controller, completed, error) in                                            
             if completed {
                 self.paymentController.dismiss(animated: true) 
             }
         } 
     }
+    
+//    @objc func printPayments(sender:Any){
+//        let pc = (paymentController.topViewController as? PaymentController)
+//        self.printPDF(wallet: self.wallet, 
+//                      formater: { return HTMLTemplate.getAmount(wallet:$0, assets: self.currentAssets, amount: pc?.amount ?? "0.0") }
+//        ){ (controller, completed, error) in                                            
+//            if completed {
+//                self.paymentController.dismiss(animated: true) 
+//            }
+//        } 
+//    }
     
     func printSecretPaper() {                            
         printPDF(wallet: wallet, 

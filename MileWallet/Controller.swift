@@ -12,11 +12,17 @@ import AVFoundation
 import MileWalletKit
 import KeychainAccess
 
+extension UIViewController {
+//    static var keychain:Keychain {
+//        return Keychain(accessGroup: Config.walletService).synchronizable(Config.isWalletKeychainSynchronizable)
+//    }
+}
+
 class Controller: UIViewController {
     
-    var keychain:Keychain {
-        return Keychain(accessGroup: Config.walletService).synchronizable(Config.isWalletKeychainSynchronizable)
-    }
+//    var keychain:Keychain {
+//        return Keychain(accessGroup: Config.walletService).synchronizable(Config.isWalletKeychainSynchronizable)
+//    }
 
     public lazy var qrCodeReader:QRReader = {return QRReader(controller: self)}() 
     
