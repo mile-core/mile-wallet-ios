@@ -187,7 +187,7 @@ class DetailViewController: Controller {
         
         if toggelPublicKey {
             content = wallet?.publicKey
-            qrImage = wallet?.publicKeyQRImage
+            qrImage = wallet?.publicKeyQr
         }
         else {
             
@@ -203,7 +203,7 @@ class DetailViewController: Controller {
             }
             
             content = wallet?.privateKey
-            qrImage = wallet?.privateKeyQRImage
+            qrImage = wallet?.privateKeyQr
         }
         
         address.text = content

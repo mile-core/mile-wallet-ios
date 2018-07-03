@@ -29,9 +29,9 @@ class HTMLTemplate {
             else { fatalError("Error getting HTML file content.") }
         
         
-        let items = ["address":     (wallet.publicKey,  wallet.publicKeyQRImage?.imageSrc), 
-                     "private-key": (wallet.privateKey, wallet.privateKeyQRImage?.imageSrc), 
-                     "notes":       (wallet.name,       wallet.nameQRImage?.imageSrc)]
+        let items = ["address":     (wallet.publicKey,  wallet.publicKeyQr?.imageSrc), 
+                     "private-key": (wallet.privateKey, wallet.privateKeyQr?.imageSrc), 
+                     "notes":       (wallet.name,       wallet.nameQr?.imageSrc)]
         
         for k in items.keys {
             if let (what, src) = items[k] { 
@@ -52,7 +52,7 @@ class HTMLTemplate {
         guard var htmlContent = try? String(contentsOf: htmlFile)
             else { fatalError("Error getting HTML file content.") }
         
-        let data = wallet.amountQRImage(assets: assets, amount: amount)
+        let data = wallet.paymentQr(assets: assets, amount: amount)
         
         let items = ["address": (wallet.publicKey ?? "",  ""), 
                      "amount":  (amount,                  ""), 

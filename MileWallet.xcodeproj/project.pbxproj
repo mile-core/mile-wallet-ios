@@ -23,6 +23,7 @@
 		319AC52B20E642B000FB0D65 /* 00-03-logo-fill-blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 319AC52A20E642AF00FB0D65 /* 00-03-logo-fill-blue.png */; };
 		31A9FE9E20DBD2EB00779F60 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A9FE9D20DBD2EB00779F60 /* Config.swift */; };
 		31B18BE420E4E743005CA426 /* AuthenticationID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B18BE320E4E743005CA426 /* AuthenticationID.swift */; };
+		31BAD73120EBA95700032E0E /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31BAD73020EBA95700032E0E /* Extensions.swift */; };
 		31BB792320EA703300AC301A /* Printer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31BB792220EA703300AC301A /* Printer.swift */; };
 		31BB792520EA787400AC301A /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31BB792420EA787400AC301A /* Store.swift */; };
 		31D1333420D9A1E200E2E8D9 /* LocalAuthentication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31D1333320D9A1E200E2E8D9 /* LocalAuthentication.framework */; };
@@ -53,6 +54,7 @@
 		31A9FE9D20DBD2EB00779F60 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		31A9FE9F20DBD50900779F60 /* MileWallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MileWallet.entitlements; sourceTree = "<group>"; };
 		31B18BE320E4E743005CA426 /* AuthenticationID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationID.swift; sourceTree = "<group>"; };
+		31BAD73020EBA95700032E0E /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		31BB792220EA703300AC301A /* Printer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Printer.swift; sourceTree = "<group>"; };
 		31BB792420EA787400AC301A /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		31D1333320D9A1E200E2E8D9 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = System/Library/Frameworks/LocalAuthentication.framework; sourceTree = SDKROOT; };
@@ -136,6 +138,7 @@
 				31B18BE320E4E743005CA426 /* AuthenticationID.swift */,
 				313CCACE20E51B5900BF8737 /* CoverView.swift */,
 				31BB792420EA787400AC301A /* Store.swift */,
+				31BAD73020EBA95700032E0E /* Extensions.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -355,6 +358,7 @@
 				31BB792520EA787400AC301A /* Store.swift in Sources */,
 				3182CDC320D1C462000C3C68 /* HTMLTemplate.swift in Sources */,
 				31E6BF4020D91A6D00C40A80 /* Controller.swift in Sources */,
+				31BAD73120EBA95700032E0E /* Extensions.swift in Sources */,
 				313CCACF20E51B5900BF8737 /* CoverView.swift in Sources */,
 				31A9FE9E20DBD2EB00779F60 /* Config.swift in Sources */,
 				31D8CB9020CAEA9A006C7B8D /* TransferViewController.swift in Sources */,

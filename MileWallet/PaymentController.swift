@@ -118,7 +118,7 @@ class PaymentControllerImp: Controller {
     
     @objc func amounthandler(sender:UITextField){
         amount = "\((amountText.text ?? "").floatValue)"
-        amountQr.image = wallet?.amountQRImage(assets: currentAssets, amount: amount)
+        amountQr.image = wallet?.paymentQr(assets: currentAssets, amount: amount)
     }
     
 }
