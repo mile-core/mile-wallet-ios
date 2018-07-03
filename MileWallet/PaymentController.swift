@@ -51,7 +51,11 @@ class PaymentController: NavigationController {
 class PaymentControllerImp: Controller {   
     
     var wallet:Wallet?
-    var currentAssets:String = "XDR"
+    var currentAssets:String = "MILE" {
+        didSet{
+            assetText.text = currentAssets
+        }
+    }
     var amount:String = "0.0"
     
     lazy var amountText:UITextField = {
@@ -65,12 +69,22 @@ class PaymentControllerImp: Controller {
         return text
     }()
     
+    lazy var assetText:UITextField = {
+        let text = UITextField()
+        text.isUserInteractionEnabled = false
+        text.textAlignment = .left
+        text.borderStyle = .none
+        text.layer.borderWidth = 0
+        return text
+    }()
+    
     lazy var amountQr:UIImageView = UIImageView(image: nil)
     
     override func viewDidLoad() {
         super.viewDidLoad()                
         
         view.addSubview(amountText)
+        view.addSubview(assetText)        
         view.addSubview(amountQr)        
         
         amountQr.snp.makeConstraints { (make) in
@@ -83,6 +97,12 @@ class PaymentControllerImp: Controller {
         amountText.snp.makeConstraints { (make) in
             make.centerX.equalTo(amountQr.snp.centerX)
             make.bottom.equalTo(amountQr.snp.top).offset(-20)
+            make.size.equalTo(CGSize(width: 150, height: 44))
+        }
+        
+        assetText.snp.makeConstraints { (make) in
+            make.centerX.equalTo(amountText.snp.centerX)
+            make.bottom.equalTo(amountText.snp.top).offset(-20)
             make.size.equalTo(CGSize(width: 150, height: 44))
         }
         

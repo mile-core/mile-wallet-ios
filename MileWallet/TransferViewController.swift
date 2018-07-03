@@ -19,7 +19,7 @@ class TransferViewController: Controller {
     
     var wallet:Wallet?     
     
-    var currentAssets:String = "XDR" 
+    var currentAssets:String = "MILE" 
 
     @IBOutlet weak var titleLabel: UILabel!
     
@@ -182,6 +182,7 @@ class TransferViewController: Controller {
             toPublicKey.text = pk
             if let assets = scanned.assets, let _amount = scanned.amount {
                 message = "Payment Address: \(pk)\n Amount: \(_amount, assets)\n Wallet name: \(scanned.name ?? "")\n"
+                currentAssets = assets
                 amount.text = _amount
             }            
             else {
