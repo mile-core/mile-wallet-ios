@@ -87,7 +87,7 @@ class NewWalletViewController: Controller {
             
             self.messageArea.text = nil
             
-            let keychain = self.keychain            
+            let keychain = Store.shared.keychain      
             
             do {
                 guard let json = Mapper<Wallet>().toJSONString(wallet) else {

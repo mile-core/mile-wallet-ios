@@ -373,10 +373,10 @@ class MasterViewController: UITableViewController, AuthenticationID {
                     self.itemsUpdated += 1
                     
                 }, complete: { (balance) in
-                    var assets = "XDR"
+                    var assets = "MILE"
                     var ammounts = "0.0000"
                     for k in balance.balance.keys {
-                        if chain.assets[k] == "XDR" {
+                        if chain.assets[k] == "MILE" {
                             assets = chain.assets[k] ?? "?"
                             let a = String(format: "%.4f", (Float(balance.balance[k] ?? "0") ?? 0.0))
                             ammounts = a

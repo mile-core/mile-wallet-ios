@@ -18,7 +18,7 @@ class DetailViewController: Controller {
     
     private var chainInfo:Chain?
     
-    var currentAssets:String = "XDR"
+    var currentAssets:String = "MILE"
     
     func mileInfoUpdate(error: ((_ error: SessionTaskError?)-> Void)?=nil, 
                         complete:@escaping ((_ chain:Chain)->Void))  {        
@@ -85,20 +85,34 @@ class DetailViewController: Controller {
     
     @objc func transferXdr(gesture:UITapGestureRecognizer) {
         currentAssets = "XDR"
-        if let c = storyboard?.instantiateViewController(withIdentifier: "TransferViewControllerId") as? TransferViewController {
-            c.currentAssets = currentAssets
-            c.wallet = wallet
-            navigationController?.pushViewController(c, animated: true)
-        }
+        transferAsset()
     }
     
     @objc func transferMile(gesture:UITapGestureRecognizer) {
         currentAssets = "MILE"
-        if let c = storyboard?.instantiateViewController(withIdentifier: "TransferViewControllerId") as? TransferViewController {
-            c.currentAssets = currentAssets
-            c.wallet = wallet
-            navigationController?.pushViewController(c, animated: true)
-        }
+        transferAsset()
+    }
+    
+    func transferAsset() {
+        
+        UIAlertController(title: nil, 
+                          message: nil, 
+                          preferredStyle: .actionSheet)
+            .addAction(title: NSLocalizedString("Send coins", comment: ""), style: .default) { (alert) in
+                if let c = self.storyboard?.instantiateViewController(withIdentifier: "TransferViewControllerId") as? TransferViewController {
+                    c.currentAssets = self.currentAssets
+                    c.wallet = self.wallet
+                    self.navigationController?.pushViewController(c, animated: true)
+                }
+            } 
+            .addAction(title: NSLocalizedString("Print Payment Ticket", comment: ""), style: .default) { (alert) in
+                self.fillPayments()
+            } 
+            .addAction(title: NSLocalizedString("Send Payment Link", comment: ""), style: .default, handler: { (alert) in
+                self.sendLink()
+            })
+            .addAction(title: "Cancel", style: .cancel) 
+            .present(by: self)                          
     }
     
     @objc func didLaunch(notification : NSNotification) {
@@ -179,7 +193,7 @@ class DetailViewController: Controller {
             
             DispatchQueue.global().async {
                 do {
-                    _ = try self.keychain
+                    _ = try Store.shared.keychain
                         .authenticationPrompt("Authenticate Private Key")
                         .get(name)                    
                 } catch let error {
@@ -249,41 +263,23 @@ class DetailViewController: Controller {
         present(activity, animated: true) 
     }
     
-    lazy var paymentController:UINavigationController = {
-        let u = UINavigationController(rootViewController: PaymentController())
-        let close = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.closePayments(sender:)))
-        let ok = UIBarButtonItem(title: NSLocalizedString("Print", comment: ""), style: .plain, target: self, action: #selector(self.printPayments(sender:)))
-        u.topViewController?.navigationItem.title = NSLocalizedString("Payment Ticket", comment: "")
-        u.topViewController?.navigationItem.leftBarButtonItem = close
-        u.topViewController?.navigationItem.rightBarButtonItem = ok
-        return u
+    lazy var paymentController:PaymentController = {
+        return PaymentController()
     }()
     
     func fillPayments() {     
-        (paymentController.topViewController as? PaymentController)?.wallet = wallet 
+        paymentController.contentController.currentAssets = self.currentAssets
+        paymentController.contentController.wallet = wallet
         present(paymentController, animated: true)
     }
     
-    @objc func closePayments(sender:Any){
-        paymentController.dismiss(animated: true) {             
-        }
-    }
-    
-    @objc func printPayments(sender:Any){
-        let pc = (paymentController.topViewController as? PaymentController)
-        self.printPDF(wallet: self.wallet, 
-                      formater: { return HTMLTemplate.getAmount(wallet:$0, assets: self.currentAssets, amount: pc?.amount ?? "0.0") }
-        ){ (controller, completed, error) in                                            
-            if completed {
-                self.paymentController.dismiss(animated: true) 
-            }
-        } 
-    }
-    
-    func printSecretPaper() {                            
-        printPDF(wallet: wallet, 
+    func printSecretPaper() {
+        loaderStart()
+        Printer.shared.printPDF(wallet: wallet, 
                  formater: { return HTMLTemplate.get(wallet:$0) }, 
-                 complete: nil)                    
+                 complete: { _,_,_ in
+                    self.loaderStop()
+        })                    
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -298,17 +294,16 @@ class DetailViewController: Controller {
 // MARK: - Send WalletInfo info
 extension DetailViewController {
     
-    @objc func shareWalletInfo(_ sender: Any) {
-        
+    @objc func shareWalletInfo(_ sender: Any) {        
         UIAlertController(title: nil, 
                           message: nil, 
                           preferredStyle: .actionSheet)
-            .addAction(title: NSLocalizedString("Print Payment Ticket", comment: ""), style: .default) { (alert) in
-                self.fillPayments()
-            } 
-            .addAction(title: NSLocalizedString("Send Payment Link", comment: ""), style: .default, handler: { (alert) in
-                self.sendLink()
-            })
+//            .addAction(title: NSLocalizedString("Print Payment Ticket", comment: ""), style: .default) { (alert) in
+//                self.fillPayments()
+//            } 
+//            .addAction(title: NSLocalizedString("Send Payment Link", comment: ""), style: .default, handler: { (alert) in
+//                self.sendLink()
+//            })
             .addAction(title: NSLocalizedString("Print Wallet Secret Papper", comment: ""), style: .default) { (alert) in
                 self.printSecretPaper() 
             } 
