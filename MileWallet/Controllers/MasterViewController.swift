@@ -20,7 +20,7 @@ class MasterViewController: UITableViewController, AuthenticationID {
       
     public lazy var qrCodeReader:QRReader = {return QRReader(controller: self)}() 
     
-    var newWalletViewController: NewWalletViewController? = nil
+    var newWalletViewController: NewWalletViewController = NewWalletViewController()
     
     lazy var coverView:UIImageView = {
         let v = UIImageView(image: UIImage(named: "logo-fill-blue"))
@@ -47,7 +47,7 @@ class MasterViewController: UITableViewController, AuthenticationID {
         
         navigationItem.rightBarButtonItem = addButton
                 
-        newWalletViewController = storyboard?.instantiateViewController(withIdentifier: "NewWalletViewControllerId") as? NewWalletViewController
+        //newWalletViewController = storyboard?.instantiateViewController(withIdentifier: "NewWalletViewControllerId") as? NewWalletViewController
         
         NotificationCenter.default.addObserver(self, selector: #selector(didLaunch), name: .UIApplicationDidFinishLaunching, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didLaunch), name: .UIApplicationWillEnterForeground, object: nil)
@@ -199,7 +199,7 @@ class MasterViewController: UITableViewController, AuthenticationID {
                           message: nil, 
                           preferredStyle: .actionSheet)
             .addAction(title: NSLocalizedString("New Wallet", comment: ""), style: .default) { (alert) in
-                self.present(self.newWalletViewController!, animated: true) 
+                self.present(self.newWalletViewController, animated: true) 
             }
             .addAction(title: NSLocalizedString("Import Wallet", comment: ""), style: .default) { (alert) in
                 self.qrCodeReader.open { (controller, result) in

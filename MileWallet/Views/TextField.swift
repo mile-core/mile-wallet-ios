@@ -30,10 +30,21 @@ extension UITextField {
         text.layer.borderWidth = 0.5
         text.clearButtonMode = .always
         return text
+    }     
+
+    public static func nameField() -> UITextField {
+        let text = UITextField()
+        text.isUserInteractionEnabled = true
+        text.contentMode = .center
+        text.textAlignment = .left
+        text.layer.borderWidth = 0.5
+        text.clearButtonMode = .always
+        return text
     }         
 }
 
 extension UITextView {
+    
     public static func hexField() -> UITextView {
         let text = UITextView()
         text.isUserInteractionEnabled = true

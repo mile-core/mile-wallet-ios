@@ -47,7 +47,8 @@ class PaymentControllerImp: Controller {
     var wallet:Wallet?
     var currentAssets:String = "MILE" {
         didSet{
-            assetText.text = currentAssets
+            //assetText.text = currentAssets
+            //self.title = NSLocalizedString("Payment for: ", comment: "") + currentAssets
         }
     }
     var amount:String = "0.0"
@@ -63,6 +64,7 @@ class PaymentControllerImp: Controller {
         let text = UILabel()
         text.isUserInteractionEnabled = false
         text.textAlignment = .left
+        text.text = NSLocalizedString("Type amount to generate QR code", comment: "")
         return text
     }()
     
@@ -85,18 +87,20 @@ class PaymentControllerImp: Controller {
             make.height.equalTo(amountQr.snp.width)
             make.centerY.equalToSuperview().offset(20)
             make.centerX.equalToSuperview()
-        }
+        }            
         
         amountText.snp.makeConstraints { (make) in
             make.centerX.equalTo(amountQr.snp.centerX)
             make.bottom.equalTo(amountQr.snp.top).offset(-20)
-            make.size.equalTo(CGSize(width: 150, height: 44))
-        }
+            make.width.equalToSuperview().offset(-40)
+            make.height.equalTo(44)            
+        }               
         
         assetText.snp.makeConstraints { (make) in
             make.centerX.equalTo(amountText.snp.centerX)
             make.bottom.equalTo(amountText.snp.top).offset(-20)
-            make.size.equalTo(CGSize(width: 150, height: 44))
+            make.width.equalTo(amountText.snp.width)
+            make.height.equalTo(44)
         }
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(tapHandler(gesture:)))
@@ -104,6 +108,11 @@ class PaymentControllerImp: Controller {
         tap.numberOfTouchesRequired = 1
         view.addGestureRecognizer(tap)
     }  
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.title = NSLocalizedString("Payment for: ", comment: "") + currentAssets
+    }
     
     @objc func tapHandler(gesture:UITapGestureRecognizer) {
         amountText.resignFirstResponder()
