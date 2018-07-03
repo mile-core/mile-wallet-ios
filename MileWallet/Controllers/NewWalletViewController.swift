@@ -22,7 +22,7 @@ class NewWalletViewController: Controller {
     @IBOutlet weak var name: UITextField!
     
     @IBAction func cancelHandler(_ sender: UIButton) {
-        dismiss(animated: true) {}
+        dismiss(animated: true)
     }
     
     func okEnabled(enable:Bool)  {
@@ -81,7 +81,7 @@ class NewWalletViewController: Controller {
         
         Wallet.create(name: name, secretPhrase: nil, error: { error in             
             
-            self.messageArea.text = error?.whatResponse            
+            self.messageArea.text = error?.localizedDescription            
             
         }) { (wallet) in   
             
@@ -102,6 +102,7 @@ class NewWalletViewController: Controller {
             }
             
             activiti.stopAnimating()
+            
             UIView.animate(withDuration: 0.2, animations: { 
                 dimView.alpha=0
             }, completion: { (flag) in

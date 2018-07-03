@@ -10,30 +10,24 @@ import UIKit
 import SnapKit
 import MileWalletKit
 
-public class NavigationController: UINavigationController {
-}
-
-class PaymentController: NavigationController {
-    
-    let contentController = PaymentControllerImp() 
-    
+class PaymentController: NavigationController {    
+    let contentController = PaymentControllerImp()     
     override func viewDidLoad() {
         super.viewDidLoad()        
         setViewControllers([contentController], animated: true)        
-        let close = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.closePayments(sender:)))
-        let ok = UIBarButtonItem(title: NSLocalizedString("Print", comment: ""), style: .plain, target: self, action: #selector(self.printPayments(sender:)))
-        topViewController?.navigationItem.title = NSLocalizedString("Payment Ticket", comment: "")
-        topViewController?.navigationItem.leftBarButtonItem = close
-        topViewController?.navigationItem.rightBarButtonItem = ok
-    }
-    
+    }       
+}
+
+
+// MARK: - Print
+extension PaymentControllerImp {
     @objc func closePayments(sender:Any){
         dismiss(animated: true) 
     }    
     
     @objc func printPayments(sender:Any){
-        Printer.shared.printPDF(wallet: self.contentController.wallet, 
-                                formater: { return HTMLTemplate.getAmount(wallet:$0, assets: self.contentController.currentAssets, amount: self.contentController.amount ) }
+        Printer.shared.printPDF(wallet: self.wallet, 
+                                formater: { return HTMLTemplate.getAmount(wallet:$0, assets: self.currentAssets, amount: self.amount ) }
         ){ (controller, completed, error) in                                            
             if completed {
                 self.dismiss(animated: true) 
@@ -42,7 +36,7 @@ class PaymentController: NavigationController {
     }
     
     func printSecretPaper() {                            
-        Printer.shared.printPDF(wallet:  contentController.wallet, 
+        Printer.shared.printPDF(wallet: wallet, 
                                 formater: { return HTMLTemplate.get(wallet:$0) }, 
                                 complete: nil)                    
     }    
@@ -59,22 +53,16 @@ class PaymentControllerImp: Controller {
     var amount:String = "0.0"
     
     lazy var amountText:UITextField = {
-        let text = UITextField()
-        text.keyboardType = .decimalPad
-        text.textAlignment = .center
-        text.borderStyle = .bezel
-        text.layer.borderWidth = 0.5
+        let text = UITextField.decimalsField()
         text.addTarget(self, action: #selector(amounthandler(sender:)), for: UIControlEvents.editingChanged)
         text.addTarget(self, action: #selector(amounthandler(sender:)), for: UIControlEvents.editingDidEnd)
         return text
     }()
     
-    lazy var assetText:UITextField = {
-        let text = UITextField()
+    lazy var assetText:UILabel = {
+        let text = UILabel()
         text.isUserInteractionEnabled = false
         text.textAlignment = .left
-        text.borderStyle = .none
-        text.layer.borderWidth = 0
         return text
     }()
     
@@ -83,6 +71,11 @@ class PaymentControllerImp: Controller {
     override func viewDidLoad() {
         super.viewDidLoad()                
         
+        navigationItem.title = NSLocalizedString("Payment Ticket", comment: "")
+
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.closePayments(sender:)))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Print", comment: ""), style: .plain, target: self, action: #selector(self.printPayments(sender:)))
+
         view.addSubview(amountText)
         view.addSubview(assetText)        
         view.addSubview(amountQr)        

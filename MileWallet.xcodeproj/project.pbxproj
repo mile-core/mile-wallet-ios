@@ -20,6 +20,7 @@
 		3182CDC520D1C481000C3C68 /* PDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3182CDC420D1C481000C3C68 /* PDF.swift */; };
 		3182CDC920D2AA9E000C3C68 /* PrintPaymentTemplate.html in Resources */ = {isa = PBXBuildFile; fileRef = 3182CDC820D2AA9D000C3C68 /* PrintPaymentTemplate.html */; };
 		3182CDCB20D2AF0D000C3C68 /* PaymentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3182CDCA20D2AF0C000C3C68 /* PaymentController.swift */; };
+		318B694720EBCB1A00DCDDB1 /* TextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318B694620EBCB1A00DCDDB1 /* TextField.swift */; };
 		319AC52B20E642B000FB0D65 /* 00-03-logo-fill-blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 319AC52A20E642AF00FB0D65 /* 00-03-logo-fill-blue.png */; };
 		31A9FE9E20DBD2EB00779F60 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A9FE9D20DBD2EB00779F60 /* Config.swift */; };
 		31B18BE420E4E743005CA426 /* AuthenticationID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B18BE320E4E743005CA426 /* AuthenticationID.swift */; };
@@ -50,6 +51,7 @@
 		3182CDC420D1C481000C3C68 /* PDF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDF.swift; sourceTree = "<group>"; };
 		3182CDC820D2AA9D000C3C68 /* PrintPaymentTemplate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = PrintPaymentTemplate.html; sourceTree = "<group>"; };
 		3182CDCA20D2AF0C000C3C68 /* PaymentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentController.swift; sourceTree = "<group>"; };
+		318B694620EBCB1A00DCDDB1 /* TextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextField.swift; sourceTree = "<group>"; };
 		319AC52A20E642AF00FB0D65 /* 00-03-logo-fill-blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "00-03-logo-fill-blue.png"; sourceTree = "<group>"; };
 		31A9FE9D20DBD2EB00779F60 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		31A9FE9F20DBD50900779F60 /* MileWallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MileWallet.entitlements; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				31A9FE9F20DBD50900779F60 /* MileWallet.entitlements */,
+				318B694820EBCB4200DCDDB1 /* Views */,
 				31BAD73220EBB01800032E0E /* Controllers */,
 				31F2CFE320D1772800C1770B /* Resources */,
 				31A77C8120C9527500462923 /* Classes */,
@@ -125,6 +128,14 @@
 			path = Printer;
 			sourceTree = "<group>";
 		};
+		318B694820EBCB4200DCDDB1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				318B694620EBCB1A00DCDDB1 /* TextField.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		31A77C8120C9527500462923 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
@@ -141,8 +152,8 @@
 		31BAD73220EBB01800032E0E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				3164FD8220C950ED00294A9F /* MasterViewController.swift */,
 				31E6BF3F20D91A6D00C40A80 /* Controller.swift */,
+				3164FD8220C950ED00294A9F /* MasterViewController.swift */,
 				3164FD8420C950ED00294A9F /* DetailViewController.swift */,
 				31144EAF20CA8AA400A8E6B4 /* NewWalletViewController.swift */,
 				31D8CB8F20CAEA9A006C7B8D /* TransferViewController.swift */,
@@ -359,6 +370,7 @@
 				3182CDCB20D2AF0D000C3C68 /* PaymentController.swift in Sources */,
 				31144EB020CA8AA400A8E6B4 /* NewWalletViewController.swift in Sources */,
 				31B18BE420E4E743005CA426 /* AuthenticationID.swift in Sources */,
+				318B694720EBCB1A00DCDDB1 /* TextField.swift in Sources */,
 				3182CDC520D1C481000C3C68 /* PDF.swift in Sources */,
 				3164FD8520C950ED00294A9F /* DetailViewController.swift in Sources */,
 				31BB792320EA703300AC301A /* Printer.swift in Sources */,

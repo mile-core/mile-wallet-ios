@@ -12,18 +12,8 @@ import AVFoundation
 import MileWalletKit
 import KeychainAccess
 
-extension UIViewController {
-//    static var keychain:Keychain {
-//        return Keychain(accessGroup: Config.walletService).synchronizable(Config.isWalletKeychainSynchronizable)
-//    }
-}
-
 class Controller: UIViewController {
     
-//    var keychain:Keychain {
-//        return Keychain(accessGroup: Config.walletService).synchronizable(Config.isWalletKeychainSynchronizable)
-//    }
-
     public lazy var qrCodeReader:QRReader = {return QRReader(controller: self)}() 
     
     private let activiti = UIActivityIndicatorView(activityIndicatorStyle: .gray)
@@ -66,47 +56,9 @@ class Controller: UIViewController {
         }, completion: { (flag) in
             self.dimView.removeFromSuperview()
         })
-    }
-    
-    
-//    lazy var printInfo:UIPrintInfo = {
-//        let p = UIPrintInfo(dictionary:nil)
-//        p.outputType = UIPrintInfoOutputType.general
-//        p.duplex = .longEdge
-//        p.orientation = .portrait        
-//        p.jobName = NSLocalizedString("Wallet printer job", comment: "")
-//        return p
-//    }()
-//
-//    
-//    lazy var printController:UIPrintInteractionController = {
-//        let p = UIPrintInteractionController.shared                
-//        p.printInfo = printInfo
-//        return p
-//    }()
-//    
-//    func printPDF(wallet:Wallet?,
-//                  formater:@escaping ((_ wallet:Wallet)->String), 
-//                  complete:((UIPrintInteractionController, Bool, Error?)->Void)?) {
-//        
-//        guard let wallet = wallet else {
-//            complete?(printController, false, nil)
-//            return
-//        }
-//        
-//        loaderStart()
-//        
-//        DispatchQueue.global().async {
-//            let str = formater(wallet)
-//            DispatchQueue.main.async {
-//                let pdf = UIMarkupTextPrintFormatter(markupText: str)
-//                PDF.generate(using: pdf)
-//                self.printController.printFormatter = pdf
-//                self.printController.present(animated: true) { (controller, completed, error) in
-//                    complete?(controller,completed,error)
-//                    self.loaderStop()
-//                }                    
-//            }
-//        }
-//    }    
+    }        
 }
+
+public class NavigationController: UINavigationController {
+}
+

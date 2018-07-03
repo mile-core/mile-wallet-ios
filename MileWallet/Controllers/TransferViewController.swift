@@ -14,59 +14,118 @@ import QRCodeReader
 import AVFoundation
 import SnapKit
 import MileWalletKit
+import APIKit
 
-class TransferViewController: Controller {
+class TransferViewController: NavigationController {    
+    let contentController = TransferViewControllerImp()     
+    override func viewDidLoad() {
+        super.viewDidLoad()        
+        setViewControllers([contentController], animated: true)        
+    }        
+}
+
+class TransferViewControllerImp: Controller {
     
     var wallet:Wallet?     
     
-    var currentAssets:String = "MILE" 
+    var currentAssets:String = "MILE"    
 
-    @IBOutlet weak var titleLabel: UILabel!
+    lazy var toPublicKeyLabel:UILabel = {
+       let l = UILabel()
+        l.textAlignment = .left
+        l.text = NSLocalizedString("Address: ", comment: "")
+        return l
+    }()
+    var toPublicKey: UITextView = UITextView.hexField()
+
+    var amountLabel:UILabel = {
+        let l = UILabel()
+        l.textAlignment = .left
+        l.text = NSLocalizedString("Amount: ", comment: "")
+        return l
+    }() 
+    var amount: UITextField = UITextField.decimalsField()
     
-    @IBOutlet weak var sendButton: UIButton!
+    lazy var readerButton:UIButton = {
+       let button = UIButton(type: UIButtonType.custom)
+        button.setTitle("Read QR", for: UIControlState.normal)
+        button.addTarget(self, action: #selector(qrQodeRead(_:)), for: UIControlEvents.touchUpInside)
+        button.titleLabel?.textColor = UIColor.white
+        button.backgroundColor = UIColor.darkGray
+        return button
+    }()
     
-    @IBOutlet weak var messageArea: UITextView!
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard))
+        self.view.addGestureRecognizer(tapGesture)                
         
-    @IBOutlet weak var toPublicKey: UITextField!
-    
-    @IBOutlet weak var amount: UITextField!
+        view.addSubview(toPublicKey)
+        view.addSubview(toPublicKeyLabel)
+
+        view.addSubview(amount)
+        view.addSubview(amountLabel)
+
+        view.addSubview(readerButton)
+
+        toPublicKeyLabel.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview()
+            make.width.equalToSuperview().offset(-40)
+            make.top.equalToSuperview().offset(navigationController!.navigationBar.frame.size.height+40)
+            make.height.equalTo(44)            
+        }
         
-    @IBAction func qrQodeRead(_ sender: UIButton) {
+        toPublicKey.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview()
+            make.width.equalTo(toPublicKeyLabel.snp.width)
+            make.top.equalTo(toPublicKeyLabel.snp.bottom).offset(20)
+            make.height.equalTo(60)
+        }
+        
+        amountLabel.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview()
+            make.width.equalTo(toPublicKey.snp.width)
+            make.top.equalTo(toPublicKey.snp.bottom).offset(20)
+            make.height.equalTo(44)
+        }
+        
+        amount.snp.makeConstraints { (make) in
+            make.centerX.equalTo(amountLabel.snp.centerX)
+            make.width.equalTo(amountLabel.snp.width)
+            make.top.equalTo(amountLabel.snp.bottom).offset(20)
+            make.height.equalTo(44)
+        }
+                
+        readerButton.snp.makeConstraints { (make) in
+            make.centerX.equalTo(toPublicKey.snp.centerX)
+            make.top.equalTo(amount.snp.bottom).offset(40)
+            make.width.equalTo(100)
+            make.height.equalTo(80)
+        }
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.closePayments(sender:)))
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Send", style: .plain, target: self, action: #selector(transferHandler(_:)))
+    }    
+    
+    @objc func closePayments(sender:Any){
+        dismiss(animated: true) 
+    } 
+    
+    @objc func qrQodeRead(_ sender: UIButton) {
         qrCodeReader.open { (controller, result) in
             self.reader(controller, didScanResult: result)
         }
     }
     
-    @IBAction func cancelHandler(_ sender: UIButton) {
+    func cancelHandler(_ sender: UIButton) {
         dismiss(animated: true) {}
     }
     
-    @IBAction func amountChanging(_ sender: UITextField) {
-        sendEnabled() 
-    }
-                
-    @IBAction func transferHandler(_ sender: UIButton) {
-        sendEnabled()         
+    @objc func transferHandler(_ sender: UIButton) {
         transfer()
     }
-    
-    func sendEnabled()  {
-        guard let key = toPublicKey.text, let am = amount.text else { 
-            //sendButton.alpha = 0.5
-            //sendButton.isUserInteractionEnabled = false   
-            return
-        }
-        if key.isEmpty || am.isEmpty {
-            //sendButton.alpha = 0.5
-            //sendButton.isUserInteractionEnabled = false            
-        }
-        else {
-            //sendButton.alpha = 1
-            //sendButton.isUserInteractionEnabled = true            
-        }
-    }
-    
-    
+        
     func transfer()  {
         
         guard let fromWallet = wallet else {
@@ -75,53 +134,47 @@ class TransferViewController: Controller {
         
         guard let amount = amount.text?.floatValue else { return }
         guard let pkey = toPublicKey.text else { return }
-                
-            
-        Swift.print("amount: \(amount) key = \(pkey)")
-
+                            
         if pkey.isEmpty {
-            self.messageArea.text = NSLocalizedString("Target address unknown...", comment: "")
+            UIAlertController(title: nil,
+                              message:  NSLocalizedString("Target address unknown...", comment: ""), 
+                              preferredStyle: .alert)
+                .addAction(title: "Close", style: .cancel)
+                .present(by: self)
             return
         }
         
         loaderStart()
         
         let toWallet = Wallet(name: pkey, publicKey: pkey, privateKey: "", secretPhrase: nil)        
-        
-        print("From: \(fromWallet)")
-        print("To: \(toWallet)")
-        
+                
         Transfer.send(asset: currentAssets, 
                       amount: "\(amount)", 
                       from: fromWallet, 
                       to: toWallet, 
                       error: { error in
+                                                                        
+                        UIAlertController(title: NSLocalizedString("Transfer error", comment: ""),
+                                          message:  error?.description, 
+                                          preferredStyle: .alert)
+                            .addAction(title: "Close", style: .cancel)
+                            .present(by: self)
                         
-                        Swift.print("Error: \(String(describing: error))")
-                        
-                        self.messageArea.text = error?.whatResponse
-                        self.loaderStop()
-                        
+                        self.loaderStop()                        
                         
         }) { (transfer) in
-            self.loaderStop()
-            Swift.print("Transfer sended: \(String(describing: transfer.toJSONString()))")
-            //self.dismiss(animated: true) { }
-            self.navigationController?.popViewController(animated: true)
+            self.loaderStop()          
+            self.dismiss(animated: true)
         }                
     }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard))
-        self.view.addGestureRecognizer(tapGesture)        
         
-        let addButton = UIBarButtonItem(title: "Send", style: .plain, target: self, action: #selector(transferHandler(_:)))         
-        navigationItem.rightBarButtonItem = addButton       
-    }    
-    
-    @objc func dismissKeyboard (_ sender: UITapGestureRecognizer) {
-        amount.resignFirstResponder()
+    @objc func dismissKeyboard (_ sender: UITapGestureRecognizer) {        
+        if amount.isFirstResponder {
+            amount.resignFirstResponder()
+        }
+        if toPublicKey.isFirstResponder {
+            toPublicKey.resignFirstResponder()
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -137,8 +190,7 @@ class TransferViewController: Controller {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.title = wallet?.name
-        titleLabel.text = "Transfer: " + currentAssets
+        self.title = NSLocalizedString("Transfer: ", comment: "") + currentAssets
         if let pk = CameraQR.shared.payment?.publicKey{
             self.toPublicKey.text = pk
         }
@@ -147,16 +199,11 @@ class TransferViewController: Controller {
             self.amount.text = "\(am)"
             self.currentAssets = assets
         }
-        appear()
     }
     
-    func appear()  {
-        messageArea.text = ""
-        sendEnabled()
-    }
-
     var currentPublicKeyQr:String?
     var currentAmmountKeyQr:String?
+    
     func reader(_ reader: QRCodeReaderViewController, didScanResult result: QRCodeReaderResult) {
                 
         reader.stopScanning()      
@@ -197,8 +244,7 @@ class TransferViewController: Controller {
         UIAlertController(title: nil, 
                           message: message, 
                           preferredStyle: .alert)
-            .addAction(title: "Accept", style: .default) {  [weak self]  (allert) in
-                self?.sendEnabled()
+            .addAction(title: "Accept", style: .default) { _ in
                 close()
             } 
             .addAction(title: "Cancel", style: .cancel) { _ in
