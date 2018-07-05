@@ -12,7 +12,9 @@ import MileWalletKit
 
 public class Store {
     public static let shared:Store = Store()
-    public let keychain = Keychain(accessGroup: Config.walletService).synchronizable(Config.isWalletKeychainSynchronizable)    
+    public var keychain:Keychain { 
+        return Keychain(accessGroup: Config.walletService).synchronizable(Config.isWalletKeychainSynchronizable)        
+    }    
     public var items:[[String : Any]] {
         return self.keychain.allItems()
     }    

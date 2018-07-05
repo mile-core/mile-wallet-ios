@@ -131,9 +131,7 @@ class NewWalletViewControllerImp: Controller {
                 .addAction(title: "Close", style: .cancel)
                 .present(by: self)                        
         }) { (wallet) in   
-                        
-            let keychain = Store.shared.keychain      
-            
+                                    
             do {
                 guard let json = Mapper<Wallet>().toJSONString(wallet) else {
                     UIAlertController(title: nil,
@@ -144,8 +142,7 @@ class NewWalletViewControllerImp: Controller {
 
                     return
                 }
-                try keychain.synchronizable(Config.isWalletKeychainSynchronizable)
-                    .set(json, key: name)
+                try Store.shared.keychain.set(json, key: name)
             }
             catch let error {
 

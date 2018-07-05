@@ -12,7 +12,7 @@ import MileWalletKit
 extension Config {
     
     
-    public static let walletService = "GHD7Y8FG8V.global.mile.wallet" //(appIdentifierPrefix() ?? "") +     
+    public static let walletService = "GHD7Y8FG8V.global.mile.wallet"  //GHD7Y8FG8V
     public static var isWalletKeychainSynchronizable = true
     
     public struct Colors {
