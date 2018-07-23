@@ -84,7 +84,6 @@
 		3164FD7420C950ED00294A9F = {
 			isa = PBXGroup;
 			children = (
-				319AC52A20E642AF00FB0D65 /* 00-03-logo-fill-blue.png */,
 				3104930B20CC05D5006AB772 /* MyPlayground.playground */,
 				3164FD7F20C950ED00294A9F /* MileWallet */,
 				3164FD7E20C950ED00294A9F /* Products */,
@@ -165,6 +164,7 @@
 		31F2CFE320D1772800C1770B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				319AC52A20E642AF00FB0D65 /* 00-03-logo-fill-blue.png */,
 				3182CDC820D2AA9D000C3C68 /* PrintPaymentTemplate.html */,
 				31F2CFE420D177A000C1770B /* PrintSecretTemplate.html */,
 				313F13DA20E3FA900074796D /* MileWallet-AASA */,
