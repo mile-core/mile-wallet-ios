@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		31144EB020CA8AA400A8E6B4 /* NewWalletViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31144EAF20CA8AA400A8E6B4 /* NewWalletViewController.swift */; };
+		311A4041210795E00015952B /* NewWalletController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311A4040210795E00015952B /* NewWalletController.swift */; };
+		311A40442107CA530015952B /* GMColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311A40432107CA530015952B /* GMColor.swift */; };
+		311A40462107CA6B0015952B /* GMPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311A40452107CA6B0015952B /* GMPalette.swift */; };
+		311A40482107CA7B0015952B /* ColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311A40472107CA7B0015952B /* ColorPicker.swift */; };
 		313CCACF20E51B5900BF8737 /* CoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313CCACE20E51B5900BF8737 /* CoverView.swift */; };
 		313F13DB20E3FA900074796D /* MileWallet-AASA in Resources */ = {isa = PBXBuildFile; fileRef = 313F13DA20E3FA900074796D /* MileWallet-AASA */; };
 		3144B658210618D900ED27BF /* RootController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3144B657210618D900ED27BF /* RootController.swift */; };
@@ -46,6 +50,10 @@
 /* Begin PBXFileReference section */
 		3104930B20CC05D5006AB772 /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		31144EAF20CA8AA400A8E6B4 /* NewWalletViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewWalletViewController.swift; sourceTree = "<group>"; };
+		311A4040210795E00015952B /* NewWalletController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewWalletController.swift; sourceTree = "<group>"; };
+		311A40432107CA530015952B /* GMColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GMColor.swift; sourceTree = "<group>"; };
+		311A40452107CA6B0015952B /* GMPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GMPalette.swift; sourceTree = "<group>"; };
+		311A40472107CA7B0015952B /* ColorPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPicker.swift; sourceTree = "<group>"; };
 		313CCACE20E51B5900BF8737 /* CoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoverView.swift; sourceTree = "<group>"; };
 		313F13DA20E3FA900074796D /* MileWallet-AASA */ = {isa = PBXFileReference; lastKnownFileType = text; path = "MileWallet-AASA"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.javascript; };
 		3144B657210618D900ED27BF /* RootController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootController.swift; sourceTree = "<group>"; };
@@ -99,6 +107,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		311A40422107CA1E0015952B /* Color Picker */ = {
+			isa = PBXGroup;
+			children = (
+				311A40432107CA530015952B /* GMColor.swift */,
+				311A40452107CA6B0015952B /* GMPalette.swift */,
+				311A40472107CA7B0015952B /* ColorPicker.swift */,
+			);
+			path = "Color Picker";
+			sourceTree = "<group>";
+		};
 		3144B6562106183400ED27BF /* Root Controller */ = {
 			isa = PBXGroup;
 			children = (
@@ -106,6 +124,7 @@
 				3144B659210618F900ED27BF /* WalletCardsController.swift */,
 				31E4E06121076ACC00ACE8FD /* WalletItemController.swift */,
 				31E4E06321076B0900ACE8FD /* WalletDetailsController.swift */,
+				311A4040210795E00015952B /* NewWalletController.swift */,
 			);
 			path = "Root Controller";
 			sourceTree = "<group>";
@@ -144,6 +163,7 @@
 			children = (
 				3185BBF321071936004CDBEF /* Assets.xcassets */,
 				31A9FE9F20DBD50900779F60 /* MileWallet.entitlements */,
+				311A40422107CA1E0015952B /* Color Picker */,
 				3144B6562106183400ED27BF /* Root Controller */,
 				318B694820EBCB4200DCDDB1 /* Views */,
 				31BAD73220EBB01800032E0E /* Controllers */,
@@ -414,15 +434,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				3182CDCB20D2AF0D000C3C68 /* PaymentController.swift in Sources */,
+				311A40482107CA7B0015952B /* ColorPicker.swift in Sources */,
+				311A40462107CA6B0015952B /* GMPalette.swift in Sources */,
 				31144EB020CA8AA400A8E6B4 /* NewWalletViewController.swift in Sources */,
 				31B18BE420E4E743005CA426 /* AuthenticationID.swift in Sources */,
 				318B694720EBCB1A00DCDDB1 /* TextField.swift in Sources */,
 				3182CDC520D1C481000C3C68 /* PDF.swift in Sources */,
 				3164FD8520C950ED00294A9F /* DetailViewController.swift in Sources */,
 				31BB792320EA703300AC301A /* Printer.swift in Sources */,
+				311A4041210795E00015952B /* NewWalletController.swift in Sources */,
 				3185BBF621072918004CDBEF /* UIButton(App).swift in Sources */,
 				3164FD8320C950ED00294A9F /* MasterViewController.swift in Sources */,
 				3144B65A210618F900ED27BF /* WalletCardsController.swift in Sources */,
+				311A40442107CA530015952B /* GMColor.swift in Sources */,
 				31BB792520EA787400AC301A /* Store.swift in Sources */,
 				3182CDC320D1C462000C3C68 /* HTMLTemplate.swift in Sources */,
 				31E6BF4020D91A6D00C40A80 /* Controller.swift in Sources */,

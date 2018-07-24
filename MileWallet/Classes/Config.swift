@@ -16,9 +16,39 @@ extension Config {
     public static var isWalletKeychainSynchronizable = true
     
     public struct Colors {
-        public static let background = UIColor.clear
+        public static let defaultColor = UIColor(hex: 0x6679FD)
+        public static let background = UIColor(patternImage:
+            UIImage.gradient(colors: [UIColor(hex: 0xEBF1FE),
+                                      UIColor.white],
+                             with: UIScreen.main.bounds)!)
         public static let buttonBackground = UIColor.white
-    }    
+        public static let navigationBarTitle =  UIColor(hex: 0x283444)
+        public static let navigationBarLargeTitle =  UIColor.white
+        public static let name = UIColor.white
+        public static let title = name
+        public static let button = UIColor(hex: 0xBCC3C3)
+        public static let line = UIColor(hex: 0xFFFFFF, alpha: 0.4)
+        public static let separator = UIColor(hex: 0x000000, alpha: 0.1)
+        public static let placeHolder =  UIColor(hex: 0x283444)
+        public static let edit =  UIColor(hex: 0x283444)
+        public static let caption =  UIColor(hex: 0x283444)
+        public static let infoLine = UIColor(hex: 0x283444, alpha: 0.1)
+    }
+    
+    public struct Images {
+        public static let basePattern = UIImage(named: "background-wallet-info")!
+    }
+    
+    public struct Fonts {
+        public static let name = UIFont(name: "SFProText-Regular", size: 15)!
+        public static let button = name
+        public static let amount = UIFont(name: "SFProDisplay-Bold", size: 30)!
+        public static let title =  UIFont(name: "SFProText-Semibold", size: 17)!
+        public static let navigationBarTitle =  UIFont(name: "SFProText-Regular", size: 21)!
+        public static let edit =  UIFont(name: "SFProText-Regular", size: 21)!
+        public static let caption =  UIFont(name: "SFProText-Regular", size: 21)!
+        public static let navigationBarLargeTitle =  UIFont(name: "SFProDisplay-Bold", size: 34)!
+    }
     
     static func appIdentifierPrefix() -> String? {
         let queryLoad: [String: AnyObject] = [

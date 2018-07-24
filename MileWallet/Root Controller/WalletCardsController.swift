@@ -67,7 +67,7 @@ class WalletCardsController: UIViewController {
 
     private let verticalLine:UIView = {
         let v = UIView()
-        v.backgroundColor = UIColor(hex: 0x283444, alpha: 0.1)
+        v.backgroundColor = Config.Colors.infoLine
         return v
     }()
     
@@ -94,12 +94,13 @@ class WalletCardsController: UIViewController {
     }
 
     @objc private func pushDetails(gesture:UITapGestureRecognizer) {
-        print("Tap details, \(gesture.state.rawValue)")
-        navigationController?.pushViewController(_walletDetailsController, animated: true)
+        if viewControllers.count > 0 {
+            navigationController?.pushViewController(_walletDetailsController, animated: true)
+        }
     }
     
     @objc private func newWallet(sender:UIButton) {
-        print("New wallet...")
+        present(_newWalletController, animated: true)
     }
     
     @objc private func openContact(sender:UIButton) {
@@ -109,7 +110,9 @@ class WalletCardsController: UIViewController {
     private lazy var pageViewController: UIPageViewController = {
         let p = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         
-        p.setViewControllers([viewControllerAtIndex(0)!], direction: .forward, animated: true, completion: nil)
+        if viewControllers.count > 0 {
+            p.setViewControllers([viewControllerAtIndex(0)!], direction: .forward, animated: true, completion: nil)
+        }
 
         p.dataSource = self
         p.delegate = self
@@ -132,6 +135,7 @@ class WalletCardsController: UIViewController {
     fileprivate var _pendingIndex: Int?
     
     fileprivate var _walletDetailsController = WalletDetailsController()
+    fileprivate var _newWalletController = NewWalletController()
 }
 
 

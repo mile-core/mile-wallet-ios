@@ -19,9 +19,6 @@ extension WalletItemDelegate {
     func walletItem(_ item: WalletItemController, didPresent wallet:Wallet?){}
 }
 
-private class WalletContent: UIView {
-}
-
 class WalletController: Controller {
     
     public var chainInfo:Chain?
@@ -167,34 +164,49 @@ class WalletItemController: WalletController {
         }
     }
     
+    private var firstTime = true
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         shadowSetup()
         
-        startActivities()
-
+        if firstTime {
+            startActivities()
+            
+            self.mileInfoUpdate(error: { (error) in
+                
+                self.stopActivities()
+                
+                UIAlertController(title: NSLocalizedString("MILE blockchain error", comment: ""),
+                                  message:  error?.description,
+                                  preferredStyle: .alert)
+                    .addAction(title: "Close", style: .cancel)
+                    .present(by: self)
+                
+            }){ (chain) in
+                self.chainInfo = chain
+                self.update(timer: nil)
+                
+                DispatchQueue.main.async {
+                    self.timerSetup()
+                }
+                
+                self.firstTime = false
+            }
+        }
+        else {
+            self.timerSetup()
+        }
+    }
+    
+    private func  timerSetup(){
         reloadTimer?.invalidate()
         reloadTimer = Timer.scheduledTimer(timeInterval: 5,
                                            target: self,
                                            selector: #selector(self.update(timer:)),
                                            userInfo: nil,
                                            repeats: true)
-        
-        self.mileInfoUpdate(error: { (error) in
-            
-            self.stopActivities()
-            
-            UIAlertController(title: NSLocalizedString("MILE blockchain error", comment: ""),
-                              message:  error?.description,
-                              preferredStyle: .alert)
-                .addAction(title: "Close", style: .cancel)
-                .present(by: self)
-            
-        }){ (chain) in
-            self.chainInfo = chain
-            self.update(timer: nil)
-        }
     }
+    
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -253,12 +265,12 @@ class WalletItemController: WalletController {
     
     private let line:UIView = {
         let v = UIView()
-        v.backgroundColor = UIColor(hex: 0xFFFFFF, alpha: 0.4)
+        v.backgroundColor = Config.Colors.line
         return v
     }()
 
     private let infoContainer:UIImageView = {
-        let v = UIImageView(image: UIImage(named: "background-wallet-info"))
+        let v = UIImageView(image: Config.Images.basePattern)
         v.contentMode = .scaleAspectFill
         return v
     }()
@@ -273,8 +285,8 @@ class WalletItemController: WalletController {
     private var xdrAmountLabel: UILabel = {
         let l = UILabel()
         l.textAlignment = .left
-        l.textColor = UIColor.white
-        l.font = UIFont(name: "SFProDisplay-Bold", size: 30)
+        l.textColor = Config.Colors.name
+        l.font = Config.Fonts.amount
         l.minimumScaleFactor = 0.5
         l.adjustsFontSizeToFitWidth = true
         return l
@@ -283,8 +295,8 @@ class WalletItemController: WalletController {
     private var mileAmountLabel: UILabel = {
         let l = UILabel()
         l.textAlignment = .left
-        l.textColor = UIColor.white
-        l.font = UIFont(name: "SFProDisplay-Bold", size: 30)
+        l.textColor = Config.Colors.name
+        l.font = Config.Fonts.amount
         l.minimumScaleFactor = 0.5
         l.adjustsFontSizeToFitWidth = true
         return l
@@ -293,18 +305,18 @@ class WalletItemController: WalletController {
     private var xdrLabel: UILabel = {
         let l = UILabel()
         l.textAlignment = .left
-        l.textColor = UIColor.white
+        l.textColor = Config.Colors.name
         l.text = "XDR"
-        l.font = UIFont(name: "SFProText-Regular", size: 15)
+        l.font = Config.Fonts.name
         return l
     }()
     
     private var mileLabel: UILabel = {
         let l = UILabel()
         l.textAlignment = .left
-        l.textColor = UIColor.white
+        l.textColor = Config.Colors.name
         l.text = "MILE"
-        l.font = UIFont(name: "SFProText-Regular", size: 15)
+        l.font = Config.Fonts.name
         return l
     }()
     

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import MileWalletKit
 
 extension UITextField {    
     
@@ -16,9 +17,11 @@ extension UITextField {
         text.contentMode = .center
         text.textAlignment = .left
         text.keyboardType = .decimalPad
-        text.layer.borderWidth = 0.5
+        text.layer.borderWidth = 0
         text.clearsOnInsertion = true
         text.clearButtonMode = .always
+        text.font = Config.Fonts.edit
+        text.textColor = Config.Colors.edit
         return text
     } 
     
@@ -27,18 +30,24 @@ extension UITextField {
         text.isUserInteractionEnabled = true
         text.contentMode = .center
         text.textAlignment = .left
-        text.layer.borderWidth = 0.5
+        text.layer.borderWidth = 0
         text.clearButtonMode = .always
+        text.font = Config.Fonts.edit
+        text.textColor = Config.Colors.edit
         return text
     }     
 
-    public static func nameField() -> UITextField {
+    public static func nameField(placeholder:String = "") -> UITextField {
         let text = UITextField()
         text.isUserInteractionEnabled = true
         text.contentMode = .center
         text.textAlignment = .left
-        text.layer.borderWidth = 0.5
+        text.layer.borderWidth = 0
         text.clearButtonMode = .always
+        text.placeholder = placeholder
+        text.borderStyle = .none
+        text.font = Config.Fonts.edit
+        text.textColor = Config.Colors.edit
         return text
     }         
 }

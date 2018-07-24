@@ -16,15 +16,30 @@ class Controller: UIViewController {
     
     public lazy var qrCodeReader:QRReader = {return QRReader(controller: self)}() 
     
+    public let contentView = UIView()
+    
     private let activiti = UIActivityIndicatorView(activityIndicatorStyle: .gray)
     private lazy var dimView = UIView(frame: self.view.bounds)        
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = Config.Colors.background
+        view.backgroundColor = UIColor.clear
+        contentView.backgroundColor = Config.Colors.background
+        view.addSubview(contentView)
+        contentView.snp.makeConstraints { (m) in
+            if navigationController != nil {
+                m.top.equalTo(view.snp.topMargin)
+            }
+            else {
+                m.top.equalToSuperview()
+            }
+            m.left.equalToSuperview()
+            m.right.equalToSuperview()
+            m.bottom.equalToSuperview()
+        }
     }
-    
-    func loaderStart()  {        
+
+    func loaderStart()  {
         DispatchQueue.main.async {
             self.dimView.backgroundColor = UIColor.white.withAlphaComponent(0.8)
             self.dimView.alpha = 0
@@ -60,5 +75,26 @@ class Controller: UIViewController {
 }
 
 public class NavigationController: UINavigationController {
+    
+    public var titleColor:UIColor = Config.Colors.defaultColor {
+        didSet{
+            bg.backgroundColor = titleColor
+        }
+    }
+    
+    private let bg = UIImageView(image: Config.Images.basePattern)
+
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        self.navigationBar.prefersLargeTitles = true
+        view.insertSubview(bg, at: 0)
+        bg.backgroundColor = titleColor
+        bg.snp.makeConstraints { (m) in
+            m.top.equalToSuperview()
+            m.left.equalToSuperview()
+            m.right.equalToSuperview()
+            m.bottom.equalTo(navigationBar.snp.bottom)
+        }
+    }
 }
 

@@ -8,20 +8,17 @@
 
 import UIKit
 import SnapKit
-
-class WalletDetailsView: UIView {
-    
-}
+import MileWalletKit
 
 class WalletDetailsController: UIViewController {
     
-    let detailsView:WalletDetailsView = WalletDetailsView()
+    let detailsView:UIView = UIView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.addSubview(detailsView)
-        detailsView.backgroundColor = UIColor(hex: 0x6679FD)
+        detailsView.backgroundColor = Config.Colors.background
         detailsView.snp.makeConstraints { (m) in
             m.edges.equalToSuperview()
         }

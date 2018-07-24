@@ -34,16 +34,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         UINavigationBar.appearance()
-            .titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor(hex: 0x283444, alpha:1) ,
-                                    NSAttributedStringKey.font: UIFont(name: "SFProText-Regular", size: 21)!]
+            .titleTextAttributes = [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarTitle,
+                                    NSAttributedStringKey.font: Config.Fonts.navigationBarTitle]
+
+        UINavigationBar.appearance().largeTitleTextAttributes =
+            [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarLargeTitle,
+             NSAttributedStringKey.font: Config.Fonts.navigationBarLargeTitle]
         
+        UIBarButtonItem.appearance()
+            .setTitleTextAttributes([NSAttributedStringKey.foregroundColor: Config.Colors.title,
+                                     NSAttributedStringKey.font: Config.Fonts.title], for: .normal)
         
+        UINavigationBar.appearance().barStyle = .default
+        UINavigationBar.appearance().isTranslucent = true
+        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
+        UINavigationBar.appearance().shadowImage = UIImage()
         
-        UILabel.appearance().font = UIFont(name: "SFProText-Regular", size: 15)
-        UILabel.appearance().textColor = UIColor(hex: 0xBCC3C3)
-        
-        UIButton.appearance().substituteFont = UIFont(name: "SFProText-Regular", size: 15)
-        UIButton.appearance().setTitleColor(UIColor(hex: 0xBCC3C3), for: .normal)
+        UIButton.appearance().setTitleColor(Config.Colors.button, for: .normal)
+        UIButton.appearance().substituteFont = Config.Fonts.button
         
         UIButton.appearance().adjustsImageWhenHighlighted = true
         UIButton.appearance().showsTouchWhenHighlighted = true
@@ -56,21 +64,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         window = UIWindow(frame: UIScreen.main.bounds)
         
-        window?.backgroundColor =
-            UIColor(patternImage:
-                UIImage.gradient(colors: [UIColor(hex: 0xEBF1FE),
-                                          UIColor.white],
-                                 with: UIScreen.main.bounds)!)
+        window?.backgroundColor = Config.Colors.background
         
         viewController = WalletCardsController()
         
         navigationController = RootController(rootViewController: viewController!)
         
-        navigationController?.navigationBar.barStyle = .default
-        navigationController?.navigationBar.isTranslucent = true
-        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationController?.navigationBar.shadowImage = UIImage()
-                
         window?.rootViewController = navigationController;
         window?.makeKeyAndVisible()
         
