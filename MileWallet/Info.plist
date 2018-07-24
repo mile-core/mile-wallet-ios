@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>ATSApplicationFontsPath</key>
+	<string>/</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -34,7 +36,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>195</string>
+	<string>554</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -44,6 +46,12 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>QRCode Scaner</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>SF-Pro-Display-Bold.otf</string>
+		<string>SF-Pro-Text-Regular.otf</string>
+		<string>SF-Pro-Text-Semibold.otf</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -55,15 +63,17 @@
 	<key>UIRequiresFullScreen</key>
 	<false/>
 	<key>UIStatusBarHidden</key>
-	<true/>
+	<false/>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleBlackOpaque</string>
 	<key>UIStatusBarTintParameters</key>
 	<dict>
 		<key>UINavigationBar</key>
 		<dict>
 			<key>Style</key>
-			<string>UIBarStyleDefault</string>
+			<string>UIBarStyleBlack</string>
 			<key>Translucent</key>
-			<false/>
+			<true/>
 		</dict>
 	</dict>
 	<key>UISupportedInterfaceOrientations</key>

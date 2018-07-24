@@ -16,7 +16,7 @@ extension Config {
     public static var isWalletKeychainSynchronizable = true
     
     public struct Colors {
-        public static let background = UIColor.white
+        public static let background = UIColor.clear
         public static let buttonBackground = UIColor.white
     }    
     

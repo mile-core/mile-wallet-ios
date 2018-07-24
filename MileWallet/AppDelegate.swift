@@ -15,8 +15,71 @@ class CameraQR {
     private init (){}
 }
 
+
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
+    
+    
+    var window: UIWindow?
+    var navigationController:RootController?
+    var viewController:WalletCardsController?
+    
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+
+        for n in UIFont.familyNames {
+            for f in UIFont.fontNames(forFamilyName: n) {
+                print("font: \(n) : \(f)")
+            }
+        }
+        
+        UINavigationBar.appearance()
+            .titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor(hex: 0x283444, alpha:1) ,
+                                    NSAttributedStringKey.font: UIFont(name: "SFProText-Regular", size: 21)!]
+        
+        
+        
+        UILabel.appearance().font = UIFont(name: "SFProText-Regular", size: 15)
+        UILabel.appearance().textColor = UIColor(hex: 0xBCC3C3)
+        
+        UIButton.appearance().substituteFont = UIFont(name: "SFProText-Regular", size: 15)
+        UIButton.appearance().setTitleColor(UIColor(hex: 0xBCC3C3), for: .normal)
+        
+        UIButton.appearance().adjustsImageWhenHighlighted = true
+        UIButton.appearance().showsTouchWhenHighlighted = true
+        
+        UIPageControl.appearance().pageIndicatorTintColor = UIColor.lightGray
+        UIPageControl.appearance().currentPageIndicatorTintColor = UIColor.black
+        UIPageControl.appearance().hidesForSinglePage = true
+
+        UIApplication.shared.statusBarStyle = .default
+
+        window = UIWindow(frame: UIScreen.main.bounds)
+        
+        window?.backgroundColor =
+            UIColor(patternImage:
+                UIImage.gradient(colors: [UIColor(hex: 0xEBF1FE),
+                                          UIColor.white],
+                                 with: UIScreen.main.bounds)!)
+        
+        viewController = WalletCardsController()
+        
+        navigationController = RootController(rootViewController: viewController!)
+        
+        navigationController?.navigationBar.barStyle = .default
+        navigationController?.navigationBar.isTranslucent = true
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationController?.navigationBar.shadowImage = UIImage()
+                
+        window?.rootViewController = navigationController;
+        window?.makeKeyAndVisible()
+        
+        return true
+    }
+}
+
+//@UIApplicationMain
+class AppDelegate__: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate {
 
     var window: UIWindow?
 
