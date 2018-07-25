@@ -33,6 +33,16 @@ extension Config {
         public static let edit =  UIColor(hex: 0x283444)
         public static let caption =  UIColor(hex: 0x283444)
         public static let infoLine = UIColor(hex: 0x283444, alpha: 0.1)
+        
+        public static let palette = [
+            Config.Colors.defaultColor,
+            UIColor(hex: 0x9466FD),
+            UIColor(hex: 0x66C3FD),
+            UIColor(hex: 0x52CAE0),
+            UIColor(hex: 0xADD4EE),
+            UIColor(hex: 0xff8a80),
+            UIColor(hex: 0x3949ab),
+            ]
     }
     
     public struct Images {

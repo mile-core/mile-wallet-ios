@@ -89,10 +89,12 @@ extension ColorPickerDelegate {
     func colorPicker(_ colorPickerView: ColorPicker, didSelectCell cell: ColorPickerCell){
         cell.layer.borderWidth = colorPickerView.selectedBorderWidth
         cell.layer.borderColor = colorPickerView.selectionColor.cgColor
+        cell.layer.contents = nil
     }
     func colorPicker(_ colorPickerView: ColorPicker, didDeselectCell cell: ColorPickerCell){
         cell.layer.borderWidth = 0
         cell.layer.borderColor = UIColor.clear.cgColor
+        cell.layer.contents = nil
     }
 }
 
@@ -145,6 +147,9 @@ open class ColorPicker: UIView, UICollectionViewDataSource, UICollectionViewDele
     //Select index programtically
     open func selectCellAtIndex(_ index: Int){
         let indexPath = IndexPath(row: index, section: 0)
+        
+        lastIndexPath = selectedIndex ?? indexPath
+
         selectedIndex = indexPath
         collectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
         self.delegate?.colorPicker(self, didSelectIndex: (self.selectedIndex! as NSIndexPath).item,
@@ -191,11 +196,9 @@ open class ColorPicker: UIView, UICollectionViewDataSource, UICollectionViewDele
         return CGSize(width: self.bounds.height, height: self.bounds.height - 1)
     }
     
-    
     open func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return cellSpacing
     }
-    
     
     
     /**
@@ -205,6 +208,8 @@ open class ColorPicker: UIView, UICollectionViewDataSource, UICollectionViewDele
         
         let duration = 0.1
         
+        lastIndexPath = lastIndexPath ?? selectedIndex 
+
         if let l = lastIndexPath {
             self.collectionView.reloadItems(at: [l])
         }

@@ -24,7 +24,6 @@ class NewWalletControllerImp: Controller {
         
         title = NSLocalizedString("New wallet", comment: "")
         
-        
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.closePayments(sender:)))
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(addWalletHandler(_:)))
@@ -62,17 +61,25 @@ class NewWalletControllerImp: Controller {
             m.height.equalTo(80)
         }
         
-        pickerView.selectionColor = UIColor.black.withAlphaComponent(0.3)
-        pickerView.selectedBorderWidth = 1.5
         pickerView.cellSpacing = 20
 
+        if let index = Config.Colors.palette.index(where: { (c) -> Bool in
+            if c === Config.Colors.defaultColor {
+                return true
+            }
+            return false
+        }) {
+            print("index = Config.Colors.palette.index == \(index)")
+            pickerView.selectCellAtIndex(index)
+        }
+
     }
-    
-    @objc func closePayments(sender:Any){
+        
+    @objc private func closePayments(sender:Any){
         dismiss(animated: true)
     }
     
-    @objc func addWalletHandler(_ sender: UIButton) {
+    @objc private func addWalletHandler(_ sender: UIButton) {
         //addWallet()
     }
     
@@ -98,27 +105,17 @@ class NewWalletControllerImp: Controller {
         return l
     }()
     
-    let name: UITextField = {
+    private let name: UITextField = {
         let t = UITextField.nameField(placeholder: NSLocalizedString("Wallet name", comment: ""))
         return t
     }()
    
+    private var currentColor = Config.Colors.defaultColor
 }
 
 extension NewWalletControllerImp: ColorPickerDataSource {
-    
-    private static let _colors:[UIColor] = [
-        UIColor(hex: 0x9466FD),
-        UIColor(hex: 0x6679FD),
-        UIColor(hex: 0x66C3FD),
-        UIColor(hex: 0x52CAE0),
-        UIColor(hex: 0xADD4EE),
-        UIColor(hex: 0xff8a80),
-        UIColor(hex: 0x3949ab),
-    ]
-    
     func colorPickerColors() -> [UIColor] {
-        return NewWalletControllerImp._colors
+        return Config.Colors.palette
     }
 }
 
