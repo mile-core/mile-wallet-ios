@@ -23,6 +23,7 @@ class WalletController: Controller {
     
     public var chainInfo:Chain?
     public var wallet:Wallet?
+    public var walletAttributes:WalletAttributes?
 
     public func mileInfoUpdate(error: ((_ error: Error?)-> Void)?=nil,
                         complete:@escaping ((_ chain:Chain)->Void))  {
@@ -54,14 +55,19 @@ class WalletItemController: WalletController {
     public var walletIndex = 0 {
         didSet{
             
-            let items = Store.shared.items
-            let item = items[walletIndex]
-            if let value =  item["value"] as? String{
-                wallet = Wallet(JSONString: value)
-                qrCode.image = wallet?.publicKeyQr
-            }
+            let wallets = WalletStore.shared.acitveWallets
+            
+            let container = wallets[walletIndex]
+            
+            wallet = container.wallet
+            walletAttributes = container.attributes
+            
+            qrCode.image = wallet?.publicKeyQr
             
             infoContainer.backgroundColor = UIColor(hex: 0x6679FD<<walletIndex*16)
+            if let color = walletAttributes?.color {
+                infoContainer.backgroundColor = UIColor(hex: color)
+            }
             content.backgroundColor = UIColor.white
             shadow.backgroundColor = content.backgroundColor                      
         }
@@ -241,9 +247,7 @@ class WalletItemController: WalletController {
             self.mileAmountLabel.text = "0.00000"
             
             self.stopActivities()
-            
-            print("balances = \(balance)")
-            
+                        
             for k in balance.balance.keys {
                 if chain.assets[k] == "XDR" {
                     self.xdrAmountLabel.text = String(format: "%.2f", (Float(balance.balance[k] ?? "0") ?? 0.0))

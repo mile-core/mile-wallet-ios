@@ -14,7 +14,7 @@ import ObjectMapper
 import MileWalletKit
 import SnapKit
 
-class NewWalletViewController: NavigationController {    
+class NewWalletViewController: NavigationController {
     let contentController = NewWalletViewControllerImp()     
     override func viewDidLoad() {
         super.viewDidLoad()        
@@ -142,7 +142,7 @@ class NewWalletViewControllerImp: Controller {
 
                     return
                 }
-                try Store.shared.keychain.set(json, key: name)
+                try WalletStore.shared.keychain.set(json, key: name)
             }
             catch let error {
 

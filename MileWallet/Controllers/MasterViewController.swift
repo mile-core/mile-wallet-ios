@@ -242,7 +242,7 @@ class MasterViewController: UITableViewController, AuthenticationID {
                         alert.message = NSLocalizedString("Wallet could not be created from the secret phrase", comment: "")                                                                
                         return
                     }
-                    try Store.shared.keychain.set(json, key: name)
+                    try WalletStore.shared.keychain.set(json, key: name)
                 }
                 catch let error {
                     alert.message = error.localizedDescription
@@ -289,7 +289,7 @@ class MasterViewController: UITableViewController, AuthenticationID {
         if segue.identifier == "showDetail" {
             if let indexPath = tableView.indexPathForSelectedRow {
                 
-                let items = Store.shared.items
+                let items = WalletStore.shared.items
                 let item = items[indexPath.row]
                 let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
                 
@@ -311,17 +311,17 @@ extension MasterViewController {
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return Store.shared.items.count > 0 ? 1 : 0 
+        return WalletStore.shared.items.count > 0 ? 1 : 0 
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return Store.shared.items.count
+        return WalletStore.shared.items.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         
-        let items = Store.shared.items
+        let items = WalletStore.shared.items
         let item = items[indexPath.row]
         
         let titleLabel = tableView.viewWithTag(999) as! UILabel
@@ -396,7 +396,7 @@ extension MasterViewController {
         
         if editingStyle == .delete {
             
-            let keychain = Store.shared.keychain
+            let keychain = WalletStore.shared.keychain
             let items = keychain.allItems()
             guard let key = items[indexPath.row]["key"] as? String else { return }
             

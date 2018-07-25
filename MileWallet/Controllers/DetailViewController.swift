@@ -194,7 +194,7 @@ class DetailViewController: Controller {
             
             DispatchQueue.global().async {
                 do {
-                    _ = try Store.shared.keychain
+                    _ = try WalletStore.shared.keychain
                         .authenticationPrompt("Authenticate Private Key")
                         .get(name)                    
                 } catch let error {

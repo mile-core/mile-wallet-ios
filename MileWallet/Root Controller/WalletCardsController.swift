@@ -25,6 +25,18 @@ class WalletCardsController: UIViewController {
         view.addSubview(contactsButton)
         view.addSubview(verticalLine)
         
+        /*
+         * !!! 
+         *
+        for w in WalletStore.shared.wallets {
+            print("... p[\(w.wallet?.name)] = \(w.wallet?.publicKey) \(w.wallet?.privateKey)")
+            if let key = w.wallet?.name, key == "local" {
+                continue
+            }
+            try? WalletStore.shared.keychain.remove(w.wallet!.name!)
+            try? WalletStore.shared.keychain.removeWalletAttr(w.wallet!.name!)
+        }*/
+        
         verticalLine.snp.makeConstraints { (m) in
             m.centerX.equalToSuperview()
             m.height.equalTo(84)
@@ -89,6 +101,46 @@ class WalletCardsController: UIViewController {
         return b
     }()
 
+    
+    fileprivate var lastIndex = 0
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        lastIndex = _currentIndex ?? 0
+    }
+    
+    ///
+    /// Apple does not motivate to use UIPageViewController with dinamic content.
+    /// so, TODO: rewrite the part of the code with custom controller.
+    ///
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        var newIndex = lastIndex
+        
+        if viewControllers.count != WalletStore.shared.acitveWallets.count {
+            if viewControllers.count < WalletStore.shared.acitveWallets.count {
+                newIndex = viewControllers.count
+            }
+            reloadData()
+        }
+        
+        if viewControllers.count > 0 {
+            pageViewController.setViewControllers(
+                [viewControllerAtIndex(0)!],
+                direction: .forward,
+                animated: false,
+                completion: { flag in
+
+                    guard let vc = self.viewControllerAtIndex(newIndex) else { return }
+                    
+                    self._currentIndex=newIndex
+                    
+                    self.pageViewController.setViewControllers([vc],
+                                                               direction: .forward,
+                                                               animated: false, completion: nil)
+            })
+        }
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -121,15 +173,23 @@ class WalletCardsController: UIViewController {
     }()
     
     fileprivate lazy var viewControllers:[UIViewController] = {
-       var u = [UIViewController]()
-        for i in 0..<Store.shared.items.count {
+        return makeControllers()
+    }()
+    
+    fileprivate func reloadData() {
+        viewControllers = makeControllers()
+    }
+    
+    fileprivate func makeControllers() -> [WalletItemController] {
+        var u = [WalletItemController]()
+        for i in 0..<WalletStore.shared.acitveWallets.count {
             let v = WalletItemController()
             v.delegate = self
             v.walletIndex = i
             u.append(v)
         }
         return u
-    }()
+    }
     
     fileprivate var _currentIndex: Int?
     fileprivate var _pendingIndex: Int?
@@ -181,12 +241,12 @@ extension WalletCardsController: UIPageViewControllerDataSource {
     }
     
     func presentationCount(for pageViewController: UIPageViewController) -> Int {
-        let count = Store.shared.items.count
-        return  count > 5 ? 5 : count
+        let count = viewControllers.count
+        return  count > Config.pageControlsNumbers ? Config.pageControlsNumbers : count
     }
 
     func presentationIndex(for pageViewController: UIPageViewController) -> Int {
-        return 0
+        return (_currentIndex ?? 0) % Config.pageControlsNumbers
     }
 }
 
@@ -199,8 +259,6 @@ extension WalletCardsController: UIPageViewControllerDelegate {
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         if completed {
             _currentIndex = _pendingIndex
-//            if let index = currentIndex {
-//            }
         }
     }
 }

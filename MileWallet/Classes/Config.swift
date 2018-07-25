@@ -15,6 +15,8 @@ extension Config {
     public static let walletService = "GHD7Y8FG8V.global.mile.wallet"  //GHD7Y8FG8V
     public static var isWalletKeychainSynchronizable = true
     
+    public static let pageControlsNumbers = 5
+    
     public struct Colors {
         public static let defaultColor = UIColor(hex: 0x6679FD)
         public static let background = UIColor(patternImage:

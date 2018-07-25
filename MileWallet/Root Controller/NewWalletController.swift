@@ -8,6 +8,7 @@
 
 import UIKit
 import MileWalletKit
+import ObjectMapper
 
 class NewWalletController: NavigationController {
     let contentController = NewWalletControllerImp()
@@ -32,7 +33,7 @@ class NewWalletControllerImp: Controller {
         contentView.addSubview(line)
         contentView.addSubview(colorLabel)
         contentView.addSubview(pickerView)
-
+        
         name.snp.makeConstraints { (make) in
             make.top.equalTo(contentView.snp.topMargin).offset(10)
             make.left.equalToSuperview().offset(20)
@@ -62,25 +63,24 @@ class NewWalletControllerImp: Controller {
         }
         
         pickerView.cellSpacing = 20
-
+        
         if let index = Config.Colors.palette.index(where: { (c) -> Bool in
             if c === Config.Colors.defaultColor {
                 return true
             }
             return false
         }) {
-            print("index = Config.Colors.palette.index == \(index)")
             pickerView.selectCellAtIndex(index)
         }
-
-    }
         
+    }
+    
     @objc private func closePayments(sender:Any){
         dismiss(animated: true)
     }
     
     @objc private func addWalletHandler(_ sender: UIButton) {
-        //addWallet()
+        addWallet()
     }
     
     private lazy var pickerView: ColorPicker = {
@@ -91,7 +91,7 @@ class NewWalletControllerImp: Controller {
     }()
     
     private let line:UIView = {
-       let l = UIView()
+        let l = UIView()
         l.backgroundColor = Config.Colors.separator
         return l
     }()
@@ -109,8 +109,83 @@ class NewWalletControllerImp: Controller {
         let t = UITextField.nameField(placeholder: NSLocalizedString("Wallet name", comment: ""))
         return t
     }()
-   
+    
     private var currentColor = Config.Colors.defaultColor
+}
+
+extension NewWalletControllerImp {
+    func addWallet()  {
+        
+        guard let name = name.text else { return }
+        
+        guard !name.isEmpty else { return }
+        
+        let checkWallet = WalletStore.shared.wallet(by: name)
+        
+        if checkWallet != nil {
+            UIAlertController(title: NSLocalizedString("Wallet Error", comment: ""),
+                              message:  NSLocalizedString("Wallet with the same name already exists", comment: ""),
+                              preferredStyle: .alert)
+                .addAction(title: "Close", style: .cancel)
+                .present(by: self)
+            return
+        }
+        
+        loaderStart()
+        
+        func close() {
+            self.loaderStop()
+            self.dismiss(animated: true, completion: nil)
+        }
+        
+        Wallet.create(name: name, secretPhrase: nil, error: { error in
+            
+            UIAlertController(title: NSLocalizedString("Wallet Error", comment: ""),
+                              message:  error?.description,
+                              preferredStyle: .alert)
+                .addAction(title: "Close", style: .cancel)
+                .present(by: self)
+            
+        }) { (wallet) in
+            
+            do {
+                guard let json = Mapper<Wallet>().toJSONString(wallet) else {
+                    UIAlertController(title: nil,
+                                      message:  NSLocalizedString("Wallet could not be created from the secret phrase", comment: ""),
+                                      preferredStyle: .alert)
+                        .addAction(title: "Close", style: .cancel)
+                        .present(by: self)
+                    close()
+                    return
+                }
+                
+                try WalletStore.shared.keychain.set(json, key: name)
+                
+                let walletAttr = WalletAttributes(color: self.currentColor.hex,
+                                                  isActive:true)
+                
+                guard let attr = Mapper<WalletAttributes>().toJSONString(walletAttr) else {
+                    self.loaderStop()
+                    self.dismiss(animated: true, completion: nil)
+                    close()
+                    return
+                }
+                
+                try WalletStore.shared.keychain.setWalletAttr(attr, key: name)
+            }
+            catch let error {
+                
+                UIAlertController(title: nil,
+                                  message:  error.description,
+                                  preferredStyle: .alert)
+                    .addAction(title: "Close", style: .cancel)
+                    .present(by: self)
+                close()
+            }
+            
+           close()
+        }
+    }
 }
 
 extension NewWalletControllerImp: ColorPickerDataSource {
@@ -137,6 +212,7 @@ extension NewWalletControllerImp: ColorPickerDelegate {
     
     func colorPicker(_ colorPickerView: ColorPicker, didSelectIndex at: Int, color: UIColor) {
         (navigationController as? NavigationController)?.titleColor = color
+        currentColor = color
     }
     
     func sizeForCellAtIndex(_ colorPickerView: ColorPicker, index at: Int) -> CGSize {
