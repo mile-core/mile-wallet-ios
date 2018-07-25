@@ -56,10 +56,10 @@ class NewWalletControllerImp: Controller {
         }
         
         pickerView.snp.makeConstraints { (m) in
-            m.top.equalTo(colorLabel.snp.bottom).offset(10)
+            m.top.equalTo(colorLabel.snp.bottom).offset(0)
             m.left.equalToSuperview().offset(0)
             m.right.equalToSuperview().offset(0)
-            m.height.equalTo(70)
+            m.height.equalTo(80)
         }
         
         pickerView.selectionColor = UIColor.black.withAlphaComponent(0.3)
@@ -117,20 +117,32 @@ extension NewWalletControllerImp: ColorPickerDataSource {
         UIColor(hex: 0x3949ab),
     ]
     
-    func colors() -> [UIColor] {
+    func colorPickerColors() -> [UIColor] {
         return NewWalletControllerImp._colors
     }
 }
 
 extension NewWalletControllerImp: ColorPickerDelegate {
     
-    func didSelectColorAtIndex(_ colorPickerView: ColorPicker, index: Int, color: UIColor) {
-        print("Index is ", index)
-        //self.view.backgroundColor = color
+    func colorPicker(_ colorPickerView: ColorPicker, didSelectCell cell: ColorPickerCell) {
+        cell.layer.contents = Config.Images.colorPickerOn.cgImage
+        cell.layer.contentsScale = 4
+        cell.layer.contentsGravity = kCAGravityCenter
+        cell.layer.isGeometryFlipped = true
+        cell.layer.shadowColor = UIColor.black.cgColor
+        cell.layer.shadowOpacity = 0.16
+        cell.layer.shadowOffset = CGSize(width: 0, height: -3)
+        cell.layer.shadowRadius = 3
+        cell.layer.borderWidth = 3
+        cell.layer.borderColor = UIColor.white.cgColor
+        cell.layer.masksToBounds = false
+    }
+    
+    func colorPicker(_ colorPickerView: ColorPicker, didSelectIndex at: Int, color: UIColor) {
         (navigationController as? NavigationController)?.titleColor = color
     }
     
-    func sizeForCellAtIndex(_ colorPickerView: ColorPicker, index: Int) -> CGSize {
+    func sizeForCellAtIndex(_ colorPickerView: ColorPicker, index at: Int) -> CGSize {
         return CGSize(width: 60, height: 60)
     }
 }

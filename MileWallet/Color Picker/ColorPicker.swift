@@ -13,7 +13,7 @@ import UIKit
 // source: https://github.com/gkye/MaterialColorPicker
 //
 
-private class ColorPickerCell: UICollectionViewCell{
+public class ColorPickerCell: UICollectionViewCell{
     
     func setup(){
         self.layer.cornerRadius = self.bounds.width / 2
@@ -31,62 +31,78 @@ private class ColorPickerCell: UICollectionViewCell{
         setup()
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
 
 
 public protocol ColorPickerDataSource {
-    /**
-     Set colors for ColorPicker (optional. Default colors will be used if nil)
-     - returns: should return an array of `UIColor`
-     */
-    func colors()->[UIColor]
+    ///
+    /// Set colors for ColorPicker (optional. Default colors will be used if nil)
+    /// - returns: should return an array of `UIColor`
+    ///
+    func colorPickerColors()->[UIColor]
+}
+
+extension ColorPickerDataSource {
 }
 
 public protocol ColorPickerDelegate{
-    /**
-     Return selected index and color for index
-     - parameter index: index of selected item
-     - parameter color: background color of selected item
-     */
-    func didSelectColorAtIndex(_ colorPickerView: ColorPicker, index: Int, color: UIColor)
+    ///
+    /// Return selected index and color for index
+    ///
+    /// - parameter index: index of selected item
+    /// - parameter color: background color of selected item
+    ///
+    func colorPicker(_ colorPickerView: ColorPicker, didSelectIndex at: Int, color: UIColor)
+
+    /// Customize selected cell
+    ///
+    /// - Parameters:
+    ///   -  parameter colorPickerView: current colorPicker instantse
+    ///   -  parameter cell: cell
+    ///
+    func colorPicker(_ colorPickerView: ColorPicker, didSelectCell cell: ColorPickerCell)
     
-    /**
-     Return a size for the current cell (overrides default size)
-     - parameter MaterialColorPickerView: current MaterialColorPicker instantse
-     - parameter index:                   index of cell
-     - returns: CGSize
-     */
-    func sizeForCellAtIndex(_ colorPickerView: ColorPicker, index: Int)->CGSize
+    /// Customize deselected cell
+    ///
+    /// - Parameters:
+    ///   -  parameter colorPickerView: current colorPicker instantse
+    ///   -  parameter cell: cell
+    ///
+    func colorPicker(_ colorPickerView: ColorPicker, didDeselectCell cell: ColorPickerCell)
+    
+    
+    ///
+    /// Return a size for the current cell (overrides default size)
+    ///
+    /// - parameter colorPickerView: current colorPicker instantse
+    /// - parameter index:                   index of cell
+    /// - returns: CGSize
+    ///
+    func sizeForCellAtIndex(_ colorPickerView: ColorPicker, index at: Int)->CGSize
+}
+
+extension ColorPickerDelegate {
+    func sizeForCellAtIndex(_ colorPickerView: ColorPicker, index at: Int)->CGSize { return CGSize(width: 50, height: 50)}
+    func colorPicker(_ colorPickerView: ColorPicker, didSelectCell cell: ColorPickerCell){
+        cell.layer.borderWidth = colorPickerView.selectedBorderWidth
+        cell.layer.borderColor = colorPickerView.selectionColor.cgColor
+    }
+    func colorPicker(_ colorPickerView: ColorPicker, didDeselectCell cell: ColorPickerCell){
+        cell.layer.borderWidth = 0
+        cell.layer.borderColor = UIColor.clear.cgColor
+    }
 }
 
 open class ColorPicker: UIView, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout{
     
     fileprivate var selectedIndex: IndexPath?
-    lazy var colors: [UIColor] =
-        {
-        let colors = GMPalette.allColors()
-        return colors
-    }()
     
-    public var dataSource: ColorPickerDataSource? {
-        didSet{
-            if let s = dataSource?.colors() {
-                colors = s
-            }
-        }
-    }
-    
+    public var dataSource: ColorPickerDataSource?
+
     open var delegate: ColorPickerDelegate?
-    
-    /// Shuffles colors within ColorPicker
-    open var shuffleColors: Bool = false{
-        didSet{
-            if shuffleColors{ colors.shuffle() }
-        }
-    }
     
     /// Color for border of selected cell
     open var selectionColor: UIColor = UIColor.black
@@ -131,34 +147,35 @@ open class ColorPicker: UIView, UICollectionViewDataSource, UICollectionViewDele
         let indexPath = IndexPath(row: index, section: 0)
         selectedIndex = indexPath
         collectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-        self.delegate?.didSelectColorAtIndex(self, index: (self.selectedIndex! as NSIndexPath).item,
-                                             color: (dataSource?.colors() ?? colors)[index])
+        self.delegate?.colorPicker(self, didSelectIndex: (self.selectedIndex! as NSIndexPath).item,
+                                             color: (dataSource?.colorPickerColors() ?? [])[index])
         animateCell(manualSelection: true)
     }
     
     //MARK: CollectionView DataSouce
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return dataSource?.colors().count ?? colors.count
+        return dataSource?.colorPickerColors().count ?? 0
     }
     
     open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! ColorPickerCell
+       
         cell.layer.masksToBounds = true
         cell.clipsToBounds = true
         
-        cell.backgroundColor =  (dataSource?.colors() ?? colors)[(indexPath as NSIndexPath).item]
+        cell.backgroundColor =  (dataSource?.colorPickerColors() ?? [])[(indexPath as NSIndexPath).item]
+        
         if indexPath == selectedIndex {
-            cell.layer.borderWidth = selectedBorderWidth
-            cell.layer.borderColor = selectionColor.cgColor
+            cell.isSelected = true
+            delegate?.colorPicker(self, didSelectCell: cell)
         }else{
-            cell.layer.borderWidth = 0
-            cell.layer.borderColor = UIColor.clear.cgColor
+            cell.isSelected = false
+            delegate?.colorPicker(self, didDeselectCell: cell)
         }
         return cell
     }
     
     //MARK: CollectionView delegate
-    
     private var lastIndexPath:IndexPath?
     open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         selectedIndex = indexPath
@@ -202,7 +219,7 @@ open class ColorPicker: UIView, UICollectionViewDataSource, UICollectionViewDele
                     UIView.animate(withDuration: duration , animations: {() -> Void in
                         cell.transform = CGAffineTransform.identity
                         if !manualSelection{
-                            self.delegate?.didSelectColorAtIndex(self, index: (self.selectedIndex! as NSIndexPath).item, color: cell.backgroundColor!)
+                            self.delegate?.colorPicker(self, didSelectIndex: (self.selectedIndex! as NSIndexPath).item, color: cell.backgroundColor!)
                         }
                         let set = [self.selectedIndex!]
                         self.collectionView.reloadItems(at: set)

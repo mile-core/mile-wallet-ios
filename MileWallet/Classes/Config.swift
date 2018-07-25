@@ -36,7 +36,8 @@ extension Config {
     }
     
     public struct Images {
-        public static let basePattern = UIImage(named: "background-wallet-info")!
+        public static let basePattern   = UIImage(named: "background-wallet-info")!
+        public static let colorPickerOn = UIImage(named: "checkbox-on")!
     }
     
     public struct Fonts {
