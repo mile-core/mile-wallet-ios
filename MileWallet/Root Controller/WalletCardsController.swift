@@ -19,24 +19,24 @@ class WalletCardsController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationController?.navigationBar.prefersLargeTitles = false
+
         view.backgroundColor = UIColor.clear
         
         view.addSubview(newWalletButton)
         view.addSubview(contactsButton)
         view.addSubview(verticalLine)
         
-        /*
-         * !!! 
-         *
-        for w in WalletStore.shared.wallets {
-            print("... p[\(w.wallet?.name)] = \(w.wallet?.publicKey) \(w.wallet?.privateKey)")
-            if let key = w.wallet?.name, key == "local" {
-                continue
-            }
-            try? WalletStore.shared.keychain.remove(w.wallet!.name!)
-            try? WalletStore.shared.keychain.removeWalletAttr(w.wallet!.name!)
-        }*/
-        
+// !!!
+//        for w in WalletStore.shared.wallets {
+//            print("... p[\(w.wallet?.name)] = \(w.wallet?.publicKey) \(w.wallet?.privateKey)")
+//            if let key = w.wallet?.name, key == "local" {
+//                continue
+//            }
+//            try? WalletStore.shared.keychain.remove(w.wallet!.name!)
+//            try? WalletStore.shared.keychain.removeWalletAttr(w.wallet!.name!)
+//        }
+//
         verticalLine.snp.makeConstraints { (m) in
             m.centerX.equalToSuperview()
             m.height.equalTo(84)

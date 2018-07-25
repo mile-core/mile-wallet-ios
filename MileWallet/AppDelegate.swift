@@ -45,11 +45,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             .setTitleTextAttributes([NSAttributedStringKey.foregroundColor: Config.Colors.title,
                                      NSAttributedStringKey.font: Config.Fonts.title], for: .normal)
         
+        UINavigationBar.appearance().prefersLargeTitles = true
         UINavigationBar.appearance().barStyle = .default
-        UINavigationBar.appearance().isTranslucent = true
+        UINavigationBar.appearance().isTranslucent = false
         UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
         UINavigationBar.appearance().shadowImage = UIImage()
-        
+
         UIButton.appearance().setTitleColor(Config.Colors.button, for: .normal)
         UIButton.appearance().substituteFont = Config.Fonts.button
         

@@ -43,6 +43,7 @@
 		31E4E06421076B0900ACE8FD /* WalletDetailsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E4E06321076B0900ACE8FD /* WalletDetailsController.swift */; };
 		31E6BF4020D91A6D00C40A80 /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E6BF3F20D91A6D00C40A80 /* Controller.swift */; };
 		31F2CFE520D177A000C1770B /* PrintSecretTemplate.html in Resources */ = {isa = PBXBuildFile; fileRef = 31F2CFE420D177A000C1770B /* PrintSecretTemplate.html */; };
+		31F97ED72108E2FA00D0FF39 /* WalletAttentionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31F97ED62108E2FA00D0FF39 /* WalletAttentionController.swift */; };
 		6C7F0151E2AF0722F86A75E3 /* Pods_MileWallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B76307F7CB9436B9776FCFD2 /* Pods_MileWallet.framework */; };
 /* End PBXBuildFile section */
 
@@ -87,6 +88,7 @@
 		31E4E06321076B0900ACE8FD /* WalletDetailsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetailsController.swift; sourceTree = "<group>"; };
 		31E6BF3F20D91A6D00C40A80 /* Controller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
 		31F2CFE420D177A000C1770B /* PrintSecretTemplate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = PrintSecretTemplate.html; sourceTree = "<group>"; };
+		31F97ED62108E2FA00D0FF39 /* WalletAttentionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletAttentionController.swift; sourceTree = "<group>"; };
 		49204292349409323B45A4FE /* Pods-MileWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MileWallet.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MileWallet/Pods-MileWallet.debug.xcconfig"; sourceTree = "<group>"; };
 		7B728D4241C0E56F3425037D /* Pods-MileWallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MileWallet.release.xcconfig"; path = "Pods/Target Support Files/Pods-MileWallet/Pods-MileWallet.release.xcconfig"; sourceTree = "<group>"; };
 		B76307F7CB9436B9776FCFD2 /* Pods_MileWallet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MileWallet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -121,6 +123,7 @@
 				31E4E06121076ACC00ACE8FD /* WalletItemController.swift */,
 				31E4E06321076B0900ACE8FD /* WalletDetailsController.swift */,
 				311A4040210795E00015952B /* NewWalletController.swift */,
+				31F97ED62108E2FA00D0FF39 /* WalletAttentionController.swift */,
 			);
 			path = "Root Controller";
 			sourceTree = "<group>";
@@ -439,6 +442,7 @@
 				3164FD8520C950ED00294A9F /* DetailViewController.swift in Sources */,
 				31BB792320EA703300AC301A /* Printer.swift in Sources */,
 				311A4041210795E00015952B /* NewWalletController.swift in Sources */,
+				31F97ED72108E2FA00D0FF39 /* WalletAttentionController.swift in Sources */,
 				3185BBF621072918004CDBEF /* UIButton(App).swift in Sources */,
 				3164FD8320C950ED00294A9F /* MasterViewController.swift in Sources */,
 				3144B65A210618F900ED27BF /* WalletCardsController.swift in Sources */,

@@ -75,6 +75,11 @@ class NewWalletControllerImp: Controller {
         
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: true)
+    }
+    
     @objc private func closePayments(sender:Any){
         dismiss(animated: true)
     }
@@ -110,11 +115,166 @@ class NewWalletControllerImp: Controller {
         return t
     }()
     
-    private var currentColor = Config.Colors.defaultColor
+    fileprivate var currentColor = Config.Colors.defaultColor
+    fileprivate var currentWallet:Wallet?    
+    
+    fileprivate lazy var attentionCover:UIView = {
+        let v = UIView()
+        let image = UIImageView(image: Config.Images.basePattern)
+        image.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+        image.frame = v.bounds
+        image.contentMode = .scaleAspectFill
+        v.addSubview(image)
+        v.backgroundColor = self.currentColor
+
+        let pinterIcon = UIImageView(image: Config.Images.printerIcon)
+        v.addSubview(pinterIcon)
+        pinterIcon.snp.makeConstraints({ (m) in
+            m.centerX.equalToSuperview()
+            m.top.equalToSuperview().offset(140)
+            m.size.equalTo(Config.Images.printerIcon.size)
+        })
+
+        let header = UILabel()
+        header.textAlignment = .center
+        header.text = NSLocalizedString("Important!", comment: "")
+        header.textColor = Config.Colors.header
+        header.font = Config.Fonts.header
+
+        v.addSubview(header)
+        header.snp.makeConstraints({ (m) in
+            m.centerX.equalToSuperview()
+            m.top.equalTo(pinterIcon.snp.bottom).offset(24)
+            m.width.equalToSuperview()
+        })
+
+        let back = UIButton(type: .custom)
+        back.setTitle(NSLocalizedString("Back to main screen", comment: ""), for: UIControlState.normal)
+        back.setTitleColor(Config.Colors.back, for: .normal)
+        back.titleLabel?.font = Config.Fonts.caption
+        back.backgroundColor = UIColor.white
+        back.layer.cornerRadius = 8
+        back.addTarget(self, action: #selector(backMainHandler(sender:)), for: UIControlEvents.touchUpInside)
+        v.addSubview(back)
+        back.snp.makeConstraints({ (m) in
+            m.centerX.equalToSuperview()
+            m.bottom.equalToSuperview().offset(-15)
+            m.width.equalToSuperview().offset(-40)
+            m.height.equalTo(60)
+        })
+
+        let text = UITextView()
+        text.backgroundColor = UIColor.clear
+        text.isUserInteractionEnabled = false
+        text.textAlignment = .center
+        text.textContainer.lineBreakMode = .byWordWrapping
+        text.textContainer.maximumNumberOfLines = 5
+        text.isSelectable = true
+        text.isScrollEnabled = false
+        text.layer.borderWidth = 0.0
+        text.font = Config.Fonts.caption
+        text.clearsOnInsertion = true
+        text.textColor = UIColor.white
+        text.resignFirstResponder()
+
+        text.text = NSLocalizedString("You should SAVE your public and private key or you will not have a chance to restore your wallet!", comment: "")
+
+        let textContainer = UIView()
+        textContainer.backgroundColor = Config.Colors.attentionText
+        textContainer.layer.cornerRadius = 8
+        textContainer.clipsToBounds = true
+
+        v.addSubview(textContainer)
+
+        textContainer.snp.makeConstraints({ (m) in
+            m.centerX.equalToSuperview()
+            m.bottom.equalTo(back.snp.top).offset(-10)
+            m.width.equalToSuperview().offset(-40)
+            m.height.equalTo(211)
+        })
+
+        textContainer.addSubview(text)
+
+        text.snp.makeConstraints({ (m) in
+            m.centerX.equalToSuperview()
+            m.bottom.equalToSuperview().offset(-60)
+            m.width.equalToSuperview().offset(-40)
+            m.top.equalToSuperview().offset(24)
+        })
+
+        let line = UIView()
+        line.backgroundColor = UIColor.white.withAlphaComponent(0.13)
+        textContainer.addSubview(line)
+
+        line.snp.makeConstraints({ (m) in
+            m.centerX.equalToSuperview()
+            m.bottom.equalToSuperview().offset(-59)
+            m.width.equalToSuperview()
+            m.height.equalTo(1)
+        })
+
+        let print = UIButton(type: .custom)
+        print.setTitle(NSLocalizedString("Print Wallet Secret Paper", comment: ""), for: UIControlState.normal)
+        print.setTitleColor(UIColor.white, for: .normal)
+        print.titleLabel?.font = Config.Fonts.caption
+        print.backgroundColor = UIColor.clear
+        print.addTarget(self, action: #selector(printHandler(sender:)), for: UIControlEvents.touchUpInside)
+        textContainer.addSubview(print)
+
+        print.snp.makeConstraints({ (m) in
+            m.centerX.equalToSuperview()
+            m.bottom.equalToSuperview()
+            m.width.equalToSuperview()
+            m.top.equalTo(line.snp.bottom)
+        })
+
+        return v
+    }()
 }
 
 extension NewWalletControllerImp {
-    func addWallet()  {
+    
+    @objc fileprivate func backMainHandler(sender:UIButton){
+        coverDown()
+        self.dismiss(animated: true)
+    }
+    
+    @objc fileprivate func printHandler(sender:UIButton){
+        loaderStart()
+        Printer.shared.printPDF(wallet: currentWallet,
+                                formater: { return HTMLTemplate.get(wallet:$0) },
+                                complete: { _,complete,_ in
+                                    self.loaderStop()
+        })
+    }
+    
+    private func coverDown() {
+        navigationController?.setNavigationBarHidden(false, animated: true)
+        UIView.animate(withDuration: Config.animationDuration, animations: {
+            self.attentionCover.alpha = 0
+        }, completion: { (flag) in
+            self.attentionCover.removeFromSuperview()
+        })
+    }
+    
+    private func coverUp()  {
+        name.resignFirstResponder()
+        attentionCover.alpha = 0
+        attentionCover.backgroundColor = self.currentColor
+        attentionCover.frame = UIScreen.main.bounds
+        UIApplication.shared.keyWindow?.addSubview(attentionCover)
+        navigationController?.setNavigationBarHidden(true, animated: true)
+        attentionCover.snp.makeConstraints { (m) in
+            m.edges.equalToSuperview()
+        }
+        UIView.animate(withDuration: Config.animationDuration) {
+            self.attentionCover.alpha = 1
+        }
+    }
+    
+    fileprivate func addWallet()  {
+        
+        let closeString = NSLocalizedString("Close", comment: "")
         
         guard let name = name.text else { return }
         
@@ -148,42 +308,49 @@ extension NewWalletControllerImp {
             
         }) { (wallet) in
             
+            self.currentWallet = wallet
+            
             do {
                 guard let json = Mapper<Wallet>().toJSONString(wallet) else {
                     UIAlertController(title: nil,
                                       message:  NSLocalizedString("Wallet could not be created from the secret phrase", comment: ""),
                                       preferredStyle: .alert)
-                        .addAction(title: "Close", style: .cancel)
+                        .addAction(title: "Close", style: .cancel, handler: { (action) in
+                            close()
+                        })
                         .present(by: self)
-                    close()
                     return
                 }
                 
                 try WalletStore.shared.keychain.set(json, key: name)
-                
+
                 let walletAttr = WalletAttributes(color: self.currentColor.hex,
                                                   isActive:true)
-                
+
                 guard let attr = Mapper<WalletAttributes>().toJSONString(walletAttr) else {
                     self.loaderStop()
                     self.dismiss(animated: true, completion: nil)
                     close()
                     return
                 }
-                
+
                 try WalletStore.shared.keychain.setWalletAttr(attr, key: name)
+                
+                self.loaderStop()
+                
+                self.coverUp()
+                
             }
             catch let error {
                 
                 UIAlertController(title: nil,
                                   message:  error.description,
                                   preferredStyle: .alert)
-                    .addAction(title: "Close", style: .cancel)
+                    .addAction(title: closeString, style: .cancel, handler: { (action) in
+                        close()
+                    })
                     .present(by: self)
-                close()
             }
-            
-           close()
         }
     }
 }
