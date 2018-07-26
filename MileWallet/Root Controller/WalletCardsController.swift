@@ -206,6 +206,7 @@ class WalletCardsController: UIViewController {
             if viewControllers.first!.isKind(of: EmptyWallet.self) {
                 return
             }
+            _walletDetailsController.qrFrame =  pageViewController.view.frame
             _walletDetailsController.walletKey = WalletStore.shared.acitveWallets[currentIndex].wallet?.publicKey
             navigationController?.pushViewController(_walletDetailsController, animated: true)
         }
@@ -271,7 +272,9 @@ class WalletCardsController: UIViewController {
 
 
 extension WalletCardsController: WalletCellDelegate {
-    func walletCell(_ item: WalletCell, didPress wallet: WalletContainer?) {
+    func walletCell(_ item: WalletCell, didPress wallet: WalletContainer?)
+    {
+        _walletDetailsController.qrFrame =  pageViewController.view.frame
         _walletDetailsController.walletKey = wallet?.wallet?.publicKey
         navigationController?.pushViewController(_walletDetailsController, animated: true)
     }

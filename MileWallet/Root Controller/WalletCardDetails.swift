@@ -12,6 +12,8 @@ import MileWalletKit
 
 class WalletCardDetails: Controller {
     
+    public var qrFrame:CGRect = .zero
+    
     public var walletKey:String? {
         didSet{
             if let w = walletKey {
@@ -68,17 +70,31 @@ class WalletCardDetails: Controller {
         shadow.backgroundColor = qrCodeBorder.backgroundColor
         shadowBorder.backgroundColor = qrCodeBorder.backgroundColor
 
-        view.addSubview(content)
+        view.addSubview(scrollView)
+        
+        scrollView.delegate = self
+        
+        scrollView.addSubview(content)
         content.addSubview(shadow)
         content.addSubview(shadowBorder)
         content.addSubview(qrCodeBorder)
         qrCodeBorder.addSubview(qrCode)
 
-        content.snp.makeConstraints { (m) in
+        scrollView.snp.makeConstraints { (m) in
             m.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(Config.iPhoneX ? 30 : 10)
-            m.left.equalTo(view).offset(0)
-            m.right.equalTo(view).offset(0)
-            m.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(Config.iPhoneX ? -190 : -170)
+            m.left.equalTo(view.safeAreaLayoutGuide.snp.left).offset(0)
+            m.right.equalTo(view.safeAreaLayoutGuide.snp.right).offset(0)
+            m.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(0)
+        }
+        
+        scrollView.contentSize = CGSize(width: view.bounds.size.width, height: 2000)
+        
+        content.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 200)
+        
+        content.snp.makeConstraints { (m) in
+            m.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(10)
+            m.left.equalTo(view.safeAreaLayoutGuide.snp.left).offset(0)
+            m.right.equalTo(view.safeAreaLayoutGuide.snp.right).offset(0)
         }
         
         qrCodeBorder.snp.makeConstraints { (m) in
@@ -106,6 +122,12 @@ class WalletCardDetails: Controller {
         
         shadowSetup()
     }
+    
+    public let scrollView:UIScrollView = {
+        let v = UIScrollView()
+        v.backgroundColor = UIColor.clear
+        return v
+    }()
     
     public let content:UIView = {
         let v = UIView()
@@ -147,4 +169,33 @@ class WalletCardDetails: Controller {
     }
     
     fileprivate var _settingsWalletController = WalletOptionsController()
+    fileprivate var baseQRCodeFrame:CGRect?
+}
+
+
+extension WalletCardDetails: UIScrollViewDelegate {
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if !decelerate {
+            let desiredOffset = CGPoint(x: 0, y: -scrollView.contentInset.top)
+            scrollView.setContentOffset(desiredOffset, animated: true)
+        }
+        else {
+            let bottomOffset = CGPoint(x: 0, y: scrollView.contentSize.height - scrollView.bounds.size.height)
+            scrollView.setContentOffset(bottomOffset, animated: true)
+        }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if qrCodeBorder.frame == .zero {return}
+        if baseQRCodeFrame == nil {
+            baseQRCodeFrame = qrCodeBorder.frame
+        }
+        let scale = (baseQRCodeFrame!.height-scrollView.contentOffset.y)/baseQRCodeFrame!.height
+        content.transform = CGAffineTransform(scaleX: scale, y: scale)
+        content.alpha = scale
+    }
 }
