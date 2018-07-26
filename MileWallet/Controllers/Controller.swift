@@ -24,7 +24,7 @@ class Controller: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.clear
-        contentView.backgroundColor = Config.Colors.background
+        contentView.backgroundColor = UIColor.clear
         view.addSubview(contentView)
         contentView.snp.makeConstraints { (m) in
             if navigationController != nil {
@@ -82,8 +82,38 @@ public class NavigationController: UINavigationController {
         }
     }
     
+//    public var navigationBarIsHidden:Bool = true {
+//        didSet{
+//            setNavigationBarHidden(navigationBarIsHidden, animated: false)
+//            bg.snp.remakeConstraints { (m) in
+//                m.top.equalToSuperview()
+//                m.left.equalToSuperview()
+//                m.right.equalToSuperview()
+//                m.bottom.equalTo(navigationBar.snp.bottom)
+//            }
+//        }
+//    }
+    
+    public override func setNavigationBarHidden(_ hidden: Bool, animated: Bool) {
+        super.setNavigationBarHidden(hidden, animated: animated)
+        if !hidden {
+            bg.snp.remakeConstraints { (m) in
+                m.top.equalToSuperview()
+                m.left.equalToSuperview()
+                m.right.equalToSuperview()
+                m.bottom.equalTo(navigationBar.snp.bottom)
+            }
+        }
+    }
+    
     private let bg = UIImageView(image: Config.Images.basePattern)
-
+    
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        //setNavigationBarHidden(false, animated: animated)
+        //navigationBarIsHidden = true
+    }
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationBar.prefersLargeTitles = true
@@ -95,6 +125,7 @@ public class NavigationController: UINavigationController {
             m.left.equalToSuperview()
             m.right.equalToSuperview()
             m.bottom.equalTo(navigationBar.snp.bottom)
+            //m.height.equalTo(navigationBar.frame.size.height)
         }
     }
 }

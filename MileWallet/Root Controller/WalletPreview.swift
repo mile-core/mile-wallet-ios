@@ -9,48 +9,7 @@
 import UIKit
 import MileWalletKit
 
-protocol WalletItemDelegate {
-    func walletItem(_ item: WalletItemController, didPress wallet:Wallet?)
-    func walletItem(_ item: WalletItemController, didPresent wallet:Wallet?)
-}
-
-extension WalletItemDelegate {
-    func walletItem(_ item: WalletItemController, didPress:Wallet?){}
-    func walletItem(_ item: WalletItemController, didPresent wallet:Wallet?){}
-}
-
-class WalletController: Controller {
-    
-    public var chainInfo:Chain?
-    public var wallet:Wallet?
-    public var walletAttributes:WalletAttributes?
-
-    public func mileInfoUpdate(error: ((_ error: Error?)-> Void)?=nil,
-                        complete:@escaping ((_ chain:Chain)->Void))  {
-        
-        if chainInfo == nil {
-            Chain.update(error: { (e) in
-                
-                error?(e)
-                
-            }) { (chain) in
-                self.chainInfo = chain
-                complete(self.chainInfo!)
-            }
-        }
-        
-        guard let chain = chainInfo else {
-            return
-        }
-        
-        complete(chain)
-    }
-    
-}
-
-class WalletItemController: WalletController {
-    
-    public var delegate:WalletItemDelegate?
+class WalletCardPreview: WalletCell {
     
     public var walletIndex = 0 {
         didSet{
@@ -68,16 +27,12 @@ class WalletItemController: WalletController {
             if let color = walletAttributes?.color {
                 infoContainer.backgroundColor = UIColor(hex: color)
             }
-            content.backgroundColor = UIColor.white
-            shadow.backgroundColor = content.backgroundColor                      
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        view.addSubview(shadow)
-        view.addSubview(content)
+
         content.addSubview(qrCode)
         content.addSubview(infoContainer)
         infoContainer.addSubview(line)
@@ -86,20 +41,19 @@ class WalletItemController: WalletController {
         infoContainer.addSubview(mileLabel)
         infoContainer.addSubview(mileAmountLabel)
 
-        shadow.snp.makeConstraints { (m) in
-            m.edges.equalTo(UIEdgeInsets(top: 40, left: 50, bottom: 30, right: 50))
+        var h = 20
+        if UIScreen.main.bounds.size.height < 640 {
+            h = 10
         }
-        
-        content.snp.makeConstraints { (m) in
-            m.edges.equalTo(UIEdgeInsets(top: 20, left: 40, bottom: 30, right: 40))
-        }
-
         qrCode.snp.makeConstraints { (m) in
-            m.edges.equalTo(UIEdgeInsets(top: 10, left: 10, bottom: 120, right: 10))
+            m.top.equalToSuperview().offset(h)
+            m.left.equalToSuperview().offset(h)
+            m.right.equalToSuperview().offset(-h)
+            m.width.equalTo(qrCode.snp.height).multipliedBy(1/1)
         }
         
         infoContainer.snp.makeConstraints { (m) in
-            m.top.equalTo(qrCode.snp.bottom)
+            m.top.equalTo(qrCode.snp.bottom).offset(h)
             m.left.equalToSuperview()
             m.right.equalToSuperview()
             m.bottom.equalToSuperview()
@@ -137,43 +91,12 @@ class WalletItemController: WalletController {
             m.right.equalTo(mileAmountLabel.snp.left)
             m.height.equalTo(44)
             m.top.equalTo(mileAmountLabel.snp.top)
-        }
-        
-        let press = UILongPressGestureRecognizer(target: self, action: #selector(pressContentHandler(gesture:)))
-        press.minimumPressDuration = 0.2
-        press.numberOfTapsRequired = 0
-        press.numberOfTouchesRequired = 1
-        press.cancelsTouchesInView = true
-        content.addGestureRecognizer(press)
+        }             
     }
-    
-    private func shadowSetup()  {
-        shadow.layer.cornerRadius = 15
-        shadow.layer.shadowColor = UIColor.black.cgColor
-        shadow.layer.shadowOffset = CGSize(width: 0, height: 10)
-        shadow.layer.shadowRadius = 10
-        shadow.layer.shadowOpacity = 0.5
-        content.layer.cornerRadius = shadow.layer.cornerRadius
-    }
-    
-    @objc private func pressContentHandler(gesture:UILongPressGestureRecognizer){
-        if gesture.state == .began {
-            CATransaction.begin()
-            CATransaction.setAnimationDuration(UIView.inheritedAnimationDuration)
-            self.shadow.layer.shadowRadius = 5
-            self.shadow.layer.shadowOffset = CGSize(width: 0, height: 4)
-            self.shadow.layer.shadowOpacity = 0.3
-            CATransaction.setCompletionBlock {
-                self.delegate?.walletItem(self, didPress: self.wallet)
-            }
-            CATransaction.commit()
-        }
-    }
-    
+       
     private var firstTime = true
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        shadowSetup()
         
         if firstTime {
             startActivities()
@@ -216,7 +139,7 @@ class WalletItemController: WalletController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        delegate?.walletItem(self, didPresent: wallet)
+        delegate?.walletCell(self, didPresent: wallet)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -259,26 +182,17 @@ class WalletItemController: WalletController {
         })
     }
     
-    private let content:UIView = {
-        let v = UIView()
-        v.clipsToBounds = true
-        return v
-    }()
-    
-    private let shadow = UIView()
-    
-    private let line:UIView = {
-        let v = UIView()
-        v.backgroundColor = Config.Colors.line
-        return v
-    }()
-
-    private let infoContainer:UIImageView = {
+    fileprivate let infoContainer:UIImageView = {
         let v = UIImageView(image: Config.Images.basePattern)
         v.contentMode = .scaleAspectFill
         return v
     }()
-
+    
+    fileprivate let line:UIView = {
+        let v = UIView()
+        v.backgroundColor = Config.Colors.line
+        return v
+    }()
     
     private let qrCode: UIImageView = {
         let v = UIImageView()

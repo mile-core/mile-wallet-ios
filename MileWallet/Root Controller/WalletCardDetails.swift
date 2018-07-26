@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import MileWalletKit
 
-class WalletDetailsController: UIViewController {
+class WalletCardDetails: UIViewController {
     
     let detailsView:UIView = UIView()
     

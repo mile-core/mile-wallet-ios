@@ -14,6 +14,7 @@ class NewWalletController: NavigationController {
     let contentController = NewWalletControllerImp()
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = Config.Colors.background
         setViewControllers([contentController], animated: true)
     }
 }
@@ -71,13 +72,11 @@ class NewWalletControllerImp: Controller {
             return false
         }) {
             pickerView.selectCellAtIndex(index)
-        }
-        
+        }        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(false, animated: true)
     }
     
     @objc private func closePayments(sender:Any){
@@ -127,9 +126,9 @@ class NewWalletControllerImp: Controller {
         v.addSubview(image)
         v.backgroundColor = self.currentColor
 
-        let pinterIcon = UIImageView(image: Config.Images.printerIcon)
-        v.addSubview(pinterIcon)
-        pinterIcon.snp.makeConstraints({ (m) in
+        let printerIcon = UIImageView(image: Config.Images.printerIcon)
+        v.addSubview(printerIcon)
+        printerIcon.snp.makeConstraints({ (m) in
             m.centerX.equalToSuperview()
             m.top.equalToSuperview().offset(140)
             m.size.equalTo(Config.Images.printerIcon.size)
@@ -140,11 +139,12 @@ class NewWalletControllerImp: Controller {
         header.text = NSLocalizedString("Important!", comment: "")
         header.textColor = Config.Colors.header
         header.font = Config.Fonts.header
-
+        
         v.addSubview(header)
         header.snp.makeConstraints({ (m) in
             m.centerX.equalToSuperview()
-            m.top.equalTo(pinterIcon.snp.bottom).offset(24)
+            
+            m.top.equalTo(printerIcon.snp.bottom).offset(40)
             m.width.equalToSuperview()
         })
 
@@ -153,7 +153,7 @@ class NewWalletControllerImp: Controller {
         back.setTitleColor(Config.Colors.back, for: .normal)
         back.titleLabel?.font = Config.Fonts.caption
         back.backgroundColor = UIColor.white
-        back.layer.cornerRadius = 8
+        back.layer.cornerRadius = Config.buttonRadius
         back.addTarget(self, action: #selector(backMainHandler(sender:)), for: UIControlEvents.touchUpInside)
         v.addSubview(back)
         back.snp.makeConstraints({ (m) in
@@ -181,14 +181,14 @@ class NewWalletControllerImp: Controller {
 
         let textContainer = UIView()
         textContainer.backgroundColor = Config.Colors.attentionText
-        textContainer.layer.cornerRadius = 8
+        textContainer.layer.cornerRadius = Config.buttonRadius
         textContainer.clipsToBounds = true
 
         v.addSubview(textContainer)
 
         textContainer.snp.makeConstraints({ (m) in
             m.centerX.equalToSuperview()
-            m.bottom.equalTo(back.snp.top).offset(-10)
+            m.bottom.equalTo(back.snp.top).offset(-18)
             m.width.equalToSuperview().offset(-40)
             m.height.equalTo(211)
         })
@@ -230,17 +230,52 @@ class NewWalletControllerImp: Controller {
 
         return v
     }()
+    
+    fileprivate lazy var printControllerBg:UIImageView = {
+        let v = UIImageView(image: Config.Images.basePattern)
+        v.alpha = 0
+        return v
+    }()
+}
+
+extension NewWalletControllerImp: UIPrintInteractionControllerDelegate {
+    
+    func printInteractionControllerParentViewController(_ printInteractionController: UIPrintInteractionController) -> UIViewController? {
+        return self.navigationController?.topViewController
+    }
+    
+    func printInteractionControllerWillPresentPrinterOptions(_ printInteractionController: UIPrintInteractionController) {
+        UIApplication.shared.keyWindow?.addSubview(printControllerBg)
+        printControllerBg.snp.makeConstraints { (m) in
+            m.edges.equalToSuperview().inset(UIEdgeInsets(top: -200, left: 0, bottom: 0, right: 0))
+        }
+        printControllerBg.backgroundColor = currentColor
+        UIView.animate(withDuration: Config.animationDuration) {
+            self.printControllerBg.alpha = 1
+        }
+    }
+    
+    func printInteractionControllerDidDismissPrinterOptions(_ printInteractionController: UIPrintInteractionController) {
+        UIView.animate(withDuration: Config.animationDuration, animations: {
+            self.printControllerBg.alpha = 0
+        }) { (flag) in
+            self.printControllerBg.removeFromSuperview()
+        }
+    }
 }
 
 extension NewWalletControllerImp {
+    
     
     @objc fileprivate func backMainHandler(sender:UIButton){
         coverDown()
         self.dismiss(animated: true)
     }
     
+    
     @objc fileprivate func printHandler(sender:UIButton){
         loaderStart()
+        Printer.shared.printController.delegate = self
         Printer.shared.printPDF(wallet: currentWallet,
                                 formater: { return HTMLTemplate.get(wallet:$0) },
                                 complete: { _,complete,_ in
@@ -249,8 +284,8 @@ extension NewWalletControllerImp {
     }
     
     private func coverDown() {
-        navigationController?.setNavigationBarHidden(false, animated: true)
         UIView.animate(withDuration: Config.animationDuration, animations: {
+            self.navigationController?.setNavigationBarHidden(false, animated: false)
             self.attentionCover.alpha = 0
         }, completion: { (flag) in
             self.attentionCover.removeFromSuperview()
@@ -263,12 +298,20 @@ extension NewWalletControllerImp {
         attentionCover.backgroundColor = self.currentColor
         attentionCover.frame = UIScreen.main.bounds
         UIApplication.shared.keyWindow?.addSubview(attentionCover)
-        navigationController?.setNavigationBarHidden(true, animated: true)
         attentionCover.snp.makeConstraints { (m) in
-            m.edges.equalToSuperview()
+            m.edges.equalToSuperview().inset(UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0))
         }
-        UIView.animate(withDuration: Config.animationDuration) {
-            self.attentionCover.alpha = 1
+       
+        UIView.animate(withDuration: Config.animationDuration,
+                       animations: {
+                        self.attentionCover.alpha = 1
+        }) { (flag) in
+            self.navigationController?.setNavigationBarHidden(true, animated: false)
+            self.attentionCover.removeFromSuperview()
+            self.view.addSubview(self.attentionCover)
+            self.attentionCover.snp.makeConstraints { (m) in
+                m.edges.equalToSuperview().inset(UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0))
+            }
         }
     }
     

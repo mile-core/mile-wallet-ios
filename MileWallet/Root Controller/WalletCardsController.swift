@@ -21,51 +21,66 @@ class WalletCardsController: UIViewController {
         
         navigationController?.navigationBar.prefersLargeTitles = false
 
-        view.backgroundColor = UIColor.clear
+        //view.backgroundColor = UIColor.clear
         
         view.addSubview(newWalletButton)
+        view.addSubview(archiveButton)
         view.addSubview(contactsButton)
-        view.addSubview(verticalLine)
-        
-// !!!
-//        for w in WalletStore.shared.wallets {
-//            print("... p[\(w.wallet?.name)] = \(w.wallet?.publicKey) \(w.wallet?.privateKey)")
-//            if let key = w.wallet?.name, key == "local" {
-//                continue
-//            }
-//            try? WalletStore.shared.keychain.remove(w.wallet!.name!)
-//            try? WalletStore.shared.keychain.removeWalletAttr(w.wallet!.name!)
-//        }
-//
-        verticalLine.snp.makeConstraints { (m) in
-            m.centerX.equalToSuperview()
+        view.addSubview(verticalLineLeft)
+        view.addSubview(verticalLineRight)
+
+ // !!!
+        for w in WalletStore.shared.wallets {
+            print("... p[\(w.wallet?.name)] = \(w.wallet?.publicKey) \(w.wallet?.privateKey)")
+            if let key = w.wallet?.name, key == "local" {
+                continue
+            }
+            try? WalletStore.shared.keychain.remove(w.wallet!.name!)
+            try? WalletStore.shared.keychain.removeWalletAttr(w.wallet!.name!)
+        }
+
+        verticalLineLeft.snp.makeConstraints { (m) in
+            m.centerX.equalTo(view.snp.right).multipliedBy(1.0/3.0)
             m.height.equalTo(84)
             m.bottom.equalToSuperview().offset(-20)
             m.width.equalTo(1)
         }
         
+        verticalLineRight.snp.makeConstraints { (m) in
+            m.centerX.equalTo(view.snp.right).multipliedBy(2.0/3.0)
+            m.height.equalTo(verticalLineLeft.snp.height)
+            m.bottom.equalTo(verticalLineLeft.snp.bottom)
+            m.width.equalTo(verticalLineLeft.snp.width)
+        }
+        
         newWalletButton.snp.makeConstraints { (m) in
-            m.centerY.equalTo(verticalLine.snp.centerY).offset(-7)
-            m.right.equalTo(verticalLine.snp.left).offset(-34)
+            m.centerY.equalTo(verticalLineLeft.snp.centerY).offset(-7)
+            m.centerX.equalTo(view.snp.right).multipliedBy(1.0/6.0)
             m.bottom.equalToSuperview().offset(-27)
             m.width.equalTo(88)
         }
         
+        archiveButton.snp.makeConstraints { (m) in
+            m.centerY.equalTo(newWalletButton.snp.centerY)
+            m.centerX.equalTo(view.snp.right).multipliedBy(5.0/6.0)
+            m.bottom.equalTo(newWalletButton.snp.bottom)
+            m.width.equalTo(88)
+        }
+        
         contactsButton.snp.makeConstraints { (m) in
-            m.centerY.equalTo(verticalLine.snp.centerY).offset(-7)
-            m.left.equalTo(verticalLine.snp.right).offset(34)
+            m.centerY.equalTo(newWalletButton.snp.centerY)
+            m.centerX.equalToSuperview()
             m.width.equalTo(88)
         }
         
         addChildViewController(pageViewController)
         view.addSubview(pageViewController.view)
         
-        let top = navigationController!.navigationBar.frame.height
         pageViewController.view.snp.makeConstraints { (m) in
-            m.edges.equalTo(UIEdgeInsets(top: top + 20,
-                                         left: 10,
-                                         bottom: 140,
-                                         right: 10))
+            m.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(Config.iPhoneX ? 20 : 0)
+            m.left.equalTo(view).offset(0)
+            m.right.equalTo(view).offset(0)
+            pagerOffset = m.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(Config.iPhoneX ? -160 : -140).constraint
         }
         
         pageViewController.didMove(toParentViewController: self)
@@ -76,8 +91,36 @@ class WalletCardsController: UIViewController {
         pageViewController.view.addGestureRecognizer(tap)
     }
     
+    private var pagerOffset:Constraint?
+    
+    func updateConstraints()  {
+        UIView.animate(withDuration: Config.animationDuration) {
+            if self.viewControllers.first!.isKind(of: EmptyWallet.self) {
+                self.newWalletButton.alpha = 0
+                self.verticalLineLeft.alpha = 0
+                self.verticalLineRight.alpha = 0
+                self.archiveButton.alpha = 0
+            }
+            else {
+                self.newWalletButton.alpha = 1
+                self.verticalLineLeft.alpha = 1
+                self.verticalLineRight.alpha = 1
+                self.archiveButton.alpha = 1
+            }
+            
+            if self.viewControllers.count > 1 {
+                self.pagerOffset?.update(offset: Config.iPhoneX ? -140 : -110)
+            }
+        }
+    }
 
-    private let verticalLine:UIView = {
+    private let verticalLineLeft:UIView = {
+        let v = UIView()
+        v.backgroundColor = Config.Colors.infoLine
+        return v
+    }()
+    
+    private let verticalLineRight:UIView = {
         let v = UIView()
         v.backgroundColor = Config.Colors.infoLine
         return v
@@ -94,13 +137,21 @@ class WalletCardsController: UIViewController {
 
     private lazy var contactsButton:UIButton = {
         let b = UIButton.app()
-        b.setImage(UIImage(named: "button-contacts"), for: UIControlState.normal)
+        b.setImage(UIImage(named: "button-contact-book"), for: UIControlState.normal)
         b.imageView?.contentMode = .scaleAspectFit
         b.setTitle(NSLocalizedString("Contacts", comment: ""), for: .normal)
         b.addTarget(self, action:#selector(openContact(sender:)), for: UIControlEvents.touchUpInside)
         return b
     }()
 
+    private lazy var archiveButton:UIButton = {
+        let b = UIButton.app()
+        b.setImage(UIImage(named: "button-archive-wallets"), for: UIControlState.normal)
+        b.imageView?.contentMode = .scaleAspectFit
+        b.setTitle(NSLocalizedString("Archive", comment: ""), for: .normal)
+        b.addTarget(self, action:#selector(openContact(sender:)), for: UIControlEvents.touchUpInside)
+        return b
+    }()
     
     fileprivate var lastIndex = 0
     override func viewDidDisappear(_ animated: Bool) {
@@ -116,7 +167,8 @@ class WalletCardsController: UIViewController {
         super.viewWillAppear(animated)
         var newIndex = lastIndex
         
-        if viewControllers.count != WalletStore.shared.acitveWallets.count {
+        if viewControllers.count != WalletStore.shared.acitveWallets.count
+        || viewControllers.count == 1 {
             if viewControllers.count < WalletStore.shared.acitveWallets.count {
                 newIndex = viewControllers.count
             }
@@ -138,6 +190,8 @@ class WalletCardsController: UIViewController {
                                                                direction: .forward,
                                                                animated: false, completion: nil)
             })
+            
+            updateConstraints()
         }
     }
     
@@ -147,6 +201,9 @@ class WalletCardsController: UIViewController {
 
     @objc private func pushDetails(gesture:UITapGestureRecognizer) {
         if viewControllers.count > 0 {
+            if viewControllers.first!.isKind(of: EmptyWallet.self) {
+                return
+            }
             navigationController?.pushViewController(_walletDetailsController, animated: true)
         }
     }
@@ -157,6 +214,10 @@ class WalletCardsController: UIViewController {
     
     @objc private func openContact(sender:UIButton) {
         print("Open contact")
+    }
+    
+    @objc private func archiveWallet(sender:UIButton) {
+        print("Archive wallet")
     }
     
     private lazy var pageViewController: UIPageViewController = {
@@ -180,12 +241,19 @@ class WalletCardsController: UIViewController {
         viewControllers = makeControllers()
     }
     
-    fileprivate func makeControllers() -> [WalletItemController] {
-        var u = [WalletItemController]()
+    fileprivate func makeControllers() -> [WalletCell] {
+        var u = [WalletCell]()
         for i in 0..<WalletStore.shared.acitveWallets.count {
-            let v = WalletItemController()
+            let v = WalletCardPreview()
             v.delegate = self
             v.walletIndex = i
+            u.append(v)
+        }
+        if u.count == 0 {
+            let v = EmptyWallet()
+            v.addWalletHandler = {
+                 self.present(self._newWalletController, animated: true)
+            }
             u.append(v)
         }
         return u
@@ -194,17 +262,17 @@ class WalletCardsController: UIViewController {
     fileprivate var _currentIndex: Int?
     fileprivate var _pendingIndex: Int?
     
-    fileprivate var _walletDetailsController = WalletDetailsController()
+    fileprivate var _walletDetailsController = WalletCardDetails()
     fileprivate var _newWalletController = NewWalletController()
 }
 
 
-extension WalletCardsController: WalletItemDelegate {
-    func walletItem(_ item: WalletItemController, didPress: Wallet?) {
+extension WalletCardsController: WalletCellDelegate {
+    func walletCell(_ item: WalletCell, didPress: Wallet?) {
         navigationController?.pushViewController(_walletDetailsController, animated: true)
     }
     
-    func walletItem(_ item: WalletItemController, didPresent wallet: Wallet?) {
+    func walletCell(_ item: WalletCell, didPresent wallet: Wallet?) {
         navigationItem.title = wallet?.name ?? "-"
     }
 }

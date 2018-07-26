@@ -11,26 +11,32 @@ import MileWalletKit
 
 extension Config {
     
+    public static let iPhoneX = (UIDevice().userInterfaceIdiom == .phone && UIScreen.main.nativeBounds.height == 2436)
     
     public static let walletService = "GHD7Y8FG8V.global.mile.wallet"  //GHD7Y8FG8V
     public static var isWalletKeychainSynchronizable = true
     
     public static let pageControlsNumbers = 5
     public static let animationDuration:TimeInterval = 0.2
+    public static let buttonRadius:CGFloat = 10
 
     public struct Colors {
         public static let defaultColor = UIColor(hex: 0x6679FD)
         public static let background = UIColor(patternImage:
-            UIImage.gradient(colors: [UIColor(hex: 0xEBF1FE),
-                                      UIColor.white],
+            UIImage.gradient(colors: [
+                UIColor(hex: 0xEAF1FF),
+                UIColor(hex: 0xEAF1FF),
+                UIColor(hex: 0xEAF1FF),
+                UIColor.white
+                ],
                              with: UIScreen.main.bounds)!)
-        
         public static let buttonBackground = UIColor.white
         public static let navigationBarTitle =  UIColor(hex: 0x283444)
         public static let navigationBarLargeTitle =  UIColor.white
         public static let name = UIColor.white
         public static let title = name
         public static let button = UIColor(hex: 0xBCC3C3)
+        public static let blueButton = UIColor(hex: 0x2371B3)
         public static let back = UIColor(hex: 0x3E50CE)
         public static let line = UIColor(hex: 0xFFFFFF, alpha: 0.4)
         public static let separator = UIColor(hex: 0x000000, alpha: 0.1)

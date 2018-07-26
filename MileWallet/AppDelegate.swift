@@ -48,7 +48,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UINavigationBar.appearance().prefersLargeTitles = true
         UINavigationBar.appearance().barStyle = .default
         UINavigationBar.appearance().isTranslucent = false
-        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
+        UINavigationBar.appearance().setBackgroundImage(Config.Images.basePattern, for: .default)
         UINavigationBar.appearance().shadowImage = UIImage()
 
         UIButton.appearance().setTitleColor(Config.Colors.button, for: .normal)
