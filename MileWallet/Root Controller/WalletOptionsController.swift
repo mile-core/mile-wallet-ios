@@ -10,8 +10,11 @@ import UIKit
 import MileWalletKit
 import ObjectMapper
 
-class NewWalletController: NavigationController {
-    let contentController = NewWalletControllerImp()
+class WalletOptionsController: NavigationController {
+    
+    public var wallet:WalletContainer?
+    
+    let contentController = WalletOptionsControllerImp()
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = Config.Colors.background
@@ -19,8 +22,17 @@ class NewWalletController: NavigationController {
     }
 }
 
-class NewWalletControllerImp: Controller {
-    
+class WalletOptionsControllerImp: Controller {
+   
+    fileprivate var wallet:WalletContainer? {
+        get {
+            return (navigationController as? WalletOptionsController)?.wallet
+        }
+        set {
+            (navigationController as? WalletOptionsController)?.wallet = newValue
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -28,7 +40,7 @@ class NewWalletControllerImp: Controller {
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.closePayments(sender:)))
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(addWalletHandler(_:)))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(doneHandler(_:)))
         
         contentView.addSubview(name)
         contentView.addSubview(line)
@@ -55,7 +67,7 @@ class NewWalletControllerImp: Controller {
             make.right.equalToSuperview().offset(-20)
             make.height.equalTo(44)
         }
-        
+    
         pickerView.snp.makeConstraints { (m) in
             m.top.equalTo(colorLabel.snp.bottom).offset(0)
             m.left.equalToSuperview().offset(0)
@@ -77,14 +89,23 @@ class NewWalletControllerImp: Controller {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        if let wallet = self.wallet {
+            title = NSLocalizedString("Settings", comment: "")
+            name.text = wallet.wallet?.name
+        }
     }
     
     @objc private func closePayments(sender:Any){
         dismiss(animated: true)
     }
     
-    @objc private func addWalletHandler(_ sender: UIButton) {
-        addWallet()
+    @objc private func doneHandler(_ sender: UIButton) {
+        if let wallet = self.wallet?.wallet {
+            self.updateWallet(wallet: wallet)
+        }
+        else {
+            addWallet()
+        }
     }
     
     private lazy var pickerView: ColorPicker = {
@@ -238,7 +259,7 @@ class NewWalletControllerImp: Controller {
     }()
 }
 
-extension NewWalletControllerImp: UIPrintInteractionControllerDelegate {
+extension WalletOptionsControllerImp: UIPrintInteractionControllerDelegate {
     
     func printInteractionControllerParentViewController(_ printInteractionController: UIPrintInteractionController) -> UIViewController? {
         return self.navigationController?.topViewController
@@ -264,7 +285,7 @@ extension NewWalletControllerImp: UIPrintInteractionControllerDelegate {
     }
 }
 
-extension NewWalletControllerImp {
+extension WalletOptionsControllerImp {
     
     
     @objc fileprivate func backMainHandler(sender:UIButton){
@@ -315,21 +336,94 @@ extension NewWalletControllerImp {
         }
     }
     
-    fileprivate func addWallet()  {
+    fileprivate func updateWallet(wallet:Wallet){
         
-        let closeString = NSLocalizedString("Close", comment: "")
+        func close() {
+            self.dismiss(animated: true, completion: nil)
+        }
+        
+        do {
+            self.currentWallet = wallet
+            
+            if self.wallet != nil, wallet.name != self.name.text {
+
+                self.currentWallet = Wallet(name: self.name.text!,
+                            publicKey: wallet.publicKey!,
+                            privateKey: wallet.privateKey!,
+                            secretPhrase: wallet.secretPhrase)
+
+            }
+
+            guard let wallet = self.currentWallet else {
+                return
+            }
+
+            guard let key = wallet.publicKey else { return }
+
+            guard let json = Mapper<Wallet>().toJSONString(wallet) else {
+                UIAlertController(title: nil,
+                                  message:  NSLocalizedString("Wallet could not be created from the secret phrase", comment: ""),
+                                  preferredStyle: .alert)
+                    .addAction(title: WalletOptionsControllerImp.closeString, style: .cancel, handler: { (action) in
+                        close()
+                    })
+                    .present(by: self)
+                return
+            }
+            
+            try WalletStore.shared.keychain.set(json, key: key)
+            
+            let walletAttr = WalletAttributes(
+                publicKey: key,
+                color: self.currentColor.hex,
+                isActive:true)
+            
+            guard let attr = Mapper<WalletAttributes>().toJSONString(walletAttr) else {
+                self.loaderStop()
+                self.dismiss(animated: true, completion: nil)
+                close()
+                return
+            }
+            
+            try WalletStore.shared.keychain.setWalletAttr(attr, key: key)
+            
+            self.loaderStop()
+
+            if self.wallet == nil {
+                self.coverUp()
+            }
+            else {
+                close()
+            }
+            
+        }
+        catch let error {
+            
+            UIAlertController(title: nil,
+                              message:  error.description,
+                              preferredStyle: .alert)
+                .addAction(title: WalletOptionsControllerImp.closeString, style: .cancel, handler: { (action) in
+                    close()
+                })
+                .present(by: self)
+        }
+    }
+    
+    fileprivate static let closeString = NSLocalizedString("Close", comment: "")
+
+    fileprivate func addWallet()  {
         
         guard let name = name.text else { return }
         
         guard !name.isEmpty else { return }
         
-        let checkWallet = WalletStore.shared.wallet(by: name)
+        let checkWallet = WalletStore.shared.find(name: name)
         
         if checkWallet != nil {
             UIAlertController(title: NSLocalizedString("Wallet Error", comment: ""),
                               message:  NSLocalizedString("Wallet with the same name already exists", comment: ""),
                               preferredStyle: .alert)
-                .addAction(title: "Close", style: .cancel)
+                .addAction(title: WalletOptionsControllerImp.closeString, style: .cancel)
                 .present(by: self)
             return
         }
@@ -342,69 +436,29 @@ extension NewWalletControllerImp {
         }
         
         Wallet.create(name: name, secretPhrase: nil, error: { error in
-            
             UIAlertController(title: NSLocalizedString("Wallet Error", comment: ""),
                               message:  error?.description,
                               preferredStyle: .alert)
-                .addAction(title: "Close", style: .cancel)
+                .addAction(title: WalletOptionsControllerImp.closeString, style: .cancel)
                 .present(by: self)
+            
+            close()
             
         }) { (wallet) in
             
-            self.currentWallet = wallet
+           self.updateWallet(wallet: wallet)
             
-            do {
-                guard let json = Mapper<Wallet>().toJSONString(wallet) else {
-                    UIAlertController(title: nil,
-                                      message:  NSLocalizedString("Wallet could not be created from the secret phrase", comment: ""),
-                                      preferredStyle: .alert)
-                        .addAction(title: "Close", style: .cancel, handler: { (action) in
-                            close()
-                        })
-                        .present(by: self)
-                    return
-                }
-                
-                try WalletStore.shared.keychain.set(json, key: name)
-
-                let walletAttr = WalletAttributes(color: self.currentColor.hex,
-                                                  isActive:true)
-
-                guard let attr = Mapper<WalletAttributes>().toJSONString(walletAttr) else {
-                    self.loaderStop()
-                    self.dismiss(animated: true, completion: nil)
-                    close()
-                    return
-                }
-
-                try WalletStore.shared.keychain.setWalletAttr(attr, key: name)
-                
-                self.loaderStop()
-                
-                self.coverUp()
-                
-            }
-            catch let error {
-                
-                UIAlertController(title: nil,
-                                  message:  error.description,
-                                  preferredStyle: .alert)
-                    .addAction(title: closeString, style: .cancel, handler: { (action) in
-                        close()
-                    })
-                    .present(by: self)
-            }
         }
     }
 }
 
-extension NewWalletControllerImp: ColorPickerDataSource {
+extension WalletOptionsControllerImp: ColorPickerDataSource {
     func colorPickerColors() -> [UIColor] {
         return Config.Colors.palette
     }
 }
 
-extension NewWalletControllerImp: ColorPickerDelegate {
+extension WalletOptionsControllerImp: ColorPickerDelegate {
     
     func colorPicker(_ colorPickerView: ColorPicker, didSelectCell cell: ColorPickerCell) {
         cell.layer.contents = Config.Images.colorPickerOn.cgImage

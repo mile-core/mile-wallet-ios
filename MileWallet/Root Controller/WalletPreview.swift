@@ -13,20 +13,22 @@ class WalletCardPreview: WalletCell {
     
     public var walletIndex = 0 {
         didSet{
-            
-            let wallets = WalletStore.shared.acitveWallets
-            
-            let container = wallets[walletIndex]
-            
-            wallet = container.wallet
-            walletAttributes = container.attributes
-            
+            updateWallet()
             qrCode.image = wallet?.publicKeyQr
-            
-            infoContainer.backgroundColor = UIColor(hex: 0x6679FD<<walletIndex*16)
-            if let color = walletAttributes?.color {
-                infoContainer.backgroundColor = UIColor(hex: color)
-            }
+        }
+    }
+    
+    fileprivate func updateWallet(){
+        let wallets = WalletStore.shared.acitveWallets
+        
+        let container = wallets[walletIndex]
+        
+        wallet = container.wallet
+        walletAttributes = container.attributes
+        
+        infoContainer.backgroundColor = UIColor(hex: 0x6679FD<<walletIndex*16)
+        if let color = walletAttributes?.color {
+            infoContainer.backgroundColor = UIColor(hex: color)
         }
     }
     
@@ -125,6 +127,8 @@ class WalletCardPreview: WalletCell {
         else {
             self.timerSetup()
         }
+        
+        updateWallet()
     }
     
     private func  timerSetup(){
@@ -139,7 +143,7 @@ class WalletCardPreview: WalletCell {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        delegate?.walletCell(self, didPresent: wallet)
+        delegate?.walletCell(self, didPresent: WalletContainer(wallet: wallet, attributes: walletAttributes))
     }
     
     override func viewDidDisappear(_ animated: Bool) {

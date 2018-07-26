@@ -29,19 +29,29 @@ public class WalletStore {
     
     public var wallets:[WalletContainer] {
         return items.compactMap({ (item) -> WalletContainer? in
-            if let value =  item["value"] as? String{
+            
+            if let value =  item["value"] as? String, let key = item["key"] as? String{
                 if let w = Wallet(JSONString: value) {
-                    if w.publicKey == nil {
+                    
+                    if let pk = w.publicKey {
+                        if pk != key {
+                            return nil
+                        }
+                    }
+                    else {
                         return nil
                     }
                     do {
-                        if let json = try keychain.getWalletAttr(w.name!),
+                        if let json = try keychain.getWalletAttr(w.publicKey!),
                             let a = WalletAttributes(JSONString: json) {
                             return WalletContainer(wallet: w, attributes: a)
                         }
                     }
                     catch {}
-                    let a = WalletAttributes(color: Config.Colors.defaultColor.hex, isActive:true)
+                    let a = WalletAttributes(
+                        publicKey: key,
+                        color: Config.Colors.defaultColor.hex,
+                        isActive:true)
                     return WalletContainer(wallet: w,
                                            attributes: a)
                 }
@@ -65,17 +75,51 @@ public class WalletStore {
         })
     }
     
-    public func wallet(by name:String) -> WalletContainer? {
+    public func wallet(by public_key:String) -> WalletContainer? {
         do {
-            guard let wjson = try keychain.get(name) else { return nil }
+            guard let wjson = try keychain.get(public_key) else { return nil }
             
             guard let w = Wallet(JSONString: wjson) else { return nil }
             
-            if let json = try keychain.getWalletAttr(name),
+            if let json = try keychain.getWalletAttr(public_key),
                 let a = WalletAttributes(JSONString: json) {
                 return WalletContainer(wallet: w, attributes: a)
             }
-            let a = WalletAttributes(color: Config.Colors.defaultColor.hex, isActive:true)
+            let a = WalletAttributes(
+                publicKey: public_key,
+                color: Config.Colors.defaultColor.hex, isActive:true)
+            return WalletContainer(wallet: w,
+                                   attributes: a)
+        }
+        catch {
+            return nil
+        }
+    }
+    
+    public func find(name:String) -> WalletContainer? {
+        do {
+            
+            let it = items
+            guard let index = (it.index { (item) -> Bool in
+                if let json  = item["value"] as? String, let n = Wallet(JSONString: json)?.name {
+                    return name == n
+                }
+                return false
+            }) else {
+                return nil
+            }
+            
+            guard let wjson = it[index]["value"] as? String else { return nil }
+            
+            guard let w = Wallet(JSONString: wjson), let public_key = w.publicKey else { return nil }
+            
+            if let json = try keychain.getWalletAttr(public_key),
+                let a = WalletAttributes(JSONString: json) {
+                return WalletContainer(wallet: w, attributes: a)
+            }
+            let a = WalletAttributes(
+                publicKey: public_key,
+                color: Config.Colors.defaultColor.hex, isActive:true)
             return WalletContainer(wallet: w,
                                    attributes: a)
         }
@@ -101,6 +145,7 @@ public extension Keychain {
 }
 
 public struct WalletAttributes {
+    var publicKey:String = ""
     var color:UInt = Config.Colors.defaultColor.hex
     var isActive:Bool = true
 }
@@ -110,6 +155,7 @@ extension WalletAttributes: Mappable {
     public init?(map: Map) {}
     
     public mutating func mapping(map: Map) {
+        publicKey     <- map["public_key"]
         color     <- map["wallet_color"]
         isActive  <- map["is_active"]
     }

@@ -10,13 +10,13 @@ import UIKit
 import MileWalletKit
 
 protocol WalletCellDelegate {
-    func walletCell(_ item: WalletCell, didPress wallet:Wallet?)
-    func walletCell(_ item: WalletCell, didPresent wallet:Wallet?)
+    func walletCell(_ item: WalletCell, didPress wallet:WalletContainer?)
+    func walletCell(_ item: WalletCell, didPresent wallet:WalletContainer?)
 }
 
 extension WalletCellDelegate {
-    func walletCell(_ item: WalletCell, didPress:Wallet?){}
-    func walletCell(_ item: WalletCell, didPresent wallet:Wallet?){}
+    func walletCell(_ item: WalletCell, didPress:WalletContainer?){}
+    func walletCell(_ item: WalletCell, didPresent wallet:WalletContainer?){}
 }
 
 class WalletCell: Controller {
@@ -70,11 +70,11 @@ class WalletCell: Controller {
         view.addSubview(content)
         
         shadow.snp.makeConstraints { (m) in
-            m.edges.equalTo(UIEdgeInsets(top: 30, left: 55, bottom: 30, right: 55))
+            m.edges.equalTo(content.snp.edges).inset(UIEdgeInsets(top: 20, left: 15, bottom: 0, right: 15))
         }
         
         shadowBorder.snp.makeConstraints { (m) in
-            m.edges.equalTo(UIEdgeInsets(top: 10, left: 40, bottom: 30, right: 40))
+            m.edges.equalTo(content.snp.edges)
         }
         
         content.snp.makeConstraints { (m) in
@@ -102,7 +102,8 @@ class WalletCell: Controller {
             self.shadow.layer.shadowOffset = CGSize(width: 0, height: 4)
             self.shadow.layer.shadowOpacity = 0.3
             CATransaction.setCompletionBlock {
-                self.delegate?.walletCell(self, didPress: self.wallet)
+                self.delegate?.walletCell(self, didPress: WalletContainer(wallet: self.wallet,
+                                                                          attributes: self.walletAttributes))
             }
             CATransaction.commit()
         }

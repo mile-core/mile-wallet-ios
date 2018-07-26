@@ -29,15 +29,17 @@ class WalletCardsController: UIViewController {
         view.addSubview(verticalLineLeft)
         view.addSubview(verticalLineRight)
 
- // !!!
-        for w in WalletStore.shared.wallets {
-            print("... p[\(w.wallet?.name)] = \(w.wallet?.publicKey) \(w.wallet?.privateKey)")
-            if let key = w.wallet?.name, key == "local" {
-                continue
-            }
-            try? WalletStore.shared.keychain.remove(w.wallet!.name!)
-            try? WalletStore.shared.keychain.removeWalletAttr(w.wallet!.name!)
-        }
+        
+//        try? WalletStore.shared.keychain.removeAll()
+// // !!!
+//        for w in WalletStore.shared.wallets {
+//            print("... p[\(w.wallet?.name)] = \(w.wallet?.publicKey) \(w.wallet?.privateKey)")
+//            if let key = w.wallet?.name, key == "local" {
+//                continue
+//            }
+//            try? WalletStore.shared.keychain.remove(w.wallet!.publicKey!)
+//            try? WalletStore.shared.keychain.removeWalletAttr(w.wallet!.publicKey!)
+//        }
 
         verticalLineLeft.snp.makeConstraints { (m) in
             m.centerX.equalTo(view.snp.right).multipliedBy(1.0/3.0)
@@ -204,6 +206,7 @@ class WalletCardsController: UIViewController {
             if viewControllers.first!.isKind(of: EmptyWallet.self) {
                 return
             }
+            _walletDetailsController.walletKey = WalletStore.shared.acitveWallets[currentIndex].wallet?.publicKey
             navigationController?.pushViewController(_walletDetailsController, animated: true)
         }
     }
@@ -263,17 +266,18 @@ class WalletCardsController: UIViewController {
     fileprivate var _pendingIndex: Int?
     
     fileprivate var _walletDetailsController = WalletCardDetails()
-    fileprivate var _newWalletController = NewWalletController()
+    fileprivate var _newWalletController = WalletOptionsController()
 }
 
 
 extension WalletCardsController: WalletCellDelegate {
-    func walletCell(_ item: WalletCell, didPress: Wallet?) {
+    func walletCell(_ item: WalletCell, didPress wallet: WalletContainer?) {
+        _walletDetailsController.walletKey = wallet?.wallet?.publicKey
         navigationController?.pushViewController(_walletDetailsController, animated: true)
     }
     
-    func walletCell(_ item: WalletCell, didPresent wallet: Wallet?) {
-        navigationItem.title = wallet?.name ?? "-"
+    func walletCell(_ item: WalletCell, didPresent wallet: WalletContainer?) {
+        navigationItem.title = wallet?.wallet?.name ?? "-"
     }
 }
 
