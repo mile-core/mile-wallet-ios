@@ -179,7 +179,7 @@ class WalletOptionsControllerImp: Controller {
         v.addSubview(back)
         back.snp.makeConstraints({ (m) in
             m.centerX.equalToSuperview()
-            m.bottom.equalToSuperview().offset(-15)
+            m.bottom.equalTo(v.safeAreaLayoutGuide.snp.bottom).offset(-15)
             m.width.equalToSuperview().offset(-40)
             m.height.equalTo(60)
         })
@@ -287,7 +287,6 @@ extension WalletOptionsControllerImp: UIPrintInteractionControllerDelegate {
 
 extension WalletOptionsControllerImp {
     
-    
     @objc fileprivate func backMainHandler(sender:UIButton){
         coverDown()
         self.dismiss(animated: true)
@@ -343,6 +342,8 @@ extension WalletOptionsControllerImp {
         }
         
         do {
+            guard let oldName = wallet.name else { return }
+            
             self.currentWallet = wallet
             
             if self.wallet != nil, wallet.name != self.name.text {
@@ -359,7 +360,14 @@ extension WalletOptionsControllerImp {
             }
 
             guard let key = wallet.publicKey else { return }
+            guard let name = wallet.name else { return }
 
+            if oldName != name {
+                if !checkWallet(name: name) {
+                    return
+                }
+            }
+            
             guard let json = Mapper<Wallet>().toJSONString(wallet) else {
                 UIAlertController(title: nil,
                                   message:  NSLocalizedString("Wallet could not be created from the secret phrase", comment: ""),
@@ -411,12 +419,7 @@ extension WalletOptionsControllerImp {
     
     fileprivate static let closeString = NSLocalizedString("Close", comment: "")
 
-    fileprivate func addWallet()  {
-        
-        guard let name = name.text else { return }
-        
-        guard !name.isEmpty else { return }
-        
+    private func checkWallet(name:String) -> Bool {
         let checkWallet = WalletStore.shared.find(name: name)
         
         if checkWallet != nil {
@@ -425,6 +428,19 @@ extension WalletOptionsControllerImp {
                               preferredStyle: .alert)
                 .addAction(title: WalletOptionsControllerImp.closeString, style: .cancel)
                 .present(by: self)
+            return false
+        }
+        
+        return true
+    }
+    
+    fileprivate func addWallet()  {
+        
+        guard let name = name.text else { return }
+        
+        guard !name.isEmpty else { return }
+        
+        if !checkWallet(name: name) {
             return
         }
         
