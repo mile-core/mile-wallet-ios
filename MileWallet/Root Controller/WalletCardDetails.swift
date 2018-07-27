@@ -104,8 +104,9 @@ class WalletCardDetails: Controller {
     }
     
     private let bg = UIImageView(image: Config.Images.basePattern)
-    let actionH:CGFloat = 90
-    let topPadding:CGFloat = 20
+    
+    var actionH:CGFloat = 80
+    let topPadding:CGFloat = 10
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -150,15 +151,15 @@ class WalletCardDetails: Controller {
         }
         
         balance.snp.remakeConstraints { (m) in
+            m.top.greaterThanOrEqualTo(view.safeAreaLayoutGuide.snp.top).offset(0).priority(.high)
             m.top.equalTo(qrCodeBorder.snp.bottom).offset(40).priority(.low)
-            m.top.greaterThanOrEqualTo(view.safeAreaLayoutGuide.snp.top).offset(10).priority(.high)
             m.left.equalTo(wrapperView).inset(40)
             m.right.equalTo(wrapperView).inset(40)
             m.height.equalTo(120)
         }
         
         actions.snp.remakeConstraints { (m) in
-            m.top.greaterThanOrEqualTo(copyAddressButton.snp.bottom).offset(10).priority(.high)
+            m.top.greaterThanOrEqualTo(copyAddressButton.snp.bottom).offset(5).priority(.high)
             m.top.equalTo(wrapperView.snp.top).offset(height).priority(.low)
             m.left.right.equalTo(wrapperView).inset(0)
             m.height.equalTo(actionH*4+4+topPadding).priority(.low)
@@ -166,7 +167,7 @@ class WalletCardDetails: Controller {
         }
         
         copyAddressButton.snp.remakeConstraints { (m) in
-            m.top.greaterThanOrEqualTo(balance.snp.bottom).offset(10).priority(.high)
+            m.top.greaterThanOrEqualTo(balance.snp.bottom).offset(0).priority(.high)
             m.bottom.equalTo(actions.snp.top).offset(-40).priority(.low)
             m.left.right.equalTo(wrapperView).inset(60)
             m.height.equalTo(60)
@@ -181,6 +182,10 @@ class WalletCardDetails: Controller {
     
     override func viewDidLoad() {
       super.viewDidLoad()
+        
+        if UIScreen.main.bounds.size.height < 640 {
+            actionH = 60
+        }
         
         contentView.addSubview(bg)
         bg.contentMode = .scaleAspectFill
@@ -376,7 +381,9 @@ extension WalletCardDetails: UIScrollViewDelegate {
         }
         qrCodeScale = (baseQRCodeFrame!.height-scrollView.contentOffset.y)/baseQRCodeFrame!.height
         qrCodeScale = qrCodeScale < 0 ? 0 : qrCodeScale
+        qrContent.transform = CGAffineTransform.identity
         qrContent.transform = CGAffineTransform(scaleX: qrCodeScale, y: qrCodeScale)
+            .concatenating(CGAffineTransform(translationX: 0, y: -scrollView.contentOffset.y/8))
         //qrContent.alpha = qrCodeScale
     }
 }
