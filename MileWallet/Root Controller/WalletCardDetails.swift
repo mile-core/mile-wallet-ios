@@ -177,7 +177,7 @@ class WalletCardDetails: Controller {
             m.edges.equalToSuperview()
         }
         
-        shadowSetup()
+        shadowSetup()        
     }
     
     override func viewDidLoad() {
@@ -193,7 +193,7 @@ class WalletCardDetails: Controller {
             m.edges.equalTo(view.snp.edges)
         }
         
-        scrollView.showsVerticalScrollIndicator = false
+        
         contentView.addSubview(scrollView)
         scrollView.snp.makeConstraints { (make) in
             make.edges.equalTo(contentView)
@@ -217,11 +217,23 @@ class WalletCardDetails: Controller {
         walletInfo.didMove(toParentViewController: self)
         
         scrollView.delegate = self
+        
+        let gest = UITapGestureRecognizer(target: self, action: #selector(scrollGestureHandler(gesture:)))
+        wrapperView.addGestureRecognizer(gest)
+    }
+    
+    class ScrollView: UIScrollView {
+        override func touchesShouldCancel(in view: UIView) -> Bool {
+            return true
+        }
     }
     
     public let scrollView:UIScrollView = {
-        let v = UIScrollView()
+        let v = ScrollView()
         v.backgroundColor = UIColor.clear
+        v.showsVerticalScrollIndicator = false
+        v.isUserInteractionEnabled = true
+        v.delaysContentTouches = false
         return v
     }()
     
@@ -261,12 +273,15 @@ class WalletCardDetails: Controller {
     
     fileprivate lazy var actions:UIView = {
         let v = UIView()
+
         v.backgroundColor = UIColor.white
         var prev = v
         
-        var y:CGFloat = 0
+        var y:CGFloat = 1
         for (i,a) in self.actionDesc.enumerated() {
             
+            let image = UIImageView(image: a.icon!)
+
             let button = UIButton(type: .custom)
             button.backgroundColor = UIColor.clear
             button.setTitle(a.title, for: .normal)
@@ -274,17 +289,39 @@ class WalletCardDetails: Controller {
             button.titleLabel?.textAlignment = .left
             button.titleLabel?.font = Config.Fonts.caption
             button.titleLabel?.textColor = UIColor.blue
-            button.frame = CGRect(x: 21, y: y, width: self.view.bounds.width, height: self.actionH)
+            button.frame = CGRect(x: 22, y: y, width: self.view.bounds.width, height: self.actionH)
             button.tag = i
-            button.addTarget(self, action: #selector(actionsHandler(_:)), for: .touchUpInside)
-            y += self.actionH
+            button.addTarget(self, action: #selector(self.actionsHandler(sender:)), for: .touchUpInside)
+            y += self.actionH + 1
+            
             v.addSubview(button)
+            
+            button.addSubview(image)
+            image.snp.makeConstraints { (m) in
+                m.top.equalTo(button).offset(24)
+                m.bottom.equalTo(button).offset(-24)
+                m.centerX.equalTo(button.snp.right).offset(-42-a.icon!.size.width/2)
+                m.height.equalTo(image.snp.width)
+            }
+            
+            if i < self.actionDesc.count-1 {
+                let line = UIView()
+                
+                line.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+                line.frame = CGRect(x: 21, y: y, width: self.view.bounds.width-38, height: 1)
+                
+                v.addSubview(line)
+            }
         }
 
         return v
     }()
-    
-    @objc func actionsHandler(_ sender:UIButton){
+
+    @objc func scrollGestureHandler(gesture:UITapGestureRecognizer){
+        printTicket("scrollGestureHandler ... > \(gesture.view?.tag, gesture.view)")
+    }
+
+    @objc func actionsHandler(sender:UIButton){
         printTicket("actionsHandler ... > \(sender.tag)")
     }
     
@@ -294,15 +331,20 @@ class WalletCardDetails: Controller {
         return v
     }()
     
-    fileprivate let copyAddressButton:UIButton = {
-        let back = UIButton(type: .custom)
-        back.setTitle(NSLocalizedString("Copy address", comment: ""), for: UIControlState.normal)
-        back.setTitleColor(UIColor.white, for: .normal)
-        back.titleLabel?.font = Config.Fonts.caption
-        back.backgroundColor = Config.Colors.blueButton
-        back.layer.cornerRadius = Config.buttonRadius
-        return back
+    fileprivate lazy var copyAddressButton:UIButton = {
+        let copy = UIButton(type: .custom)
+        copy.setTitle(NSLocalizedString("Copy address", comment: ""), for: .normal)
+        copy.setTitleColor(UIColor.white, for: .normal)
+        copy.titleLabel?.font = Config.Fonts.caption
+        copy.backgroundColor = Config.Colors.blueButton
+        copy.layer.cornerRadius = Config.buttonRadius
+        copy.addTarget(self, action: #selector(self.copyAddress(sender:)), for: .touchUpInside)
+        return copy
     }()
+    
+    @objc func copyAddress(sender:UIButton){
+        printTicket("copyAddress ... > \(sender.tag)")
+    }
     
     private func shadowSetup()  {
         shadow.layer.cornerRadius = 15
@@ -346,7 +388,7 @@ extension WalletCardDetails: UIScrollViewDelegate {
                 scrollView.setContentOffset(topOffset, animated: true)
             }
             else {
-                let bottomOffset = CGPoint(x: 0, y: baseActionsFrame.origin.y-baseActionsFrame.size.height+actionH)
+                let bottomOffset = CGPoint(x: 0, y: baseActionsFrame.origin.y-baseActionsFrame.size.height)
                 scrollView.setContentOffset(bottomOffset, animated: true)
             }
             return
@@ -357,7 +399,7 @@ extension WalletCardDetails: UIScrollViewDelegate {
             scrollView.setContentOffset(topOffset, animated: true)
         }
         else {
-            let bottomOffset = CGPoint(x: 0, y: baseActionsFrame.origin.y-baseActionsFrame.size.height+actionH)
+            let bottomOffset = CGPoint(x: 0, y: baseActionsFrame.origin.y-baseActionsFrame.size.height)
             scrollView.setContentOffset(bottomOffset, animated: true)
         }
     }
