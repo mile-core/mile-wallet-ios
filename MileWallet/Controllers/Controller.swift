@@ -13,7 +13,9 @@ import MileWalletKit
 import KeychainAccess
 
 class Controller: UIViewController {
-    
+
+    public var chainInfo:Chain?
+
     public lazy var qrCodeReader:QRReader = {return QRReader(controller: self)}() 
     
     public let contentView = UIView()
@@ -71,7 +73,28 @@ class Controller: UIViewController {
         }, completion: { (flag) in
             self.dimView.removeFromSuperview()
         })
-    }        
+    }
+    
+    public func mileInfoUpdate(error: ((_ error: Error?)-> Void)?=nil,
+                               complete:@escaping ((_ chain:Chain)->Void))  {
+        
+        if chainInfo == nil {
+            Chain.update(error: { (e) in
+                
+                error?(e)
+                
+            }) { (chain) in
+                self.chainInfo = chain
+                complete(self.chainInfo!)
+            }
+        }
+        
+        guard let chain = chainInfo else {
+            return
+        }
+        
+        complete(chain)
+    }
 }
 
 public class NavigationController: UINavigationController {

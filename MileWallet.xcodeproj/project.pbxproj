@@ -41,6 +41,7 @@
 		31BB792320EA703300AC301A /* Printer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31BB792220EA703300AC301A /* Printer.swift */; };
 		31BB792520EA787400AC301A /* WalletStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31BB792420EA787400AC301A /* WalletStore.swift */; };
 		31D1333420D9A1E200E2E8D9 /* LocalAuthentication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31D1333320D9A1E200E2E8D9 /* LocalAuthentication.framework */; };
+		31D26322210A74E600797080 /* WalletInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31D26321210A74E600797080 /* WalletInfo.swift */; };
 		31D8CB9020CAEA9A006C7B8D /* TransferViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31D8CB8F20CAEA9A006C7B8D /* TransferViewController.swift */; };
 		31E4E06421076B0900ACE8FD /* WalletCardDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E4E06321076B0900ACE8FD /* WalletCardDetails.swift */; };
 		31E6BF4020D91A6D00C40A80 /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E6BF3F20D91A6D00C40A80 /* Controller.swift */; };
@@ -87,6 +88,7 @@
 		31BB792220EA703300AC301A /* Printer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Printer.swift; sourceTree = "<group>"; };
 		31BB792420EA787400AC301A /* WalletStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletStore.swift; sourceTree = "<group>"; };
 		31D1333320D9A1E200E2E8D9 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = System/Library/Frameworks/LocalAuthentication.framework; sourceTree = SDKROOT; };
+		31D26321210A74E600797080 /* WalletInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletInfo.swift; sourceTree = "<group>"; };
 		31D8CB8F20CAEA9A006C7B8D /* TransferViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferViewController.swift; sourceTree = "<group>"; };
 		31E4E06321076B0900ACE8FD /* WalletCardDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletCardDetails.swift; sourceTree = "<group>"; };
 		31E6BF3F20D91A6D00C40A80 /* Controller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
@@ -123,6 +125,7 @@
 				3144B657210618D900ED27BF /* RootController.swift */,
 				3144B659210618F900ED27BF /* WalletCardsController.swift */,
 				31B1690F2109A0570004DE8E /* WalletCell.swift */,
+				31D26321210A74E600797080 /* WalletInfo.swift */,
 				31B169132109A1BF0004DE8E /* WalletPreview.swift */,
 				31B6091B2109A2C500B66FD8 /* EmptyWallet.swift */,
 				31E4E06321076B0900ACE8FD /* WalletCardDetails.swift */,
@@ -436,6 +439,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				31D26322210A74E600797080 /* WalletInfo.swift in Sources */,
 				3182CDCB20D2AF0D000C3C68 /* PaymentController.swift in Sources */,
 				311A40482107CA7B0015952B /* ColorPicker.swift in Sources */,
 				31144EB020CA8AA400A8E6B4 /* NewWalletViewController.swift in Sources */,

@@ -16,30 +16,7 @@ import MileWalletKit
 
 class DetailViewController: Controller {
     
-    private var chainInfo:Chain?
-    
-    var currentAssets:String = "MILE"
-    
-    func mileInfoUpdate(error: ((_ error: Error?)-> Void)?=nil, 
-                        complete:@escaping ((_ chain:Chain)->Void))  {        
-        
-        if chainInfo == nil {
-            Chain.update(error: { (e) in
-                
-                error?(e)
-                
-            }) { (chain) in
-                self.chainInfo = chain
-                complete(self.chainInfo!)
-            }
-        }
-        
-        guard let chain = chainInfo else {
-            return
-        }
-        
-        complete(chain)
-    }
+    var currentAssets:String = Asset.mile.name
     
     var wallet:Wallet? 
     
@@ -84,12 +61,12 @@ class DetailViewController: Controller {
     }
     
     @objc func transferXdr(gesture:UITapGestureRecognizer) {
-        currentAssets = "XDR"
+        currentAssets = Asset.xdr.name
         transferAsset()
     }
     
     @objc func transferMile(gesture:UITapGestureRecognizer) {
-        currentAssets = "MILE"
+        currentAssets = Asset.mile.name
         transferAsset()
     }
     

@@ -21,32 +21,11 @@ extension WalletCellDelegate {
 
 class WalletCell: Controller {
     
-    public var chainInfo:Chain?
     public var wallet:Wallet?
     public var walletAttributes:WalletAttributes?
     
     public var delegate:WalletCellDelegate?
-    
-    public func mileInfoUpdate(error: ((_ error: Error?)-> Void)?=nil,
-                               complete:@escaping ((_ chain:Chain)->Void))  {
-        
-        if chainInfo == nil {
-            Chain.update(error: { (e) in
-                
-                error?(e)
-                
-            }) { (chain) in
-                self.chainInfo = chain
-                complete(self.chainInfo!)
-            }
-        }
-        
-        guard let chain = chainInfo else {
-            return
-        }
-        
-        complete(chain)
-    }
+      
     
     public let content:UIView = {
         let v = UIView()
@@ -93,7 +72,13 @@ class WalletCell: Controller {
         super.viewWillAppear(animated)
         shadowSetup()
     }
-        
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        delegate?.walletCell(self, didPresent:  WalletContainer(wallet: self.wallet,
+                                                                attributes: self.walletAttributes))
+    }
+    
     @objc private func pressContentHandler(gesture:UILongPressGestureRecognizer){
         if gesture.state == .began {
             CATransaction.begin()
