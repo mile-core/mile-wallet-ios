@@ -163,6 +163,8 @@ class ConactCell: UITableViewCell {
 }
 
 class ContactsController: UITableViewController {
+   
+    fileprivate var wallet:WalletContainer?
     
     let cellReuseIdendifier = "cell"
 
@@ -182,6 +184,9 @@ class ContactsController: UITableViewController {
             self.tableView.reloadData()
         }
     }
+    
+    fileprivate var _sendCoinsController = SendCoins()
+
 }
 
 
@@ -198,18 +203,19 @@ extension ContactsController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellReuseIdendifier, for: indexPath) as! ConactCell
+        
+        let list = self.list
+        
         let contact = list[indexPath.row]
         cell.name = contact.name
         cell.publicKey = contact.publicKey
         cell.avatar = contact.photo
         
-        if indexPath.row < list.count - 1 {
-            cell.contentView.add(border: .bottom,
-                                 color: UIColor.black.withAlphaComponent(0.1),
-                                 width: 1,
-                                 padding: UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
-            )
-        }
+        cell.contentView.add(border: .bottom,
+                             color: UIColor.black.withAlphaComponent(0.1),
+                             width: 1,
+                             padding: UIEdgeInsets(top: 0, left: 90, bottom: 0, right: 0)
+        )
         
         return cell
     }
@@ -236,6 +242,11 @@ extension ContactsController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)!
         cell.backgroundColor = UIColor.black.withAlphaComponent(0.03)
+        
+        _sendCoinsController.wallet = self.wallet
+        _sendCoinsController.contact = Contact.list[indexPath.row]
+        present(_sendCoinsController, animated: true)
+
     }
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
@@ -254,6 +265,7 @@ extension ContactsController {
                 try Model.shared.context.save()
                 if l.count == 1 {
                     tableView.deleteSections(IndexSet(integer: indexPath.section), with: .automatic)
+                    tableView.reloadRows(at:[indexPath], with: .automatic)
                 } else {
                     tableView.deleteRows(at: [indexPath], with: .automatic)
                 }
@@ -269,6 +281,7 @@ class WalletContacts: Controller {
     
     private var wallet:WalletContainer? {
         didSet{
+            _tableController.wallet = wallet
             bg.backgroundColor = UIColor(hex: wallet?.attributes?.color ?? 0)
         }
     }

@@ -53,8 +53,11 @@ class WalletContactOptionsControllerImp: Controller, UITextFieldDelegate {
     
     private let _tableController = ContactController()
 
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        navigationController?.navigationBar.isTranslucent = false
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.closePayments(sender:)))
         
@@ -73,8 +76,6 @@ class WalletContactOptionsControllerImp: Controller, UITextFieldDelegate {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        //_tableController.load.setImage(_tableController.loadImage, for: .normal)
         
         if let contact = self.contact {
             title = NSLocalizedString("Send coins to", comment: "") + ": " + contact.name!
@@ -125,7 +126,7 @@ class WalletContactOptionsControllerImp: Controller, UITextFieldDelegate {
                 .present(by: self)
             return
         }
-                
+        
         guard Contact.find(publicKey, for: "publicKey").count==0 else {
             UIAlertController(title: nil,
                               message: NSLocalizedString("You already have the same key in contact book", comment: ""),
@@ -215,7 +216,8 @@ class ContactController: UITableViewController {
             v.addSubview(self.loadButton)
             
             u.snp.makeConstraints({ (m) in
-                m.right.left.equalTo(v)
+                m.right.equalTo(v)
+                m.left.equalTo(v)
                 m.top.equalTo(v)
                 m.bottom.equalTo(v.snp.centerY).offset(-25)
             })
@@ -230,6 +232,7 @@ class ContactController: UITableViewController {
             return v
         }()
     ]
+    
 }
 
 class PickerController: UIImagePickerController {
@@ -293,7 +296,8 @@ extension ContactController: UIImagePickerControllerDelegate, UINavigationContro
         let v = list[indexPath.row]
         cell.addSubview(v)
         v.snp.makeConstraints { (m) in
-            m.left.right.equalTo(cell).offset(30)
+            m.left.equalTo(cell).offset(30)
+            m.right.equalTo(cell).offset(-30)
             m.bottom.equalTo(cell).offset(-20)
             m.top.equalTo(cell).offset(20)
         }

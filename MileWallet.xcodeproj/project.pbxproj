@@ -26,6 +26,7 @@
 		3164FD8520C950ED00294A9F /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3164FD8420C950ED00294A9F /* DetailViewController.swift */; };
 		3164FD8820C950ED00294A9F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3164FD8620C950ED00294A9F /* Main.storyboard */; };
 		3164FD8D20C950ED00294A9F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3164FD8B20C950ED00294A9F /* LaunchScreen.storyboard */; };
+		31679764210D174B00686E92 /* SendCoins.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31679763210D174B00686E92 /* SendCoins.swift */; };
 		3182CDC320D1C462000C3C68 /* HTMLTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3182CDC220D1C462000C3C68 /* HTMLTemplate.swift */; };
 		3182CDC520D1C481000C3C68 /* PDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3182CDC420D1C481000C3C68 /* PDF.swift */; };
 		3182CDC920D2AA9E000C3C68 /* PrintPaymentTemplate.html in Resources */ = {isa = PBXBuildFile; fileRef = 3182CDC820D2AA9D000C3C68 /* PrintPaymentTemplate.html */; };
@@ -77,6 +78,7 @@
 		3164FD8720C950ED00294A9F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3164FD8C20C950ED00294A9F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3164FD8E20C950ED00294A9F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		31679763210D174B00686E92 /* SendCoins.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendCoins.swift; sourceTree = "<group>"; };
 		3182CDC220D1C462000C3C68 /* HTMLTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLTemplate.swift; sourceTree = "<group>"; };
 		3182CDC420D1C481000C3C68 /* PDF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDF.swift; sourceTree = "<group>"; };
 		3182CDC820D2AA9D000C3C68 /* PrintPaymentTemplate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = PrintPaymentTemplate.html; sourceTree = "<group>"; };
@@ -142,6 +144,7 @@
 				3116D391210C724800C5C85F /* WalletOptions.swift */,
 				31B13C11210CB87C00446E9D /* WalletContacts.swift */,
 				3105B71B210CD6FB0047C2C0 /* WalletContactOptions.swift */,
+				31679763210D174B00686E92 /* SendCoins.swift */,
 			);
 			path = "Root Controller";
 			sourceTree = "<group>";
@@ -500,6 +503,7 @@
 				31F1C86B210C926600C1DF8E /* Model.swift in Sources */,
 				311A404A21088BAE0015952B /* UIColor(Hex).swift in Sources */,
 				3164FD8120C950ED00294A9F /* AppDelegate.swift in Sources */,
+				31679764210D174B00686E92 /* SendCoins.swift in Sources */,
 				31E4E06421076B0900ACE8FD /* WalletDetails.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

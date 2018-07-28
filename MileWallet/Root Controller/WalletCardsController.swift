@@ -151,7 +151,7 @@ class WalletCardsController: UIViewController {
         b.setImage(UIImage(named: "button-archive-wallets"), for: UIControlState.normal)
         b.imageView?.contentMode = .scaleAspectFit
         b.setTitle(NSLocalizedString("Archive", comment: ""), for: .normal)
-        b.addTarget(self, action:#selector(openContact(sender:)), for: UIControlEvents.touchUpInside)
+        b.addTarget(self, action:#selector(archiveWallet(sender:)), for: UIControlEvents.touchUpInside)
         return b
     }()
     
