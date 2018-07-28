@@ -167,6 +167,8 @@ class WalletCardsController: UIViewController {
     ///
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationController?.navigationBar.prefersLargeTitles = false
+
         var newIndex = lastIndex
         
         if viewControllers.count != WalletStore.shared.acitveWallets.count
@@ -220,7 +222,14 @@ class WalletCardsController: UIViewController {
     }
     
     @objc private func openContact(sender:UIButton) {
-        print("Open contact")
+        print("Open contact")        
+        if viewControllers.count > 0 {
+            if viewControllers.first!.isKind(of: EmptyWallet.self) {
+                return
+            }
+            _walletContacts.walletKey = WalletStore.shared.acitveWallets[currentIndex].wallet?.publicKey
+            navigationController?.pushViewController(_walletContacts, animated: true)
+        }
     }
     
     @objc private func archiveWallet(sender:UIButton) {
@@ -271,6 +280,7 @@ class WalletCardsController: UIViewController {
     
     fileprivate var _walletDetailsController = WalletCardDetails()
     fileprivate var _newWalletController = WalletOptions()
+    fileprivate var _walletContacts = WalletContacts()
 }
 
 

@@ -73,7 +73,8 @@ extension Config {
         public static let navigationBarTitle =  UIFont(name: "SFProText-Regular", size: 21)!
         public static let edit =  UIFont(name: "SFProText-Regular", size: 21)!
         public static let caption =  UIFont(name: "SFProText-Regular", size: 21)!
-        public static let toolBar =  UIFont(name: "SFProText-Regular", size: 13)!
+        public static let toolBar =  UIFont(name: "SFProText-Regular", size: 15)!
+        public static let contacts =  UIFont(name: "SFProText-Regular", size: 15)!
         public static let navigationBarLargeTitle =  UIFont(name: "SFProDisplay-Bold", size: 34)!
         public static let header =  UIFont(name: "SFProDisplay-Bold", size: 34)!
     }

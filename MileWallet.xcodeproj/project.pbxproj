@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3105B71C210CD6FB0047C2C0 /* WalletContactOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105B71B210CD6FB0047C2C0 /* WalletContactOptions.swift */; };
 		31144EB020CA8AA400A8E6B4 /* NewWalletViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31144EAF20CA8AA400A8E6B4 /* NewWalletViewController.swift */; };
 		3116D392210C724800C5C85F /* WalletOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3116D391210C724800C5C85F /* WalletOptions.swift */; };
 		311A40482107CA7B0015952B /* ColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311A40472107CA7B0015952B /* ColorPicker.swift */; };
@@ -33,6 +34,7 @@
 		318B694720EBCB1A00DCDDB1 /* TextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318B694620EBCB1A00DCDDB1 /* TextField.swift */; };
 		319AC52B20E642B000FB0D65 /* 00-03-logo-fill-blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 319AC52A20E642AF00FB0D65 /* 00-03-logo-fill-blue.png */; };
 		31A9FE9E20DBD2EB00779F60 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A9FE9D20DBD2EB00779F60 /* Config.swift */; };
+		31B13C12210CB87C00446E9D /* WalletContacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B13C11210CB87C00446E9D /* WalletContacts.swift */; };
 		31B169102109A0570004DE8E /* WalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B1690F2109A0570004DE8E /* WalletCell.swift */; };
 		31B169142109A1BF0004DE8E /* WalletPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B169132109A1BF0004DE8E /* WalletPreview.swift */; };
 		31B18BE420E4E743005CA426 /* AuthenticationID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B18BE320E4E743005CA426 /* AuthenticationID.swift */; };
@@ -45,12 +47,15 @@
 		31D8CB9020CAEA9A006C7B8D /* TransferViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31D8CB8F20CAEA9A006C7B8D /* TransferViewController.swift */; };
 		31E4E06421076B0900ACE8FD /* WalletCardDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E4E06321076B0900ACE8FD /* WalletCardDetails.swift */; };
 		31E6BF4020D91A6D00C40A80 /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E6BF3F20D91A6D00C40A80 /* Controller.swift */; };
+		31F1C86B210C926600C1DF8E /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31F1C86A210C926600C1DF8E /* Model.swift */; };
+		31F1C875210C9DEE00C1DF8E /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 31F1C873210C9DEE00C1DF8E /* Model.xcdatamodeld */; };
 		31F2CFE520D177A000C1770B /* PrintSecretTemplate.html in Resources */ = {isa = PBXBuildFile; fileRef = 31F2CFE420D177A000C1770B /* PrintSecretTemplate.html */; };
 		6C7F0151E2AF0722F86A75E3 /* Pods_MileWallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B76307F7CB9436B9776FCFD2 /* Pods_MileWallet.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		3104930B20CC05D5006AB772 /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		3105B71B210CD6FB0047C2C0 /* WalletContactOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletContactOptions.swift; sourceTree = "<group>"; };
 		31144EAF20CA8AA400A8E6B4 /* NewWalletViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewWalletViewController.swift; sourceTree = "<group>"; };
 		3116D391210C724800C5C85F /* WalletOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WalletOptions.swift; sourceTree = "<group>"; };
 		311A40472107CA7B0015952B /* ColorPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPicker.swift; sourceTree = "<group>"; };
@@ -80,6 +85,7 @@
 		319AC52A20E642AF00FB0D65 /* 00-03-logo-fill-blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "00-03-logo-fill-blue.png"; sourceTree = "<group>"; };
 		31A9FE9D20DBD2EB00779F60 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		31A9FE9F20DBD50900779F60 /* MileWallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MileWallet.entitlements; sourceTree = "<group>"; };
+		31B13C11210CB87C00446E9D /* WalletContacts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletContacts.swift; sourceTree = "<group>"; };
 		31B1690F2109A0570004DE8E /* WalletCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletCell.swift; sourceTree = "<group>"; };
 		31B169132109A1BF0004DE8E /* WalletPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WalletPreview.swift; sourceTree = "<group>"; };
 		31B18BE320E4E743005CA426 /* AuthenticationID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationID.swift; sourceTree = "<group>"; };
@@ -92,6 +98,8 @@
 		31D8CB8F20CAEA9A006C7B8D /* TransferViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferViewController.swift; sourceTree = "<group>"; };
 		31E4E06321076B0900ACE8FD /* WalletCardDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletCardDetails.swift; sourceTree = "<group>"; };
 		31E6BF3F20D91A6D00C40A80 /* Controller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
+		31F1C86A210C926600C1DF8E /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		31F1C874210C9DEE00C1DF8E /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		31F2CFE420D177A000C1770B /* PrintSecretTemplate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = PrintSecretTemplate.html; sourceTree = "<group>"; };
 		49204292349409323B45A4FE /* Pods-MileWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MileWallet.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MileWallet/Pods-MileWallet.debug.xcconfig"; sourceTree = "<group>"; };
 		7B728D4241C0E56F3425037D /* Pods-MileWallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MileWallet.release.xcconfig"; path = "Pods/Target Support Files/Pods-MileWallet/Pods-MileWallet.release.xcconfig"; sourceTree = "<group>"; };
@@ -130,6 +138,8 @@
 				31B6091B2109A2C500B66FD8 /* EmptyWallet.swift */,
 				31E4E06321076B0900ACE8FD /* WalletCardDetails.swift */,
 				3116D391210C724800C5C85F /* WalletOptions.swift */,
+				31B13C11210CB87C00446E9D /* WalletContacts.swift */,
+				3105B71B210CD6FB0047C2C0 /* WalletContactOptions.swift */,
 			);
 			path = "Root Controller";
 			sourceTree = "<group>";
@@ -169,6 +179,7 @@
 				3185BBF321071936004CDBEF /* Assets.xcassets */,
 				31A9FE9F20DBD50900779F60 /* MileWallet.entitlements */,
 				311A40422107CA1E0015952B /* Color Picker */,
+				31F1C869210C8F7C00C1DF8E /* Model */,
 				3144B6562106183400ED27BF /* Root Controller */,
 				318B694820EBCB4200DCDDB1 /* Views */,
 				31BAD73220EBB01800032E0E /* Controllers */,
@@ -210,7 +221,6 @@
 				31A9FE9D20DBD2EB00779F60 /* Config.swift */,
 				31B18BE320E4E743005CA426 /* AuthenticationID.swift */,
 				313CCACE20E51B5900BF8737 /* CoverView.swift */,
-				31BB792420EA787400AC301A /* WalletStore.swift */,
 				31BAD73020EBA95700032E0E /* Extensions.swift */,
 			);
 			path = Classes;
@@ -227,6 +237,16 @@
 				3182CDCA20D2AF0C000C3C68 /* PaymentController.swift */,
 			);
 			path = Controllers;
+			sourceTree = "<group>";
+		};
+		31F1C869210C8F7C00C1DF8E /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				31F1C86A210C926600C1DF8E /* Model.swift */,
+				31F1C873210C9DEE00C1DF8E /* Model.xcdatamodeld */,
+				31BB792420EA787400AC301A /* WalletStore.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		31F2CFE320D1772800C1770B /* Resources */ = {
@@ -302,7 +322,13 @@
 							com.apple.Keychain = {
 								enabled = 1;
 							};
+							com.apple.Push = {
+								enabled = 1;
+							};
 							com.apple.SafariKeychain = {
+								enabled = 1;
+							};
+							com.apple.iCloud = {
 								enabled = 1;
 							};
 						};
@@ -456,14 +482,18 @@
 				31BB792520EA787400AC301A /* WalletStore.swift in Sources */,
 				3182CDC320D1C462000C3C68 /* HTMLTemplate.swift in Sources */,
 				31E6BF4020D91A6D00C40A80 /* Controller.swift in Sources */,
+				31F1C875210C9DEE00C1DF8E /* Model.xcdatamodeld in Sources */,
+				31B13C12210CB87C00446E9D /* WalletContacts.swift in Sources */,
 				31BAD73120EBA95700032E0E /* Extensions.swift in Sources */,
 				3144B658210618D900ED27BF /* RootController.swift in Sources */,
 				313CCACF20E51B5900BF8737 /* CoverView.swift in Sources */,
+				3105B71C210CD6FB0047C2C0 /* WalletContactOptions.swift in Sources */,
 				31A9FE9E20DBD2EB00779F60 /* Config.swift in Sources */,
 				3116D392210C724800C5C85F /* WalletOptions.swift in Sources */,
 				31B169102109A0570004DE8E /* WalletCell.swift in Sources */,
 				3144B6602106311E00ED27BF /* UImage(Gradient).swift in Sources */,
 				31D8CB9020CAEA9A006C7B8D /* TransferViewController.swift in Sources */,
+				31F1C86B210C926600C1DF8E /* Model.swift in Sources */,
 				311A404A21088BAE0015952B /* UIColor(Hex).swift in Sources */,
 				3164FD8120C950ED00294A9F /* AppDelegate.swift in Sources */,
 				31E4E06421076B0900ACE8FD /* WalletCardDetails.swift in Sources */,
@@ -668,6 +698,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		31F1C873210C9DEE00C1DF8E /* Model.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				31F1C874210C9DEE00C1DF8E /* Model.xcdatamodel */,
+			);
+			currentVersion = 31F1C874210C9DEE00C1DF8E /* Model.xcdatamodel */;
+			path = Model.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 3164FD7520C950ED00294A9F /* Project object */;
 }
