@@ -43,18 +43,24 @@ extension Contact {
         return []
     }
     
-    public static func contains(_ name: String ) -> [Contact] {
+    public static func contains(_ value: String, for key:String = "name") -> [Contact] {
+        return Contact.find(value, for: key, predicate: NSPredicate(format: key+" LIKE[c] %@", value))
+    }
+    
+    public static func find(_ value: String, for key:String = "name") -> [Contact] {
+        return Contact.find(value,for: key, predicate: NSPredicate(format: key+" ==[c] %@", value))
+    }
+    
+    public static func find(_ value: String, for key:String , predicate: NSPredicate) -> [Contact] {
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: ContactEntityName)
         request.returnsObjectsAsFaults = false
         
         // Add Sort Descriptor
-        let sortDescriptor = NSSortDescriptor(key: "name", ascending: true)
+        let sortDescriptor = NSSortDescriptor(key: key, ascending: true)
         request.sortDescriptors = [sortDescriptor]
         
-        // Add Predicate
-        let predicate = NSPredicate(format: "name CONTAINS[c] %@", name)
         request.predicate = predicate
-
+        
         do {
             let result = try Model.shared.context.fetch(request)
             return result as! [Contact]

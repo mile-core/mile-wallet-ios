@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import MileWalletKit
 
-class WalletCardDetails: Controller {
+class WalletDetails: Controller {
     
     class Action {
         @objc var action:((_ sender:Any) -> ())?

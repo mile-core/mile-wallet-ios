@@ -278,7 +278,7 @@ class WalletCardsController: UIViewController {
     fileprivate var _currentIndex: Int?
     fileprivate var _pendingIndex: Int?
     
-    fileprivate var _walletDetailsController = WalletCardDetails()
+    fileprivate var _walletDetailsController = WalletDetails()
     fileprivate var _newWalletController = WalletOptions()
     fileprivate var _walletContacts = WalletContacts()
 }

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import MileCsaLight
 import MileWalletKit
 
 class WalletContactOptions: NavigationController {
@@ -114,6 +115,24 @@ class WalletContactOptionsControllerImp: Controller, UITextFieldDelegate {
                 .addAction(title: NSLocalizedString("Close", comment: ""), style: .cancel)
                 .present(by: self)
                 return
+        }
+        
+        guard MileCsaKeys.testPublicKey(publicKey) else {
+            UIAlertController(title: nil,
+                              message: NSLocalizedString("Public key is not a MILE address", comment: ""),
+                              preferredStyle: .actionSheet)
+                .addAction(title: NSLocalizedString("Close", comment: ""), style: .cancel)
+                .present(by: self)
+            return
+        }
+                
+        guard Contact.find(publicKey, for: "publicKey").count==0 else {
+            UIAlertController(title: nil,
+                              message: NSLocalizedString("You already have the same key in contact book", comment: ""),
+                              preferredStyle: .actionSheet)
+                .addAction(title: NSLocalizedString("Close", comment: ""), style: .cancel)
+                .present(by: self)
+            return
         }
         
         let newContact = Contact()
