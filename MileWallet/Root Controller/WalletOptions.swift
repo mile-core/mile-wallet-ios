@@ -112,13 +112,22 @@ class WalletOptionsControllerImp: Controller, UITextFieldDelegate {
             archiveButton.isUserInteractionEnabled = false
             archiveButton.isHidden = true
         }
-        if let w = wallet?.attributes {
-            if w.isActive {
-                archiveButton.setTitle(NSLocalizedString("Archive wallet", comment: ""), for: .normal)
-            }
-            else {
-                archiveButton.setTitle(NSLocalizedString("Restore wallet", comment: ""), for: .normal)
-            }
+        
+        guard let a = wallet?.attributes else {
+            return
+        }
+        
+        if a.isActive {
+            archiveButton.setTitle(NSLocalizedString("Archive wallet", comment: ""), for: .normal)
+        }
+        else {
+            archiveButton.setTitle(NSLocalizedString("Restore wallet", comment: ""), for: .normal)
+        }
+        
+        if let index = Config.Colors.palette.index(where: { (c) -> Bool in
+            return c.hex == a.color
+        }) {
+            pickerView.selectCellAtIndex(index)
         }
     }
     
@@ -184,12 +193,10 @@ class WalletOptionsControllerImp: Controller, UITextFieldDelegate {
             UIAlertController(title: NSLocalizedString("Archive wallet \(w.name!)", comment: ""),
                               message: nil,
                               preferredStyle: .actionSheet)
-                .addAction(title: "Archive", style: .default) { _ in
+                .addAction(title: NSLocalizedString("Archive", comment: ""), style: .default) { _ in
                     self.updateWallet(wallet: w, isActive: !a.isActive)
                 }
-                .addAction(title: "Close", style: .cancel) { _ in
-                    self.dismiss(animated: true)
-                }
+                .addAction(title: NSLocalizedString("Close", comment: ""), style: .cancel)
                 .present(by: self)
         }
         else {
