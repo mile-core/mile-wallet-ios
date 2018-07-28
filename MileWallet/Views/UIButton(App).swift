@@ -22,6 +22,42 @@ extension UIButton {
 
 class Button: UIButton {
     fileprivate var handler:((_ sender:UIButton)->Void)?
+    
+    convenience init(image:UIImage?, action: ((_ sender:UIButton)->Void)?) {
+        self.init()
+        handler = action
+        setImage(image, for: UIControlState.normal)
+        imageView?.contentMode = .scaleAspectFit
+        titleLabel?.font = Config.Fonts.toolBar
+        addTarget(self, action:#selector(self.__actionHandler(sender:)), for: UIControlEvents.touchUpInside)
+    }
+    
+    @objc private func __actionHandler(sender:UIButton){
+        (sender as? Button)?.handler?(sender)
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    
+    init() {
+        super.init(frame: .zero)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+class RoundButton: Button {
+    
+    override func setImage(_ image: UIImage?, for state: UIControlState) {
+        super.setImage(image, for: state)
+        imageView?.contentMode = .scaleAspectFill
+        imageView?.layer.cornerRadius = (imageView?.frame.size.width ?? 0 )  / 2
+        imageView?.layer.masksToBounds = true
+        imageView?.clipsToBounds = true
+    }
 }
 
 class AppButton: Button {

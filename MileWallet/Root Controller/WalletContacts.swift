@@ -11,10 +11,34 @@ import MileWalletKit
 
 class ContactView: UIView {
     
-    public var nameLabel = UILabel()
-    public var pablicKeyLabel = UILabel()
-    public var iconView = UIImageView()
-    public var litera = UILabel()
+    var avatar:Data? {
+        didSet{
+            guard let d = avatar else {
+                return
+            }
+            iconView.image = UIImage(data: d)
+        }
+    }
+    
+    var publicKey:String? = "" {
+        didSet{
+            pablicKeyLabel.text = publicKey
+        }
+    }
+    
+    var name:String? = "" {
+        didSet{
+            if let str = name, str.count > 0 {
+                litera.text = String(str.prefix(1))
+            }
+            nameLabel.text = name
+        }
+    }
+    
+    fileprivate var nameLabel = UILabel()
+    fileprivate var pablicKeyLabel = UILabel()
+    fileprivate var iconView = UIImageView()
+    fileprivate var litera = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -78,25 +102,32 @@ class ContactView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         iconView.layer.cornerRadius = iconView.frame.size.width  / 2
+        iconView.layer.masksToBounds = true
         iconView.clipsToBounds = true
+        if avatar == nil {
+            litera.alpha = 1
+        }
+        else {
+            litera.alpha = 0
+        }
     }
 }
 
 class ConactCell: UITableViewCell {
     
-    var publicKey:String? = "" {
-        didSet{
-            contactView.pablicKeyLabel.text = publicKey
-        }
+    var avatar:Data? {
+        set{ contactView.avatar = newValue}
+        get{ return contactView.avatar }
     }
     
-    var name:String? = "" {
-        didSet{
-            if let str = name, str.count > 0 {
-                contactView.litera.text = String(str.prefix(1))
-            }
-            contactView.nameLabel.text = name
-        }
+    var publicKey:String?  {
+        set{ contactView.publicKey = newValue}
+        get{ return contactView.publicKey }
+    }
+    
+    var name:String? {
+        set{ contactView.name = newValue}
+        get{ return contactView.name }
     }
     
     private let contactView = ContactView()
@@ -140,6 +171,7 @@ class ContactsController: UITableViewController {
         tableView.dataSource = self
         tableView.backgroundView = UIView()
         tableView.backgroundView?.backgroundColor = UIColor.white
+        tableView.separatorColor = UIColor.clear
         tableView.register(ConactCell.self, forCellReuseIdentifier: cellReuseIdendifier)
     }
     
@@ -169,12 +201,27 @@ extension ContactsController {
         let contact = list[indexPath.row]
         cell.name = contact.name
         cell.publicKey = contact.publicKey
+        cell.avatar = contact.photo
+        
+        if indexPath.row < list.count - 1 {
+            cell.contentView.add(border: .bottom,
+                                 color: UIColor.black.withAlphaComponent(0.1),
+                                 width: 1,
+                                 padding: UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+            )
+        }
+        
         return cell
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 90
     }
+    
+}
+
+// MARK: - Delegate
+extension ContactsController {
     
     override func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)!
@@ -187,15 +234,9 @@ extension ContactsController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("tableView \(indexPath)")
         let cell = tableView.cellForRow(at: indexPath)!
         cell.backgroundColor = UIColor.black.withAlphaComponent(0.03)
     }
-}
-
-// MARK: - Delegate
-extension ContactsController {
-    
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
     }
@@ -254,8 +295,6 @@ class WalletContacts: Controller {
             m.edges.equalTo(view.snp.edges)
         }
         
-      
-        
         addChildViewController(_tableController)
         contentView.addSubview(_tableController.view)
         _tableController.didMove(toParentViewController: self)
@@ -297,6 +336,7 @@ class WalletContacts: Controller {
     }
     
     @objc private func add(sender:Any) {
+        _contactOptionsController.contact = nil
         _contactOptionsController.wallet = self.wallet
         present(_contactOptionsController, animated: true)
     }

@@ -44,8 +44,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
         UINavigationBar.appearance().barStyle = .default
         UINavigationBar.appearance().tintColor = UIColor.white
         UINavigationBar.appearance().isTranslucent = true
-        //UINavigationBar.appearance().setBackgroundImage(Config.Images.basePattern, for: .default)
-        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
+        UINavigationBar.appearance().setBackgroundImage(Config.Images.basePattern, for: .default)
+        //UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
         UINavigationBar.appearance().shadowImage = UIImage()
 
         UIButton.appearance().setTitleColor(Config.Colors.button, for: .normal)
