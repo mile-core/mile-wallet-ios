@@ -36,16 +36,16 @@ class WalletCardDetails: Controller {
     
     fileprivate lazy var actionDesc:[Action] = [
         Action(action: self.sendCoins,
-               title: NSLocalizedString("Send coins", comment: ""),
+               title: NSLocalizedString("Send", comment: ""),
                icon: UIImage(named: "button-send-coins")!),
-        Action(action: sendCoins,
-               title: NSLocalizedString("Print payment ticket", comment: ""),
+        Action(action: printTicket,
+               title: NSLocalizedString("Print", comment: ""),
                icon: UIImage(named: "button-print-ticket")!),
-        Action(action: sendCoins,
-               title: NSLocalizedString("Send payment link", comment: ""),
+        Action(action: sendLink,
+               title: NSLocalizedString("Link", comment: ""),
                icon: UIImage(named: "button-send-link")!),
-        Action(action: sendCoins,
-               title: NSLocalizedString("Send invoice", comment: ""),
+        Action(action: sendInvoice,
+               title: NSLocalizedString("Invoice", comment: ""),
                icon: UIImage(named: "button-send-invoice")!),
     ]
     
@@ -67,7 +67,6 @@ class WalletCardDetails: Controller {
         print("..... sendInvoice \(sender)")
 
     }
-
     
     private var wallet:WalletContainer? {
         didSet{
@@ -84,14 +83,27 @@ class WalletCardDetails: Controller {
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "button-settings"),
                                                            style: .plain, target: self, action: #selector(settings(sender:)))
         
-        if let name = walletKey, let w = WalletStore.shared.wallet(by: name) {
+        if let walletKey = walletKey, let w = WalletStore.shared.wallet(by: walletKey) {
             wallet = w
             title = w.wallet?.name
             qrCode.image = w.wallet?.publicKeyQr
             bg.backgroundColor = UIColor(hex: w.attributes?.color ?? 0)
         }
         
-    
+        if let a = wallet?.attributes {
+            if a.isActive {
+                copyAddressButton.isUserInteractionEnabled = true
+                qrContent.alpha = 1
+                toolBar.alpha = 1
+                toolBar.isUserInteractionEnabled = true
+            }
+            else {
+                copyAddressButton.isUserInteractionEnabled = false
+                qrContent.alpha = 0.5
+                toolBar.alpha = 0.5
+                toolBar.isUserInteractionEnabled = false
+            }
+        }
     }
     
     @objc private func back(sender:Any) {
@@ -107,31 +119,47 @@ class WalletCardDetails: Controller {
     
     var actionH:CGFloat = 80
     let topPadding:CGFloat = 10
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-     
-        let height = contentView.frame.height
+    
+    override func viewDidLoad() {
+      super.viewDidLoad()
         
-        wrapperView.snp.makeConstraints { (m) in
-            m.top.equalTo(scrollView)
-            m.bottom.equalTo(scrollView).offset(-(actionH*4+4 + height))
-            m.left.right.equalTo(contentView)
+        if UIScreen.main.bounds.size.height < 640 {
+            actionH = 60
         }
+        
+        contentView.addSubview(bg)
+        bg.contentMode = .scaleAspectFill
+        bg.snp.makeConstraints { (m) in
+            m.edges.equalTo(view.snp.edges)
+        }
+        
+        contentView.addSubview(qrContent)
+        
+        qrContent.addSubview(shadow)
+        qrContent.addSubview(shadowBorder)
+        qrContent.addSubview(qrCodeBorder)
+        qrCodeBorder.addSubview(qrCode)
+        
+        contentView.addSubview(balance)
+        contentView.addSubview(copyAddressButton)
+
+        addChildViewController(walletInfo)
+        balance.addSubview(walletInfo.view)
+        walletInfo.didMove(toParentViewController: self)
         
         qrContent.snp.remakeConstraints { (m) in
-            m.top.equalTo(wrapperView.snp.top).offset(0)
-            m.left.right.equalTo(wrapperView).inset(0)
-            m.height.equalTo(height-topPadding)
+            m.top.equalTo(contentView.snp.top).offset(0)
+            m.left.right.equalTo(contentView).inset(0)
+            m.height.equalTo(qrContent.snp.width)
         }
-                
+        
         qrCodeBorder.snp.makeConstraints { (m) in
             m.top.equalToSuperview().offset(topPadding)
             m.left.equalToSuperview().offset(60)
             m.right.equalToSuperview().offset(-60)
             m.width.equalTo(qrCodeBorder.snp.height).multipliedBy(1/1)
         }
-
+        
         shadow.snp.makeConstraints { (m) in
             m.edges.equalTo(qrCodeBorder.snp.edges)
                 .inset(UIEdgeInsets(top: 20, left: 15, bottom: 0, right: 15))
@@ -151,90 +179,77 @@ class WalletCardDetails: Controller {
         }
         
         balance.snp.remakeConstraints { (m) in
-            m.top.greaterThanOrEqualTo(view.safeAreaLayoutGuide.snp.top).offset(0).priority(.high)
-            m.top.equalTo(qrCodeBorder.snp.bottom).offset(40).priority(.low)
-            m.left.equalTo(wrapperView).inset(40)
-            m.right.equalTo(wrapperView).inset(40)
+            //m.top.greaterThanOrEqualTo(view.safeAreaLayoutGuide.snp.top).offset(0).priority(.high)
+            m.top.equalTo(qrCodeBorder.snp.bottom).offset(h)//.priority(.low)
+            m.left.equalTo(contentView).inset(40)
+            m.right.equalTo(contentView).inset(40)
             m.height.equalTo(120)
-        }
-        
-        actions.snp.remakeConstraints { (m) in
-            m.top.greaterThanOrEqualTo(copyAddressButton.snp.bottom).offset(5).priority(.high)
-            m.top.equalTo(wrapperView.snp.top).offset(height).priority(.low)
-            m.left.right.equalTo(wrapperView).inset(0)
-            m.height.equalTo(actionH*4+4+topPadding).priority(.low)
-            m.bottom.greaterThanOrEqualTo(view.snp.bottom).priority(.high)
-        }
-        
-        copyAddressButton.snp.remakeConstraints { (m) in
-            m.top.greaterThanOrEqualTo(balance.snp.bottom).offset(0).priority(.high)
-            m.bottom.equalTo(actions.snp.top).offset(-40).priority(.low)
-            m.left.right.equalTo(wrapperView).inset(60)
-            m.height.equalTo(60)
         }
         
         walletInfo.view.snp.remakeConstraints { (m) in
             m.edges.equalToSuperview()
         }
         
-        shadowSetup()        
-    }
-    
-    override func viewDidLoad() {
-      super.viewDidLoad()
+        shadowSetup()
         
-        if UIScreen.main.bounds.size.height < 640 {
-            actionH = 60
-        }
+        toolBar.sizeToFit()
         
-        contentView.addSubview(bg)
-        bg.contentMode = .scaleAspectFill
-        bg.snp.makeConstraints { (m) in
-            m.edges.equalTo(view.snp.edges)
-        }
+        contentView.addSubview(toolBar)
         
-        
-        contentView.addSubview(scrollView)
-        scrollView.snp.makeConstraints { (make) in
-            make.edges.equalTo(contentView)
-        }
-        
-        scrollView.addSubview(wrapperView)
-        
-        wrapperView.addSubview(qrContent)
-        
-        qrContent.addSubview(shadow)
-        qrContent.addSubview(shadowBorder)
-        qrContent.addSubview(qrCodeBorder)
-        qrCodeBorder.addSubview(qrCode)
-        
-        wrapperView.addSubview(balance)
-        wrapperView.addSubview(actions)
-        wrapperView.addSubview(copyAddressButton)
+        var b:[UIBarButtonItem] = []
+        for (i,a) in actionDesc.enumerated() {
+            
+            //b.append(UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil))
 
-        addChildViewController(walletInfo)
-        balance.addSubview(walletInfo.view)
-        walletInfo.didMove(toParentViewController: self)
+            let item = UIButton.toolBar(title: a.title,
+                                        image: a.icon) { (sender) in
+                                            a.action?(sender)
+            }
+            b.append(item)
+            
+            if i < actionDesc.count-1 {
+                b.append(UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil))
+                let sep = Separator()
+                b.append(UIBarButtonItem(customView: sep))
+                b.append(UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil))
+            }
+        }
+        //b.append(UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil))
+
+        toolBar.setItems(b, animated: false)
         
-        scrollView.delegate = self
+        h = 90
+        if UIScreen.main.bounds.size.height < 640 {
+            h = 70
+        }
         
-        let gest = UITapGestureRecognizer(target: self, action: #selector(scrollGestureHandler(gesture:)))
-        wrapperView.addGestureRecognizer(gest)
-    }
-    
-    class ScrollView: UIScrollView {
-        override func touchesShouldCancel(in view: UIView) -> Bool {
-            return true
+        toolBar.snp.makeConstraints { (m) in
+            m.left.right.equalTo(view)
+            m.bottom.equalTo(contentView.snp.bottom)
+            m.height.equalTo(h)
+        }
+        
+        toolBar.sizeToFit()
+
+        
+        copyAddressButton.snp.remakeConstraints { (m) in
+            m.top.equalTo(balance.snp.bottom).offset(h).priority(.low)
+            m.bottom.equalTo(toolBar.snp.top).offset(-20).priority(.high)
+            m.left.right.equalTo(contentView).inset(60)
+            m.height.equalTo(60)
         }
     }
-    
-    public let scrollView:UIScrollView = {
-        let v = ScrollView()
-        v.backgroundColor = UIColor.clear
-        v.showsVerticalScrollIndicator = false
-        v.isUserInteractionEnabled = true
-        v.delaysContentTouches = false
-        return v
+
+    let toolBar:UIToolbar = {
+        let toolBar = UIToolbar()
+        
+        toolBar.tintColor = UIColor.white
+        toolBar.backgroundColor = UIColor.white
+        toolBar.barTintColor = UIColor.white
+        toolBar.isTranslucent = false
+        toolBar.layer.borderColor = UIColor.clear.cgColor
+        toolBar.setShadowImage(UIImage(), forToolbarPosition: .bottom)
+        return toolBar
     }()
     
     public let qrContent:UIView = {
@@ -243,8 +258,6 @@ class WalletCardDetails: Controller {
         v.backgroundColor = UIColor.clear
         return v
     }()
-    
-    let wrapperView = UIView()
     
     private let shadow:UIView = {
        let s = UIView()
@@ -271,60 +284,6 @@ class WalletCardDetails: Controller {
         return v
     }()
     
-    fileprivate lazy var actions:UIView = {
-        let v = UIView()
-
-        v.backgroundColor = UIColor.white
-        var prev = v
-        
-        var y:CGFloat = 1
-        for (i,a) in self.actionDesc.enumerated() {
-            
-            let image = UIImageView(image: a.icon!)
-
-            let button = UIButton(type: .custom)
-            button.backgroundColor = UIColor.clear
-            button.setTitle(a.title, for: .normal)
-            button.contentHorizontalAlignment = .left
-            button.titleLabel?.textAlignment = .left
-            button.titleLabel?.font = Config.Fonts.caption
-            button.titleLabel?.textColor = UIColor.blue
-            button.frame = CGRect(x: 22, y: y, width: self.view.bounds.width, height: self.actionH)
-            button.tag = i
-            button.addTarget(self, action: #selector(self.actionsHandler(sender:)), for: .touchUpInside)
-            y += self.actionH + 1
-            
-            v.addSubview(button)
-            
-            button.addSubview(image)
-            image.snp.makeConstraints { (m) in
-                m.top.equalTo(button).offset(24)
-                m.bottom.equalTo(button).offset(-24)
-                m.centerX.equalTo(button.snp.right).offset(-42-a.icon!.size.width/2)
-                m.height.equalTo(image.snp.width)
-            }
-            
-            if i < self.actionDesc.count-1 {
-                let line = UIView()
-                
-                line.backgroundColor = UIColor.black.withAlphaComponent(0.1)
-                line.frame = CGRect(x: 21, y: y, width: self.view.bounds.width-38, height: 1)
-                
-                v.addSubview(line)
-            }
-        }
-
-        return v
-    }()
-
-    @objc func scrollGestureHandler(gesture:UITapGestureRecognizer){
-        printTicket("scrollGestureHandler ... > \(gesture.view?.tag, gesture.view)")
-    }
-
-    @objc func actionsHandler(sender:UIButton){
-        printTicket("actionsHandler ... > \(sender.tag)")
-    }
-    
     fileprivate let balance:UIView = {
         let v = UIView()
         v.backgroundColor = UIColor.clear
@@ -342,8 +301,10 @@ class WalletCardDetails: Controller {
         return copy
     }()
     
-    @objc func copyAddress(sender:UIButton){
-        printTicket("copyAddress ... > \(sender.tag)")
+    @objc func copyAddress(sender:UIButton){ 
+        if let publicKey = wallet?.wallet?.publicKey {
+            UIPasteboard.general.string = publicKey
+        }
     }
     
     private func shadowSetup()  {
@@ -364,68 +325,5 @@ class WalletCardDetails: Controller {
     
     
     fileprivate var walletInfo:WalletInfo = WalletInfo()
-    fileprivate var _settingsWalletController = WalletOptionsController()
-    fileprivate var baseQRCodeFrame:CGRect?
-    fileprivate var baseActionsFrame:CGRect = .zero
-
-    fileprivate var qrCodeScale:CGFloat = 1
-    fileprivate var scrollVelocity:CGPoint = .zero
-}
-
-
-extension WalletCardDetails: UIScrollViewDelegate {
-    
-    func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
-        scrollVelocity = scrollView.panGestureRecognizer.velocity(in: nil)
-        jump(scrollView)
-    }
-    
-    fileprivate func jump(_ scrollView: UIScrollView) {
-        
-        if abs(scrollVelocity.y) > 800 {
-            if scrollVelocity.y > 0 {
-                let topOffset = CGPoint(x: 0, y: -scrollView.contentInset.top)
-                scrollView.setContentOffset(topOffset, animated: true)
-            }
-            else {
-                let bottomOffset = CGPoint(x: 0, y: baseActionsFrame.origin.y-baseActionsFrame.size.height)
-                scrollView.setContentOffset(bottomOffset, animated: true)
-            }
-            return
-        }
-        
-        if qrCodeScale > 0.2 {
-            let topOffset = CGPoint(x: 0, y: -scrollView.contentInset.top)
-            scrollView.setContentOffset(topOffset, animated: true)
-        }
-        else {
-            let bottomOffset = CGPoint(x: 0, y: baseActionsFrame.origin.y-baseActionsFrame.size.height)
-            scrollView.setContentOffset(bottomOffset, animated: true)
-        }
-    }
-    
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        jump(scrollView)
-    }
-    
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        jump(scrollView)
-    }
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        
-        if qrCodeBorder.frame == .zero {return}
-        if baseQRCodeFrame == nil {
-            baseQRCodeFrame = qrCodeBorder.frame
-        }
-        if baseActionsFrame == .zero {
-            baseActionsFrame = actions.frame
-        }
-        qrCodeScale = (baseQRCodeFrame!.height-scrollView.contentOffset.y)/baseQRCodeFrame!.height
-        qrCodeScale = qrCodeScale < 0 ? 0 : qrCodeScale
-        qrContent.transform = CGAffineTransform.identity
-        qrContent.transform = CGAffineTransform(scaleX: qrCodeScale, y: qrCodeScale)
-            .concatenating(CGAffineTransform(translationX: 0, y: -scrollView.contentOffset.y/8))
-        //qrContent.alpha = qrCodeScale
-    }
+    fileprivate var _settingsWalletController = WalletOptions()
 }

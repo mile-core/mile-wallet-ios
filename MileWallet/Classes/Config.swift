@@ -37,6 +37,7 @@ extension Config {
         public static let title = name
         public static let button = UIColor(hex: 0xBCC3C3)
         public static let blueButton = UIColor(hex: 0x2371B3)
+        public static let redButton = UIColor(hex: 0xFF3B30)
         public static let back = UIColor(hex: 0x3E50CE)
         public static let line = UIColor(hex: 0xFFFFFF, alpha: 0.4)
         public static let separator = UIColor(hex: 0x000000, alpha: 0.1)
@@ -72,6 +73,7 @@ extension Config {
         public static let navigationBarTitle =  UIFont(name: "SFProText-Regular", size: 21)!
         public static let edit =  UIFont(name: "SFProText-Regular", size: 21)!
         public static let caption =  UIFont(name: "SFProText-Regular", size: 21)!
+        public static let toolBar =  UIFont(name: "SFProText-Regular", size: 13)!
         public static let navigationBarLargeTitle =  UIFont(name: "SFProDisplay-Bold", size: 34)!
         public static let header =  UIFont(name: "SFProDisplay-Bold", size: 34)!
     }

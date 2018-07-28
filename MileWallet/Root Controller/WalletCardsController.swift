@@ -174,6 +174,9 @@ class WalletCardsController: UIViewController {
             if viewControllers.count < WalletStore.shared.acitveWallets.count {
                 newIndex = viewControllers.count
             }
+            else if newIndex >= WalletStore.shared.acitveWallets.count {
+                newIndex -= 1
+            }
             reloadData()
         }
         
@@ -267,7 +270,7 @@ class WalletCardsController: UIViewController {
     fileprivate var _pendingIndex: Int?
     
     fileprivate var _walletDetailsController = WalletCardDetails()
-    fileprivate var _newWalletController = WalletOptionsController()
+    fileprivate var _newWalletController = WalletOptions()
 }
 
 

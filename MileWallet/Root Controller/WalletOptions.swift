@@ -10,7 +10,7 @@ import UIKit
 import MileWalletKit
 import ObjectMapper
 
-class WalletOptionsController: NavigationController {
+class WalletOptions: NavigationController {
     
     public var wallet:WalletContainer?
     
@@ -22,14 +22,14 @@ class WalletOptionsController: NavigationController {
     }
 }
 
-class WalletOptionsControllerImp: Controller {
+class WalletOptionsControllerImp: Controller, UITextFieldDelegate {
    
     fileprivate var wallet:WalletContainer? {
         get {
-            return (navigationController as? WalletOptionsController)?.wallet
+            return (navigationController as? WalletOptions)?.wallet
         }
         set {
-            (navigationController as? WalletOptionsController)?.wallet = newValue
+            (navigationController as? WalletOptions)?.wallet = newValue
         }
     }
 
@@ -46,6 +46,9 @@ class WalletOptionsControllerImp: Controller {
         contentView.addSubview(line)
         contentView.addSubview(colorLabel)
         contentView.addSubview(pickerView)
+        contentView.addSubview(archiveButton)
+
+        name.delegate = self
         
         name.snp.makeConstraints { (make) in
             make.top.equalTo(contentView.snp.topMargin).offset(10)
@@ -75,6 +78,12 @@ class WalletOptionsControllerImp: Controller {
             m.height.equalTo(80)
         }
         
+        archiveButton.snp.remakeConstraints { (m) in
+            m.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
+            m.left.right.equalTo(contentView).inset(60)
+            m.height.equalTo(60)
+        }
+        
         pickerView.cellSpacing = 20
         
         if let index = Config.Colors.palette.index(where: { (c) -> Bool in
@@ -84,7 +93,11 @@ class WalletOptionsControllerImp: Controller {
             return false
         }) {
             pickerView.selectCellAtIndex(index)
-        }        
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -92,6 +105,20 @@ class WalletOptionsControllerImp: Controller {
         if let wallet = self.wallet {
             title = NSLocalizedString("Settings", comment: "")
             name.text = wallet.wallet?.name
+            archiveButton.isUserInteractionEnabled = true
+            archiveButton.isHidden = false
+        }
+        else {
+            archiveButton.isUserInteractionEnabled = false
+            archiveButton.isHidden = true
+        }
+        if let w = wallet?.attributes {
+            if w.isActive {
+                archiveButton.setTitle(NSLocalizedString("Archive wallet", comment: ""), for: .normal)
+            }
+            else {
+                archiveButton.setTitle(NSLocalizedString("Restore wallet", comment: ""), for: .normal)
+            }
         }
     }
     
@@ -137,6 +164,38 @@ class WalletOptionsControllerImp: Controller {
     
     fileprivate var currentColor = Config.Colors.defaultColor
     fileprivate var currentWallet:Wallet?    
+    
+    fileprivate lazy var archiveButton:UIButton = {
+        let copy = UIButton(type: .custom)
+        copy.setTitle(NSLocalizedString("Archive wallet", comment: ""), for: .normal)
+        copy.setTitleColor(UIColor.white, for: .normal)
+        copy.titleLabel?.font = Config.Fonts.caption
+        copy.backgroundColor = Config.Colors.redButton
+        copy.layer.cornerRadius = Config.buttonRadius
+        copy.addTarget(self, action: #selector(self.archiveButtonHandler(sender:)), for: .touchUpInside)
+        return copy
+    }()
+    
+    @objc func archiveButtonHandler(sender:UIButton){
+        guard let w = wallet?.wallet, let a = wallet?.attributes else {
+            return
+        }
+        if a.isActive {
+            UIAlertController(title: NSLocalizedString("Archive wallet \(w.name!)", comment: ""),
+                              message: nil,
+                              preferredStyle: .actionSheet)
+                .addAction(title: "Archive", style: .default) { _ in
+                    self.updateWallet(wallet: w, isActive: !a.isActive)
+                }
+                .addAction(title: "Close", style: .cancel) { _ in
+                    self.dismiss(animated: true)
+                }
+                .present(by: self)
+        }
+        else {
+             self.updateWallet(wallet: w, isActive: !a.isActive)
+        }
+    }
     
     fileprivate lazy var attentionCover:UIView = {
         let v = UIView()
@@ -335,7 +394,7 @@ extension WalletOptionsControllerImp {
         }
     }
     
-    fileprivate func updateWallet(wallet:Wallet){
+    fileprivate func updateWallet(wallet:Wallet, isActive:Bool = true){
         
         func close() {
             self.dismiss(animated: true, completion: nil)
@@ -384,7 +443,7 @@ extension WalletOptionsControllerImp {
             let walletAttr = WalletAttributes(
                 publicKey: key,
                 color: self.currentColor.hex,
-                isActive:true)
+                isActive: isActive)
             
             guard let attr = Mapper<WalletAttributes>().toJSONString(walletAttr) else {
                 self.loaderStop()
@@ -422,7 +481,7 @@ extension WalletOptionsControllerImp {
     private func checkWallet(name:String) -> Bool {
         let checkWallet = WalletStore.shared.find(name: name)
         
-        if checkWallet != nil {
+        if let wallet = checkWallet, let a = wallet.attributes, a.isActive {
             UIAlertController(title: NSLocalizedString("Wallet Error", comment: ""),
                               message:  NSLocalizedString("Wallet with the same name already exists", comment: ""),
                               preferredStyle: .alert)

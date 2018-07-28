@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		31144EB020CA8AA400A8E6B4 /* NewWalletViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31144EAF20CA8AA400A8E6B4 /* NewWalletViewController.swift */; };
-		311A4041210795E00015952B /* WalletOptionsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311A4040210795E00015952B /* WalletOptionsController.swift */; };
+		3116D392210C724800C5C85F /* WalletOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3116D391210C724800C5C85F /* WalletOptions.swift */; };
 		311A40482107CA7B0015952B /* ColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311A40472107CA7B0015952B /* ColorPicker.swift */; };
 		311A404A21088BAE0015952B /* UIColor(Hex).swift in Sources */ = {isa = PBXBuildFile; fileRef = 311A404921088BAE0015952B /* UIColor(Hex).swift */; };
 		313CCACF20E51B5900BF8737 /* CoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313CCACE20E51B5900BF8737 /* CoverView.swift */; };
@@ -52,7 +52,7 @@
 /* Begin PBXFileReference section */
 		3104930B20CC05D5006AB772 /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		31144EAF20CA8AA400A8E6B4 /* NewWalletViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewWalletViewController.swift; sourceTree = "<group>"; };
-		311A4040210795E00015952B /* WalletOptionsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletOptionsController.swift; sourceTree = "<group>"; };
+		3116D391210C724800C5C85F /* WalletOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WalletOptions.swift; sourceTree = "<group>"; };
 		311A40472107CA7B0015952B /* ColorPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPicker.swift; sourceTree = "<group>"; };
 		311A404921088BAE0015952B /* UIColor(Hex).swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor(Hex).swift"; sourceTree = "<group>"; };
 		313CCACE20E51B5900BF8737 /* CoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoverView.swift; sourceTree = "<group>"; };
@@ -129,7 +129,7 @@
 				31B169132109A1BF0004DE8E /* WalletPreview.swift */,
 				31B6091B2109A2C500B66FD8 /* EmptyWallet.swift */,
 				31E4E06321076B0900ACE8FD /* WalletCardDetails.swift */,
-				311A4040210795E00015952B /* WalletOptionsController.swift */,
+				3116D391210C724800C5C85F /* WalletOptions.swift */,
 			);
 			path = "Root Controller";
 			sourceTree = "<group>";
@@ -449,7 +449,6 @@
 				3164FD8520C950ED00294A9F /* DetailViewController.swift in Sources */,
 				31BB792320EA703300AC301A /* Printer.swift in Sources */,
 				31B6091C2109A2C500B66FD8 /* EmptyWallet.swift in Sources */,
-				311A4041210795E00015952B /* WalletOptionsController.swift in Sources */,
 				3185BBF621072918004CDBEF /* UIButton(App).swift in Sources */,
 				3164FD8320C950ED00294A9F /* MasterViewController.swift in Sources */,
 				31B169142109A1BF0004DE8E /* WalletPreview.swift in Sources */,
@@ -461,6 +460,7 @@
 				3144B658210618D900ED27BF /* RootController.swift in Sources */,
 				313CCACF20E51B5900BF8737 /* CoverView.swift in Sources */,
 				31A9FE9E20DBD2EB00779F60 /* Config.swift in Sources */,
+				3116D392210C724800C5C85F /* WalletOptions.swift in Sources */,
 				31B169102109A0570004DE8E /* WalletCell.swift in Sources */,
 				3144B6602106311E00ED27BF /* UImage(Gradient).swift in Sources */,
 				31D8CB9020CAEA9A006C7B8D /* TransferViewController.swift in Sources */,

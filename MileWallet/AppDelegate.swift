@@ -17,7 +17,7 @@ class CameraQR {
 
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
     
     
     var window: UIWindow?
@@ -27,12 +27,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
-        for n in UIFont.familyNames {
-            for f in UIFont.fontNames(forFamilyName: n) {
-                print("font: \(n) : \(f)")
-            }
-        }
-        
         UINavigationBar.appearance()
             .titleTextAttributes = [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarTitle,
                                     NSAttributedStringKey.font: Config.Fonts.navigationBarTitle]
@@ -54,10 +48,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UINavigationBar.appearance().shadowImage = UIImage()
 
         UIButton.appearance().setTitleColor(Config.Colors.button, for: .normal)
-        UIButton.appearance().substituteFont = Config.Fonts.button
-        
         UIButton.appearance().adjustsImageWhenHighlighted = true
         UIButton.appearance().showsTouchWhenHighlighted = true
+        
+        //UIButton.appearance().substituteFont = Config.Fonts.button
+        //UIButton.appearance(whenContainedInInstancesOf: [ToolButton.self]).substituteFont = Config.Fonts.toolBar
+        
+//        UIBarButtonItem.appearance().setTitleTextAttributes([
+//            NSAttributedStringKey.font : Config.Fonts.toolBar,
+//            NSAttributedStringKey.foregroundColor : Config.Colors.button,
+//            ], for: .normal)
+//        
+//        UIBarButtonItem.appearance().setTitleTextAttributes([
+//            NSAttributedStringKey.font : Config.Fonts.toolBar,
+//            NSAttributedStringKey.foregroundColor : Config.Colors.button,
+//            ], for: .highlighted)
+//        
         
         UIPageControl.appearance().pageIndicatorTintColor = UIColor.lightGray
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor.black
@@ -72,7 +78,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         viewController = WalletCardsController()
         
         navigationController = RootController(rootViewController: viewController!)
-        
         window?.rootViewController = navigationController;
         window?.makeKeyAndVisible()
         

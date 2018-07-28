@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import MileWalletKit
 
 extension UIButton {
     @objc public var substituteFont : UIFont? {
@@ -19,7 +20,11 @@ extension UIButton {
     }
 }
 
-class AppButton: UIButton {
+class Button: UIButton {
+    fileprivate var handler:((_ sender:UIButton)->Void)?
+}
+
+class AppButton: Button {
     
     override func titleRect(forContentRect contentRect: CGRect) -> CGRect {
         let titleRect = super.titleRect(forContentRect: contentRect)
@@ -42,7 +47,7 @@ class AppButton: UIButton {
     }
     
     private let padding: CGFloat
-    
+
     init(padding: CGFloat) {
         self.padding = padding
         
@@ -53,9 +58,86 @@ class AppButton: UIButton {
     required init?(coder aDecoder: NSCoder) { fatalError() }
 }
 
+class ToolButton: Button {
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        centerTextAndImage()
+    }
+    
+    func centerTextAndImage() {
+        let size = bounds.size
+        let insetAmount = -size.width/2/2
+        let titleRect = self.titleRect(forContentRect: bounds)
+        let offset = titleRect.size.height/2
+        imageEdgeInsets = UIEdgeInsets(top: -offset, left: -insetAmount, bottom: 0, right: insetAmount)
+        titleEdgeInsets = UIEdgeInsets(top: size.height+offset, left: insetAmount, bottom: 0, right: -insetAmount)
+        contentEdgeInsets = UIEdgeInsets(top: 0, left: insetAmount, bottom: 0, right: insetAmount)
+    }
+}
+
+class Separator: UIButton {
+    
+    enum Style {
+        case vertical
+        case horizontal
+    }
+    
+    override func imageRect(forContentRect contentRect: CGRect) -> CGRect {
+        let imageRect = super.imageRect(forContentRect: contentRect)
+        
+        return CGRect(x: imageRect.origin.x, y: imageRect.origin.y+imageRect.size.height*padding, width: imageRect.size.width, height: imageRect.size.height-imageRect.size.height*padding*2)
+    }
+    
+    init(padding:CGFloat = 0.1, style: Style = .vertical) {
+        self.padding = padding
+
+        super.init(frame: .zero)
+        switch style {
+        case .vertical:
+            setImage(UIImage(named: "icon-vertical-separator"), for: UIControlState.normal)
+        default:
+            break
+        }
+        imageView?.contentMode = .scaleAspectFit
+    }
+    
+    required init?(coder aDecoder: NSCoder) { fatalError() }
+    
+    private var padding: CGFloat
+}
+
 extension UIButton {
     
     static func app(padding: CGFloat = 16) -> UIButton {
-        return AppButton(padding: padding)
+        let app = AppButton(padding: padding)
+        app.titleLabel?.font =  Config.Fonts.button
+        return app
+    }
+    
+    static func toolBar(title: String?, image: UIImage?, handler: ((_ sender:UIButton)->Void)?=nil) -> UIBarButtonItem {
+        let app = ToolButton()
+        app.handler = handler
+
+        app.setImage(image, for: UIControlState.normal)
+        app.imageView?.contentMode = .scaleAspectFit
+        app.setTitle(title, for: .normal)
+        app.titleLabel?.font = Config.Fonts.toolBar
+        app.addTarget(self, action:#selector(UIButton.actionHandler(sender:)), for: UIControlEvents.touchUpInside)
+        
+        let item = UIBarButtonItem(customView: app)
+        
+// WTF!??
+//
+//        let item = UIBarButtonItem(title: title, style: UIBarButtonItemStyle.done, target: self, action:#selector(UIButton.actionHandler(sender:)))
+//        item.title = title
+//        item.tintColor = UIColor.black
+//        item.image = image
+        
+        return item
+    }
+    
+     @objc static private func actionHandler(sender:UIButton){
+        (sender as? Button)?.handler?(sender)
     }
 }
