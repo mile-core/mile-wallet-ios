@@ -46,6 +46,7 @@ class ContactView: UIView {
         iconView.backgroundColor = UIColor(hex: 0xD5E9F5)
         iconView.layer.cornerRadius = iconView.frame.size.width  / 2
         iconView.clipsToBounds = true
+        iconView.contentMode = .scaleAspectFill
         
         addSubview(nameLabel)
         addSubview(pablicKeyLabel)
