@@ -19,6 +19,16 @@ class SendCoins: NavigationController {
             return contentController.wallet
         }
     }
+    
+    public var newPublicKey:String?{
+        get {
+            return contentController.newPublicKey
+        }
+        set {
+            contentController.newPublicKey = newValue
+        }
+    }
+    
     public var contact:Contact? {
         set{
             contentController.contact = newValue
@@ -40,11 +50,24 @@ class SendCoinsImp: Controller {
     
     public var wallet:WalletContainer?
     
+    fileprivate var newPublicKey:String? {
+        didSet{
+            contactView.isEdited = false
+            contactView.publicKey = newPublicKey
+        }
+    }
+    
     public var contact:Contact? {
         didSet{
-            contactView.avatar = contact?.photo
-            contactView.name = contact?.name
-            contactView.publicKey = contact?.publicKey
+            if contact == nil {
+                contactView.isEdited = true
+            }
+            else {
+                contactView.isEdited = false
+                contactView.avatar = contact?.photo
+                contactView.name = contact?.name
+                contactView.publicKey = contact?.publicKey
+            }
         }
     }
     
@@ -67,8 +90,9 @@ class SendCoinsImp: Controller {
             m.right.left.equalTo(contentView)
             m.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(10)
         }
+        
         contactView.add(border: .bottom,
-                        color: UIColor.black.withAlphaComponent(0.1),
+                        color: Config.Colors.bottomLine,
                         width: 1, padding: UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20))
       
         contentView.addSubview(amount)
@@ -79,20 +103,20 @@ class SendCoinsImp: Controller {
             m.right.equalToSuperview().offset(-20)
         }
         amount.add(border: .bottom,
-                        color: UIColor.black.withAlphaComponent(0.1),
+                        color: Config.Colors.bottomLine,
                         width: 1, padding: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0))
         
         contentView.addSubview(coinsPicker)
         
         coinsPicker.showsSelectionIndicator = false
         coinsPicker.snp.makeConstraints { (m) in
-            m.top.equalTo(amount.snp.bottom).offset(10)
-            m.height.equalTo(60)
-            m.left.equalToSuperview().offset(20)
+            m.top.equalTo(amount.snp.bottom).offset(-5)
+            m.height.equalTo(95)
+            m.left.equalTo(contentView.snp.right).offset(-60)
             m.right.equalToSuperview().offset(-20)
         }
         coinsPicker.add(border: .bottom,
-                   color: UIColor.black.withAlphaComponent(0.1),
+                   color: Config.Colors.bottomLine,
                    width: 1, padding: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0))
 
         coinsPicker.dataSource = self
@@ -146,7 +170,7 @@ class SendCoinsImp: Controller {
         }
     }
     
-    private func sendCoin(from:Wallet, to: Contact, asset: Asset, amount:Float, balance:Balance) {
+    private func sendCoin(from:Wallet, to: String, asset: Asset, amount:Float, balance:Balance) {
         Chain.update(error: { (error) in
             
             self.loaderStop()
@@ -183,12 +207,12 @@ class SendCoinsImp: Controller {
             
             var mess = NSLocalizedString("Accept sending ", comment: "")
             mess += " \(amount) "
-            mess += NSLocalizedString("coins to: ", comment: "") + (to.name ?? "-")
+            mess += NSLocalizedString("coins to: ", comment: "") + (self.contact?.name ?? to)
             UIAlertController(title: NSLocalizedString("Sending coins...", comment: ""),
                               message: mess,
                               preferredStyle: .actionSheet)
                 .addAction(title: "Accept", style: .default, handler: { (action) in
-                    self.acceptedSend(from: from, to: to.publicKey ?? "", asset: asset, amount: amount)
+                    self.acceptedSend(from: from, to: to, asset: asset, amount: amount)
                 })
                 .addAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel)
                 .present(by: self)
@@ -200,7 +224,7 @@ class SendCoinsImp: Controller {
         
         view.endEditing(true)
 
-        guard let contact = self.contact else {
+        guard let toKey = self.contact?.publicKey ?? contactView.publicKey else {
             return
         }
 
@@ -230,7 +254,7 @@ class SendCoinsImp: Controller {
                 .present(by: self)
         }) { (balance) in
             let asset = Asset.list[self.coinsPicker.selectedRow(inComponent: 0)]
-            self.sendCoin(from: w, to: contact, asset: asset, amount: asked, balance: balance)
+            self.sendCoin(from: w, to: toKey, asset: asset, amount: asked, balance: balance)
         }
     }
     

@@ -303,7 +303,7 @@ extension ContactController: UIImagePickerControllerDelegate, UINavigationContro
         }
         if indexPath.row < list.count - 1 {
             cell.contentView.add(border: .bottom,
-                                 color: UIColor.black.withAlphaComponent(0.1),
+                                 color: Config.Colors.bottomLine,
                                  width: 1,
                                  padding: UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
             )

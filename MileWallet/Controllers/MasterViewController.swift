@@ -200,7 +200,7 @@ class MasterViewController: UITableViewController, AuthenticationID {
                 self.present(self.newWalletViewController, animated: true) 
             }
             .addAction(title: NSLocalizedString("Import Wallet", comment: ""), style: .default) { (alert) in
-                self.qrCodeReader.open { (controller, result) in
+                self.qrCodeReader.open { (controller, result) in                    
                     self.reader(controller, didScanResult: result)
                 }
             }
@@ -301,6 +301,7 @@ class MasterViewController: UITableViewController, AuthenticationID {
         }
     }              
 }
+
 
 // MARK: - Table View
 extension MasterViewController {    

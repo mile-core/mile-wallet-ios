@@ -8,10 +8,20 @@
 
 import UIKit
 import MileWalletKit
+import SnapKit
 
 class ContactView: UIView {
     
-    var avatar:Data? {
+    public var isEdited = false {
+        didSet{
+            pablicKeyLabelConstraint()
+            iconView.alpha = isEdited ? 0.0 : 1.0
+            publicKeyLabel.isUserInteractionEnabled = isEdited
+            publicKeyLabel.placeholder = isEdited ? NSLocalizedString("Type or paste transfer address", comment: "") : ""
+        }
+    }
+    
+    public var avatar:Data? {
         didSet{
             guard let d = avatar else {
                 return
@@ -20,13 +30,16 @@ class ContactView: UIView {
         }
     }
     
-    var publicKey:String? = "" {
-        didSet{
-            pablicKeyLabel.text = publicKey
+    public var publicKey:String? {
+        set{
+            publicKeyLabel.text = newValue
+        }
+        get {
+            return publicKeyLabel.text
         }
     }
     
-    var name:String? = "" {
+    public var name:String? = "" {
         didSet{
             if let str = name, str.count > 0 {
                 litera.text = String(str.prefix(1))
@@ -36,9 +49,20 @@ class ContactView: UIView {
     }
     
     fileprivate var nameLabel = UILabel()
-    fileprivate var pablicKeyLabel = UILabel()
+    
+    private lazy var publicKeyLabel:UITextField = {
+        let t = UITextField.nameField(placeholder: "")
+        t.font = Config.Fonts.address
+        t.adjustsFontSizeToFitWidth = true
+        t.isUserInteractionEnabled = false
+        t.clearButtonMode = .whileEditing
+        return t
+    }()
+    
     fileprivate var iconView = UIImageView()
     fileprivate var litera = UILabel()
+    
+    fileprivate var publicKeyLeft:ConstraintMakerExtendable!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -49,7 +73,7 @@ class ContactView: UIView {
         iconView.contentMode = .scaleAspectFill
         
         addSubview(nameLabel)
-        addSubview(pablicKeyLabel)
+        addSubview(publicKeyLabel)
         addSubview(iconView)
         
         iconView.snp.makeConstraints { (m) in
@@ -64,10 +88,10 @@ class ContactView: UIView {
         nameLabel.textColor = UIColor.black
         nameLabel.backgroundColor = UIColor.clear
         
-        pablicKeyLabel.textAlignment = .left
-        pablicKeyLabel.font = Config.Fonts.contacts
-        pablicKeyLabel.textColor = UIColor.black
-        pablicKeyLabel.backgroundColor = UIColor.clear
+        publicKeyLabel.textAlignment = .left
+        publicKeyLabel.font = Config.Fonts.contacts
+        publicKeyLabel.textColor = UIColor.black
+        publicKeyLabel.backgroundColor = UIColor.clear
         
         nameLabel.snp.makeConstraints { (m) in
             m.left.equalTo(iconView.snp.right).offset(10)
@@ -76,12 +100,7 @@ class ContactView: UIView {
             m.right.equalToSuperview().offset(-10)
         }
         
-        pablicKeyLabel.snp.makeConstraints { (m) in
-            m.left.equalTo(iconView.snp.right).offset(10)
-            m.top.equalTo(nameLabel.snp.centerY).offset(5)
-            m.bottom.equalTo(self).offset(5)
-            m.right.equalToSuperview().offset(-10)
-        }
+        pablicKeyLabelConstraint()
         
         litera.textAlignment = .center
         litera.font = Config.Fonts.header
@@ -93,6 +112,20 @@ class ContactView: UIView {
             m.center.equalTo(iconView)
             m.width.equalTo(iconView)
             m.height.equalTo(litera.snp.width)
+        }
+    }
+    
+    private func pablicKeyLabelConstraint() {
+        publicKeyLabel.snp.remakeConstraints { (m) in
+            if !isEdited {
+                m.left.equalTo(iconView.snp.right).offset(10)
+            }
+            else {
+                m.left.equalToSuperview().offset(20)
+            }
+            m.top.equalTo(nameLabel.snp.centerY).offset(5)
+            m.bottom.equalTo(self).offset(5)
+            m.right.equalToSuperview().offset(-10)
         }
     }
     
@@ -165,6 +198,8 @@ class ConactCell: UITableViewCell {
 
 class ContactsController: UITableViewController {
    
+    fileprivate var isBook:Bool = false
+
     fileprivate var wallet:WalletContainer?
     
     let cellReuseIdendifier = "cell"
@@ -213,7 +248,7 @@ extension ContactsController {
         cell.avatar = contact.photo
         
         cell.contentView.add(border: .bottom,
-                             color: UIColor.black.withAlphaComponent(0.05),
+                             color: Config.Colors.bottomLine,
                              width: 1,
                              padding: UIEdgeInsets(top: 0, left: 90, bottom: 0, right: 0)
         )
@@ -243,14 +278,13 @@ extension ContactsController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)!
         cell.backgroundColor = UIColor.black.withAlphaComponent(0.03)
-        
         _sendCoinsController.wallet = self.wallet
         _sendCoinsController.contact = Contact.list[indexPath.row]
         present(_sendCoinsController, animated: true)
 
     }
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return true
+        return !isBook
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
@@ -280,6 +314,14 @@ extension ContactsController {
 
 class WalletContacts: Controller {
     
+    fileprivate var isModal:Bool = false
+    
+    public var isBook:Bool = false {
+        didSet{
+            _tableController.isBook = isBook
+        }
+    }
+    
     private var wallet:WalletContainer? {
         didSet{
             _tableController.wallet = wallet
@@ -295,7 +337,7 @@ class WalletContacts: Controller {
         }
     }
     
-    private let _tableController = ContactsController()
+    fileprivate let _tableController = ContactsController()
     private let _contactOptionsController = WalletContactOptions()
 
     private let bg = UIImageView(image: Config.Images.basePattern)
@@ -327,15 +369,23 @@ class WalletContacts: Controller {
 
         navigationController?.navigationBar.prefersLargeTitles = true
 
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "button-back"),
-                                                           style: .plain,
-                                                           target: self,
-                                                           action: #selector(back(sender:)))
+        if isModal {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel,
+                                                               target: self, action: #selector(back(sender:)))
+        }
+        else {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "button-back"),
+                                                               style: .plain,
+                                                               target: self,
+                                                               action: #selector(back(sender:)))
+        }
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.add,
+        if !isBook {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.add,
                                                             target: self,
                                                             action: #selector(add(sender:)))
-                
+        }
+        
         if let walletKey = walletKey,
             let w = WalletStore.shared.wallet(by: walletKey) {
             wallet = w
@@ -346,7 +396,12 @@ class WalletContacts: Controller {
     }
     
     @objc private func back(sender:Any) {
-        navigationController?.popToRootViewController(animated: true)
+        if isModal {
+            dismiss(animated: true)
+        }
+        else {
+            navigationController?.popToRootViewController(animated: true)
+        }
     }
     
     @objc private func add(sender:Any) {
@@ -355,3 +410,28 @@ class WalletContacts: Controller {
         present(_contactOptionsController, animated: true)
     }
 }
+
+class WalletContactsModal: NavigationController {
+
+    public var isBook:Bool = false {
+        didSet{
+            contentController.isBook = true
+        }
+    }
+
+    public var walletKey:String? {
+        didSet{
+           contentController.walletKey = walletKey
+        }
+    }
+
+    let contentController = WalletContacts()
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        contentController.isBook = isBook
+        contentController.isModal = true
+        view.backgroundColor = Config.Colors.background
+        setViewControllers([contentController], animated: true)
+    }
+}
+

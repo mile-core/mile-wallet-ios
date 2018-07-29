@@ -16,6 +16,7 @@
 		313CCACF20E51B5900BF8737 /* CoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313CCACE20E51B5900BF8737 /* CoverView.swift */; };
 		313F13DB20E3FA900074796D /* MileWallet-AASA in Resources */ = {isa = PBXBuildFile; fileRef = 313F13DA20E3FA900074796D /* MileWallet-AASA */; };
 		3140C4DC210DAAAF00DFD4B7 /* Date(Formater).swift in Sources */ = {isa = PBXBuildFile; fileRef = 3140C4DB210DAAAF00DFD4B7 /* Date(Formater).swift */; };
+		3140C4DE210DD99D00DFD4B7 /* SendCoinsChooser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3140C4DD210DD99D00DFD4B7 /* SendCoinsChooser.swift */; };
 		3144B658210618D900ED27BF /* RootController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3144B657210618D900ED27BF /* RootController.swift */; };
 		3144B65A210618F900ED27BF /* WalletCardsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3144B659210618F900ED27BF /* WalletCardsController.swift */; };
 		3144B6602106311E00ED27BF /* UImage(Gradient).swift in Sources */ = {isa = PBXBuildFile; fileRef = 3144B65F2106311E00ED27BF /* UImage(Gradient).swift */; };
@@ -67,6 +68,7 @@
 		313CCACE20E51B5900BF8737 /* CoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoverView.swift; sourceTree = "<group>"; };
 		313F13DA20E3FA900074796D /* MileWallet-AASA */ = {isa = PBXFileReference; lastKnownFileType = text; path = "MileWallet-AASA"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.javascript; };
 		3140C4DB210DAAAF00DFD4B7 /* Date(Formater).swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date(Formater).swift"; sourceTree = "<group>"; };
+		3140C4DD210DD99D00DFD4B7 /* SendCoinsChooser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendCoinsChooser.swift; sourceTree = "<group>"; };
 		3144B657210618D900ED27BF /* RootController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootController.swift; sourceTree = "<group>"; };
 		3144B659210618F900ED27BF /* WalletCardsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletCardsController.swift; sourceTree = "<group>"; };
 		3144B65F2106311E00ED27BF /* UImage(Gradient).swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UImage(Gradient).swift"; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 				31B13C11210CB87C00446E9D /* WalletContacts.swift */,
 				3105B71B210CD6FB0047C2C0 /* WalletContactOptions.swift */,
 				31679763210D174B00686E92 /* SendCoins.swift */,
+				3140C4DD210DD99D00DFD4B7 /* SendCoinsChooser.swift */,
 			);
 			path = "Root Controller";
 			sourceTree = "<group>";
@@ -491,6 +494,7 @@
 				3182CDC520D1C481000C3C68 /* PDF.swift in Sources */,
 				3164FD8520C950ED00294A9F /* DetailViewController.swift in Sources */,
 				31BB792320EA703300AC301A /* Printer.swift in Sources */,
+				3140C4DE210DD99D00DFD4B7 /* SendCoinsChooser.swift in Sources */,
 				31B6091C2109A2C500B66FD8 /* EmptyWallet.swift in Sources */,
 				3185BBF621072918004CDBEF /* UIButton(App).swift in Sources */,
 				3164FD8320C950ED00294A9F /* MasterViewController.swift in Sources */,

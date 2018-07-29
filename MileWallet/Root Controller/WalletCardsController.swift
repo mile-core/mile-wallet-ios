@@ -226,7 +226,8 @@ class WalletCardsController: UIViewController {
                 return
             }
             _walletContacts.walletKey = WalletStore.shared.acitveWallets[currentIndex].wallet?.publicKey
-            navigationController?.pushViewController(_walletContacts, animated: true)
+            present(_walletContacts, animated: true)
+            //navigationController?.pushViewController(_walletContacts, animated: true)
         }
     }
     
@@ -278,7 +279,7 @@ class WalletCardsController: UIViewController {
     
     fileprivate var _walletDetailsController = WalletDetails()
     fileprivate var _newWalletController = WalletOptions()
-    fileprivate var _walletContacts = WalletContacts()
+    fileprivate var _walletContacts = WalletContactsModal()
 }
 
 

@@ -47,6 +47,7 @@ extension Config {
         public static let header =  UIColor.white
         public static let infoLine = UIColor(hex: 0x283444, alpha: 0.1)
         public static let attentionText = UIColor(hex: 0x2B47E2)
+        public static let bottomLine = UIColor.black.withAlphaComponent(0.05)
         
         public static let palette = [
             Config.Colors.defaultColor,
@@ -75,6 +76,7 @@ extension Config {
         public static let caption =  UIFont(name: "SFProText-Regular", size: 21)!
         public static let toolBar =  UIFont(name: "SFProText-Regular", size: 15)!
         public static let contacts =  UIFont(name: "SFProText-Regular", size: 15)!
+        public static let address =  UIFont(name: "SFProText-Regular", size: 13)!
         public static let navigationBarLargeTitle =  UIFont(name: "SFProDisplay-Bold", size: 34)!
         public static let header =  UIFont(name: "SFProDisplay-Bold", size: 34)!
     }

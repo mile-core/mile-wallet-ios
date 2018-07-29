@@ -49,9 +49,12 @@ class WalletDetails: Controller {
                icon: UIImage(named: "button-send-invoice")!),
     ]
     
+    private lazy var _sendCoinsChooser:SendCoinsChooser = SendCoinsChooser()
+    
     @objc func sendCoins(_ sender:Any) {
         print("..... sendCoins \(sender)")
-
+        _sendCoinsChooser.wallet = wallet
+        navigationController?.pushViewController(_sendCoinsChooser, animated: true)
     }
 
     @objc func printTicket(_ sender:Any) {
@@ -76,7 +79,7 @@ class WalletDetails: Controller {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+                
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "button-back"),
                                                            style: .plain, target: self, action: #selector(back(sender:)))
        
@@ -118,10 +121,10 @@ class WalletDetails: Controller {
         present(_settingsWalletController, animated: true)
     }
     
-    private let bg = UIImageView(image: Config.Images.basePattern)
-    
     var actionH:CGFloat = 80
     let topPadding:CGFloat = 10
+
+    private let bg = UIImageView(image: Config.Images.basePattern)
     
     override func viewDidLoad() {
       super.viewDidLoad()
