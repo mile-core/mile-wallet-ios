@@ -9,6 +9,10 @@
 import UIKit
 import MileWalletKit
 
+
+///
+/// View wallet in page controller as preview
+///
 class WalletCardPreview: WalletCell {
     
     public var walletIndex = 0 {
@@ -20,12 +24,14 @@ class WalletCardPreview: WalletCell {
     
     fileprivate func updateWallet(){
         let wallets = WalletStore.shared.acitveWallets
-
+        
         let container = wallets[walletIndex]
 
+        walletInfo.wallet = container
+        
         wallet = container.wallet
         walletAttributes = container.attributes
-        
+    
         infoContainer.backgroundColor = UIColor(hex: 0x6679FD<<walletIndex*16)
         if let color = walletAttributes?.color {
             infoContainer.backgroundColor = UIColor(hex: color)

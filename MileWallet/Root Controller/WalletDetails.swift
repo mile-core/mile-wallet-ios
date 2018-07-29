@@ -84,6 +84,9 @@ class WalletDetails: Controller {
                                                            style: .plain, target: self, action: #selector(settings(sender:)))
         
         if let walletKey = walletKey, let w = WalletStore.shared.wallet(by: walletKey) {
+            
+            walletInfo.wallet = w
+            
             wallet = w
             title = w.wallet?.name
             qrCode.image = w.wallet?.publicKeyQr

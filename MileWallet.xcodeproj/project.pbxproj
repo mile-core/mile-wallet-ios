@@ -15,6 +15,7 @@
 		311A404A21088BAE0015952B /* UIColor(Hex).swift in Sources */ = {isa = PBXBuildFile; fileRef = 311A404921088BAE0015952B /* UIColor(Hex).swift */; };
 		313CCACF20E51B5900BF8737 /* CoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313CCACE20E51B5900BF8737 /* CoverView.swift */; };
 		313F13DB20E3FA900074796D /* MileWallet-AASA in Resources */ = {isa = PBXBuildFile; fileRef = 313F13DA20E3FA900074796D /* MileWallet-AASA */; };
+		3140C4DC210DAAAF00DFD4B7 /* Date(Formater).swift in Sources */ = {isa = PBXBuildFile; fileRef = 3140C4DB210DAAAF00DFD4B7 /* Date(Formater).swift */; };
 		3144B658210618D900ED27BF /* RootController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3144B657210618D900ED27BF /* RootController.swift */; };
 		3144B65A210618F900ED27BF /* WalletCardsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3144B659210618F900ED27BF /* WalletCardsController.swift */; };
 		3144B6602106311E00ED27BF /* UImage(Gradient).swift in Sources */ = {isa = PBXBuildFile; fileRef = 3144B65F2106311E00ED27BF /* UImage(Gradient).swift */; };
@@ -65,6 +66,7 @@
 		311A404921088BAE0015952B /* UIColor(Hex).swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor(Hex).swift"; sourceTree = "<group>"; };
 		313CCACE20E51B5900BF8737 /* CoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoverView.swift; sourceTree = "<group>"; };
 		313F13DA20E3FA900074796D /* MileWallet-AASA */ = {isa = PBXFileReference; lastKnownFileType = text; path = "MileWallet-AASA"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.javascript; };
+		3140C4DB210DAAAF00DFD4B7 /* Date(Formater).swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date(Formater).swift"; sourceTree = "<group>"; };
 		3144B657210618D900ED27BF /* RootController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootController.swift; sourceTree = "<group>"; };
 		3144B659210618F900ED27BF /* WalletCardsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletCardsController.swift; sourceTree = "<group>"; };
 		3144B65F2106311E00ED27BF /* UImage(Gradient).swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UImage(Gradient).swift"; sourceTree = "<group>"; };
@@ -131,6 +133,14 @@
 			path = "Color Picker";
 			sourceTree = "<group>";
 		};
+		3140C4DA210DAA8F00DFD4B7 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				3140C4DB210DAAAF00DFD4B7 /* Date(Formater).swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
 		3144B6562106183400ED27BF /* Root Controller */ = {
 			isa = PBXGroup;
 			children = (
@@ -183,6 +193,7 @@
 			children = (
 				3185BBF321071936004CDBEF /* Assets.xcassets */,
 				31A9FE9F20DBD50900779F60 /* MileWallet.entitlements */,
+				3140C4DA210DAA8F00DFD4B7 /* Utils */,
 				311A40422107CA1E0015952B /* Color Picker */,
 				31F1C869210C8F7C00C1DF8E /* Model */,
 				3144B6562106183400ED27BF /* Root Controller */,
@@ -503,6 +514,7 @@
 				31F1C86B210C926600C1DF8E /* Model.swift in Sources */,
 				311A404A21088BAE0015952B /* UIColor(Hex).swift in Sources */,
 				3164FD8120C950ED00294A9F /* AppDelegate.swift in Sources */,
+				3140C4DC210DAAAF00DFD4B7 /* Date(Formater).swift in Sources */,
 				31679764210D174B00686E92 /* SendCoins.swift in Sources */,
 				31E4E06421076B0900ACE8FD /* WalletDetails.swift in Sources */,
 			);

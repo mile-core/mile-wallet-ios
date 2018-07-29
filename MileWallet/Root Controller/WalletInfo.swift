@@ -11,13 +11,9 @@ import MileWalletKit
 
 class WalletInfo: Controller {
     
-    public var walletIndex = 0 {
-        didSet{
-            updateWallet()
-        }
-    }
-    public var wallet:Wallet?
-    public var walletAttributes:WalletAttributes?
+    private static var balancesCache:[String:Balance] = [:]
+    
+    public var wallet:WalletContainer?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,26 +22,6 @@ class WalletInfo: Controller {
         view.addSubview(xdrAmountLabel)
         view.addSubview(mileLabel)
         view.addSubview(mileAmountLabel)
-        
-        line.snp.makeConstraints { (m) in
-            m.center.equalToSuperview()
-            m.height.equalTo(1)
-            m.width.equalToSuperview().offset(-40)
-        }
-        
-        xdrAmountLabel.snp.makeConstraints { (m) in
-            m.left.equalTo(view.snp.centerX).offset(10)
-            m.right.equalTo(line.snp.right)
-            m.height.equalTo(44)
-            m.centerY.equalToSuperview().dividedBy(2)
-        }
-        
-        mileAmountLabel.snp.makeConstraints { (m) in
-            m.left.equalTo(view.snp.centerX).offset(10)
-            m.right.equalTo(line.snp.right)
-            m.height.equalTo(44)
-            m.centerY.equalToSuperview().multipliedBy(1.5)
-        }
         
         xdrLabel.snp.makeConstraints { (m) in
             m.left.equalTo(line.snp.left)
@@ -60,11 +36,35 @@ class WalletInfo: Controller {
             m.height.equalTo(44)
             m.top.equalTo(mileAmountLabel.snp.top)
         }
+        
+        line.snp.makeConstraints { (m) in
+            m.center.equalToSuperview()
+            m.height.equalTo(1)
+            m.width.equalToSuperview().offset(-40)
+        }
+        
+        xdrAmountLabel.snp.makeConstraints { (m) in
+            m.left.equalTo(view.snp.centerX).dividedBy(2).offset(20)
+            m.right.equalTo(line.snp.right)
+            m.height.equalTo(44)
+            m.centerY.equalToSuperview().dividedBy(2)
+        }
+        
+        mileAmountLabel.snp.makeConstraints { (m) in
+            m.left.equalTo(xdrAmountLabel.snp.left)
+            m.right.equalTo(line.snp.right)
+            m.height.equalTo(44)
+            m.centerY.equalToSuperview().multipliedBy(1.5)
+        }
     }
     
     private var firstTime = true
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+                
+        if let k = wallet?.wallet?.publicKey, let b = WalletInfo.balancesCache[k] {
+            update(balance: b)
+        }
         
         if firstTime {
             startActivities()
@@ -92,9 +92,7 @@ class WalletInfo: Controller {
         }
         else {
             self.timerSetup()
-        }
-        
-        updateWallet()
+        }        
     }
     
     private func  timerSetup(){
@@ -156,7 +154,6 @@ class WalletInfo: Controller {
         return l
     }()
     
-    
     private func activityLoader(place:UIView)  -> UIActivityIndicatorView {
         let a = UIActivityIndicatorView(activityIndicatorStyle: .white)
         a.hidesWhenStopped = true
@@ -180,10 +177,30 @@ class WalletInfo: Controller {
     
     public var reloadTimer:Timer?
     
-    @objc func update(timer:Timer?)  {
+    public func update(balance: Balance) {
         
-        guard let w = wallet, let chain = chainInfo else {return}
+        guard let chain = chainInfo else {return}
+
+        self.xdrAmountLabel.text = Asset.xdr.stringValue(0)
+        self.mileAmountLabel.text = Asset.mile.stringValue(0)
         
+        self.stopActivities()
+        
+        for k in balance.balance.keys {
+            let b = Float(balance.balance[k] ?? "0") ?? 0
+            if chain.assets[k] == Asset.xdr.name {
+                self.xdrAmountLabel.text = Asset.xdr.stringValue(b)
+            }
+            else if chain.assets[k] == Asset.mile.name {
+                self.mileAmountLabel.text = Asset.mile.stringValue(b)
+            }
+        }
+    }
+    
+    @objc private func update(timer:Timer?)  {
+        
+        guard let w = wallet?.wallet else {return}
+                
         Balance.update(wallet: w, error: { (error) in
             
             UIAlertController(title: NSLocalizedString("Balance error", comment: ""),
@@ -195,30 +212,8 @@ class WalletInfo: Controller {
             self.stopActivities()
             
         }, complete: { (balance) in
-            
-            self.xdrAmountLabel.text = Asset.xdr.stringValue(0)
-            self.mileAmountLabel.text = Asset.mile.stringValue(0)
-            
-            self.stopActivities()
-            
-            for k in balance.balance.keys {
-                let b = Float(balance.balance[k] ?? "0") ?? 0
-                if chain.assets[k] == Asset.xdr.name {
-                    self.xdrAmountLabel.text = Asset.xdr.stringValue(b)
-                }
-                else if chain.assets[k] == Asset.mile.name {
-                    self.mileAmountLabel.text = Asset.mile.stringValue(b)
-                }
-            }
+            self.update(balance: balance)
+            WalletInfo.balancesCache[w.publicKey!] = balance
         })
-    }
-    
-    fileprivate func updateWallet(){
-        let wallets = WalletStore.shared.acitveWallets
-        
-        let container = wallets[walletIndex]
-        
-        wallet = container.wallet
-        walletAttributes = container.attributes
     }
 }

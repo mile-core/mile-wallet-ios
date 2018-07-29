@@ -133,8 +133,6 @@ class MasterViewController: UITableViewController, AuthenticationID {
             
             if CameraQR.shared.payment != nil {
                 
-                Swift.print(" reload \(self, self.isAppearing)")
-
                 if self.isAppearing {                    
                     UIAlertController(title: nil,
                                       message: "Choose target address", 
@@ -359,9 +357,7 @@ extension MasterViewController {
                 let wallet = Wallet(JSONString: value) {    
                 
                 Balance.update(wallet: wallet, error: { (error) in
-                    
-                    Swift.print("Get.... Error: \(String(describing: error))")
-                    
+                                        
                     activiti?.stopAnimating()
                     self.itemsUpdated += 1
                     

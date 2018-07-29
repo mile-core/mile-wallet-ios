@@ -20,8 +20,6 @@ class WalletCardsController: UIViewController {
         super.viewDidLoad()
         
         navigationController?.navigationBar.prefersLargeTitles = false
-
-        //view.backgroundColor = UIColor.clear
         
         view.addSubview(newWalletButton)
         view.addSubview(archiveButton)

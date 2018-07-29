@@ -42,15 +42,15 @@ class WalletOptionsControllerImp: Controller, UITextFieldDelegate {
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(doneHandler(_:)))
         
-        contentView.addSubview(name)
+        contentView.addSubview(nameOrPk)
         contentView.addSubview(line)
         contentView.addSubview(colorLabel)
         contentView.addSubview(pickerView)
         contentView.addSubview(archiveButton)
 
-        name.delegate = self
+        nameOrPk.delegate = self
         
-        name.snp.makeConstraints { (make) in
+        nameOrPk.snp.makeConstraints { (make) in
             make.top.equalTo(contentView.snp.topMargin).offset(10)
             make.left.equalToSuperview().offset(20)
             make.right.equalToSuperview().offset(-20)
@@ -58,7 +58,7 @@ class WalletOptionsControllerImp: Controller, UITextFieldDelegate {
         }
         
         line.snp.makeConstraints { (make) in
-            make.top.equalTo(name.snp.bottomMargin).offset(10)
+            make.top.equalTo(nameOrPk.snp.bottomMargin).offset(10)
             make.left.equalToSuperview().offset(20)
             make.right.equalToSuperview().offset(-20)
             make.height.equalTo(1)
@@ -104,7 +104,7 @@ class WalletOptionsControllerImp: Controller, UITextFieldDelegate {
         super.viewWillAppear(animated)
         if let wallet = self.wallet {
             title = NSLocalizedString("Settings", comment: "")
-            name.text = wallet.wallet?.name
+            nameOrPk.text = wallet.wallet?.name
             archiveButton.isUserInteractionEnabled = true
             archiveButton.isHidden = false
         }
@@ -118,9 +118,11 @@ class WalletOptionsControllerImp: Controller, UITextFieldDelegate {
         }
         
         if a.isActive {
+            nameOrPk.placeholder = NSLocalizedString("Wallet Name", comment: "")
             archiveButton.setTitle(NSLocalizedString("Archive wallet", comment: ""), for: .normal)
         }
         else {
+            nameOrPk.placeholder = NSLocalizedString("Name or Private Key", comment: "")
             archiveButton.setTitle(NSLocalizedString("Restore wallet", comment: ""), for: .normal)
         }
         
@@ -166,8 +168,8 @@ class WalletOptionsControllerImp: Controller, UITextFieldDelegate {
         return l
     }()
     
-    private let name: UITextField = {
-        let t = UITextField.nameField(placeholder: NSLocalizedString("Wallet name", comment: ""))
+    private let nameOrPk: UITextField = {
+        let t = UITextField.nameField(placeholder: NSLocalizedString("Name or Private Key", comment: ""))
         return t
     }()
     
@@ -379,7 +381,7 @@ extension WalletOptionsControllerImp {
     }
     
     private func coverUp()  {
-        name.resignFirstResponder()
+        nameOrPk.resignFirstResponder()
         attentionCover.alpha = 0
         attentionCover.backgroundColor = self.currentColor
         attentionCover.frame = UIScreen.main.bounds
@@ -412,9 +414,9 @@ extension WalletOptionsControllerImp {
             
             self.currentWallet = wallet
             
-            if self.wallet != nil, wallet.name != self.name.text {
+            if self.wallet != nil, wallet.name != self.nameOrPk.text {
 
-                self.currentWallet = Wallet(name: self.name.text!,
+                self.currentWallet = Wallet(name: self.nameOrPk.text!,
                             publicKey: wallet.publicKey!,
                             privateKey: wallet.privateKey!,
                             secretPhrase: wallet.secretPhrase)
@@ -502,7 +504,7 @@ extension WalletOptionsControllerImp {
     
     fileprivate func addWallet()  {
         
-        guard let name = name.text else { return }
+        guard let name = nameOrPk.text else { return }
         
         guard !name.isEmpty else { return }
         
@@ -517,19 +519,52 @@ extension WalletOptionsControllerImp {
             self.dismiss(animated: true, completion: nil)
         }
         
-        Wallet.create(name: name, secretPhrase: nil, error: { error in
-            UIAlertController(title: NSLocalizedString("Wallet Error", comment: ""),
-                              message:  error?.description,
-                              preferredStyle: .alert)
-                .addAction(title: WalletOptionsControllerImp.closeString, style: .cancel)
+        do {
+            let fromPk = try Wallet(name: Date.currentTimeString, privateKey: name)
+            
+            self.loaderStop()
+
+            if WalletStore.shared.wallet(by: fromPk.publicKey!) != nil {
+               
+                UIAlertController(title: NSLocalizedString("Wallet error", comment: ""),
+                                  message: NSLocalizedString("Wallet with the same public key already exists", comment: "") + fromPk.publicKey!,
+                                  preferredStyle: .actionSheet)
+                    .addAction(title: WalletOptionsControllerImp.closeString, style: .cancel){ action in
+                        close()
+                    }
+                    .present(by: self)
+                
+                return
+            }
+            
+            UIAlertController(title: NSLocalizedString("Success!", comment: ""),
+                              message: NSLocalizedString("Private Key is valid. Wallet address: ", comment: "") + fromPk.publicKey!,
+                              preferredStyle: .actionSheet)
+                .addAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel){ action in
+                    close()
+                }
+                .addAction(title: NSLocalizedString("Accept", comment: ""), style: .default){ action in
+                    self.updateWallet(wallet: fromPk)
+                }
                 .present(by: self)
+        }
+        catch {
             
-            close()
-            
-        }) { (wallet) in
-            
-           self.updateWallet(wallet: wallet)
-            
+            Wallet.create(name: name, secretPhrase: nil, error: { error in
+               
+                UIAlertController(title: NSLocalizedString("Wallet Error", comment: ""),
+                                  message:  error?.description,
+                                  preferredStyle: .alert)
+                    .addAction(title: WalletOptionsControllerImp.closeString, style: .cancel) { action in
+                        close()
+                    }
+                    .present(by: self)
+                
+            }) { (wallet) in
+                
+                self.updateWallet(wallet: wallet)
+                
+            }
         }
     }
 }

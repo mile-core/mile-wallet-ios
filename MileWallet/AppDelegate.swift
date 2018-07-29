@@ -16,7 +16,6 @@ class CameraQR {
     private init (){}
 }
 
-
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
     
@@ -27,7 +26,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
     
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-
+        
+        Config.url = "https://wallet.testnet.mile.global"
+        
         UINavigationBar.appearance()
             .titleTextAttributes = [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarTitle,
                                     NSAttributedStringKey.font: Config.Fonts.navigationBarTitle]

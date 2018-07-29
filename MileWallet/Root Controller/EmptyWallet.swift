@@ -16,8 +16,6 @@ class EmptyWallet: WalletCell {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        print("size = \(UIScreen.main.bounds.size.height)")
-
         content.addSubview(cover)
         cover.snp.makeConstraints { (m) in
             m.edges.equalToSuperview()

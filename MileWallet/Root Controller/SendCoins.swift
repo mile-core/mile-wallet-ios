@@ -119,14 +119,96 @@ class SendCoinsImp: Controller {
         dismiss(animated: true)
     }
     
+    private func acceptedSend(from:Wallet, to: String, asset: Asset, amount:Float) {
+
+        let toWallet = Wallet(name: to, publicKey: to, privateKey: "", secretPhrase: nil)
+        
+        loaderStart()
+
+        Transfer.send(
+            asset:  asset.name,
+            amount: "\(amount)",
+            from:   from,
+            to:     toWallet,
+            error: { error in
+                
+                UIAlertController(title: NSLocalizedString("Transfer error", comment: ""),
+                                  message:  error?.description,
+                                  preferredStyle: .alert)
+                    .addAction(title: "Close", style: .cancel)
+                    .present(by: self)
+                
+                self.loaderStop()
+                
+        }) { (transfer) in
+            self.loaderStop()
+            self.dismiss(animated: true)
+        }
+    }
+    
+    private func sendCoin(from:Wallet, to: Contact, asset: Asset, amount:Float, balance:Balance) {
+        Chain.update(error: { (error) in
+            
+            self.loaderStop()
+            
+            UIAlertController(title: nil,
+                              message: error?.description,
+                              preferredStyle: .actionSheet)
+                .addAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel)
+                .present(by: self)
+            
+            
+        }) { (chain) in
+        
+            let code = chain.assetCode(of: asset.name)!
+            
+            let b = balance.amount(code)
+                        
+            self.loaderStop()
+
+            guard let total = b, amount<=total else {
+                
+                let v = asset.stringValue(b ?? 0.0)
+                var mess = NSLocalizedString("Your total \(asset.name) amount is ", comment:"")
+                mess += v
+                mess += NSLocalizedString(" that is less then ", comment: "") + asset.stringValue(amount)
+                
+                UIAlertController(title: nil,
+                                  message: mess,
+                                  preferredStyle: .actionSheet)
+                    .addAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel)
+                    .present(by: self)
+                return
+            }
+            
+            var mess = NSLocalizedString("Accept sending ", comment: "")
+            mess += " \(amount) "
+            mess += NSLocalizedString("coins to: ", comment: "") + (to.name ?? "-")
+            UIAlertController(title: NSLocalizedString("Sending coins...", comment: ""),
+                              message: mess,
+                              preferredStyle: .actionSheet)
+                .addAction(title: "Accept", style: .default, handler: { (action) in
+                    self.acceptedSend(from: from, to: to.publicKey ?? "", asset: asset, amount: amount)
+                })
+                .addAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel)
+                .present(by: self)
+        }
+        
+    }
+    
     @objc private func doneHandler(_ sender: UIButton) {
         
         view.endEditing(true)
 
-        guard let total = amount.text?.floatValue, total > 0.0 else {
+        guard let contact = self.contact else {
+            return
+        }
+
+        guard let asked = amount.text?.floatValue,
+            asked > 0.0 else {
             
             UIAlertController(title: nil,
-                              message: NSLocalizedString("Total amount is not valid", comment: ""),
+                              message: NSLocalizedString("Amount is not valid", comment: ""),
                               preferredStyle: .actionSheet)
                 .addAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel)
                 .present(by: self)
@@ -134,21 +216,22 @@ class SendCoinsImp: Controller {
             return
         }
         
-        guard let name = contact?.name else {
-            return
+        guard let w = wallet?.wallet else {
+           return
         }
         
-        var mess = NSLocalizedString("Accept sending ", comment: "")
-        mess += " \(total) "
-        mess += NSLocalizedString("coins to: ", comment: "") + name
-        UIAlertController(title: NSLocalizedString("Sending coins...", comment: ""),
-                          message: mess,
-                          preferredStyle: .actionSheet)
-            .addAction(title: "Accept", style: .default, handler: { (action) in
-                self.dismiss(animated: true)
-            })
-        .addAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel)
-        .present(by: self)
+        
+        loaderStart()
+        
+        Balance.update(wallet: w, error: { (error) in
+            UIAlertController(title: nil,
+                              message: error?.description,
+                              preferredStyle: .actionSheet)
+                .present(by: self)
+        }) { (balance) in
+            let asset = Asset.list[self.coinsPicker.selectedRow(inComponent: 0)]
+            self.sendCoin(from: w, to: contact, asset: asset, amount: asked, balance: balance)
+        }
     }
     
     lazy var contactView:ContactView = ContactView()

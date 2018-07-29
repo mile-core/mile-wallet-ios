@@ -25,8 +25,7 @@ class WalletCell: Controller {
     public var walletAttributes:WalletAttributes?
     
     public var delegate:WalletCellDelegate?
-      
-    
+          
     public let content:UIView = {
         let v = UIView()
         v.clipsToBounds = true
