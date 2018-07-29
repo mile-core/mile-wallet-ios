@@ -22,6 +22,7 @@ extension UITextField {
         text.clearButtonMode = .always
         text.font = Config.Fonts.edit
         text.textColor = Config.Colors.edit
+        text.text = ""
         return text
     } 
     

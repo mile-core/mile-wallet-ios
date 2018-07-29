@@ -212,7 +212,7 @@ extension ContactsController {
         cell.avatar = contact.photo
         
         cell.contentView.add(border: .bottom,
-                             color: UIColor.black.withAlphaComponent(0.1),
+                             color: UIColor.black.withAlphaComponent(0.05),
                              width: 1,
                              padding: UIEdgeInsets(top: 0, left: 90, bottom: 0, right: 0)
         )

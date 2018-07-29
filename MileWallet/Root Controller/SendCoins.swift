@@ -109,7 +109,9 @@ class SendCoinsImp: Controller {
         guard let a = wallet?.attributes else {
             return
         }
-       
+        
+        amount.placeholder = amount.text
+        amount.text = nil
         (navigationController as? NavigationController)?.titleColor = UIColor(hex: a.color)
     }
     
@@ -118,16 +120,65 @@ class SendCoinsImp: Controller {
     }
     
     @objc private func doneHandler(_ sender: UIButton) {
+        
+        view.endEditing(true)
 
+        guard let total = amount.text?.floatValue, total > 0.0 else {
+            
+            UIAlertController(title: nil,
+                              message: NSLocalizedString("Total amount is not valid", comment: ""),
+                              preferredStyle: .actionSheet)
+                .addAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel)
+                .present(by: self)
+            
+            return
+        }
+        
+        guard let name = contact?.name else {
+            return
+        }
+        
+        var mess = NSLocalizedString("Accept sending ", comment: "")
+        mess += " \(total) "
+        mess += NSLocalizedString("coins to: ", comment: "") + name
+        UIAlertController(title: NSLocalizedString("Sending coins...", comment: ""),
+                          message: mess,
+                          preferredStyle: .actionSheet)
+            .addAction(title: "Accept", style: .default, handler: { (action) in
+                self.dismiss(animated: true)
+            })
+        .addAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel)
+        .present(by: self)
     }
     
     lazy var contactView:ContactView = ContactView()
-    lazy var amount:UITextField = UITextField.nameField(placeholder: NSLocalizedString("Amount", comment: ""))
+    lazy var amount:UITextField = {
+       let a = UITextField.decimalsField()
+        a.delegate = self
+        return a
+    }()
     
     lazy var coinsPicker:UIPickerView = UIPickerView()
 }
 
-extension SendCoinsImp: UIPickerViewDataSource, UIPickerViewDelegate {
+
+extension SendCoinsImp: UITextFieldDelegate {
+
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        return true
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField, reason: UITextFieldDidEndEditingReason) {
+        if amount.text != nil {
+            amount.placeholder = nil
+        }
+    }
+}
+
+// MARK: - datasource
+extension SendCoinsImp: UIPickerViewDataSource {
+    static let coins = Asset.list
+
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         pickerView.subviews.forEach({
             $0.isHidden = $0.frame.height < 1.0
@@ -138,16 +189,14 @@ extension SendCoinsImp: UIPickerViewDataSource, UIPickerViewDelegate {
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return SendCoinsImp.coins.count
     }
-    
-    // delegate method to return the value shown in the picker
+}
 
+extension SendCoinsImp: UIPickerViewDelegate{
+    // delegate method to return the value shown in the picker
     func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
         let coin:UILabel = UILabel()
         coin.textAlignment = .left
         coin.text = SendCoinsImp.coins[row].name
         return coin
     }
-
-    
-    static let coins = Asset.list
 }
