@@ -164,7 +164,7 @@ class ConactCell: UITableViewCell {
         get{ return contactView.name }
     }
     
-    private let contactView = ContactView()
+    fileprivate let contactView = ContactView()
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -197,7 +197,16 @@ class ConactCell: UITableViewCell {
 }
 
 class ContactsController: UITableViewController {
-   
+    
+    fileprivate var style:CoinsOperation.Style  {
+        set{
+            _sendCoinsController.style = newValue
+        }
+        get {
+            return _sendCoinsController.style
+        }
+    }
+    
     fileprivate var isBook:Bool = false
 
     fileprivate var wallet:WalletContainer?
@@ -221,8 +230,7 @@ class ContactsController: UITableViewController {
         }
     }
     
-    fileprivate var _sendCoinsController = SendCoins()
-
+    fileprivate var _sendCoinsController = CoinsOperation()
 }
 
 
@@ -247,6 +255,7 @@ extension ContactsController {
         cell.publicKey = contact.publicKey
         cell.avatar = contact.photo
         
+        cell.contentView.remove(border: .bottom)
         cell.contentView.add(border: .bottom,
                              color: Config.Colors.bottomLine,
                              width: 1,
@@ -316,6 +325,7 @@ class WalletContacts: Controller {
     
     fileprivate var isModal:Bool = false
     
+   
     public var isBook:Bool = false {
         didSet{
             _tableController.isBook = isBook
@@ -413,6 +423,12 @@ class WalletContacts: Controller {
 
 class WalletContactsModal: NavigationController {
 
+    public var style:CoinsOperation.Style = .contact {
+        didSet{
+            contentController._tableController._sendCoinsController.style = style
+        }
+    }
+    
     public var isBook:Bool = false {
         didSet{
             contentController.isBook = true

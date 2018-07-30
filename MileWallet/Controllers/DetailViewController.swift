@@ -268,7 +268,7 @@ class DetailViewController: Controller {
     func printSecretPaper() {
         loaderStart()
         Printer.shared.printPDF(wallet: wallet, 
-                 formater: { return HTMLTemplate.get(wallet:$0) }, 
+                 formater: { return HTMLTemplate.pairAndName(wallet:$0) }, 
                  complete: { _,_,_ in
                     self.loaderStop()
         })                    

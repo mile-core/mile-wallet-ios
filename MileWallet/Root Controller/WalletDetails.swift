@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import MileWalletKit
 
-class WalletDetails: Controller {
+class WalletDetails: Controller, UIGestureRecognizerDelegate {
     
     class Action {
         @objc var action:((_ sender:Any) -> ())?
@@ -49,17 +49,15 @@ class WalletDetails: Controller {
                icon: UIImage(named: "button-send-invoice")!),
     ]
     
-    private lazy var _sendCoinsChooser:SendCoinsChooser = SendCoinsChooser()
-    
     @objc func sendCoins(_ sender:Any) {
-        print("..... sendCoins \(sender)")
         _sendCoinsChooser.wallet = wallet
-        navigationController?.pushViewController(_sendCoinsChooser, animated: true)
+        present(_sendCoinsChooser, animated: true)
     }
 
     @objc func printTicket(_ sender:Any) {
-        print("..... printTicket \(sender)")
-
+        _printInvoiceController.style = .print
+        _printInvoiceController.wallet = wallet
+        present(_printInvoiceController, animated: true)
     }
 
     @objc func sendLink(_ sender:Any) {
@@ -77,9 +75,23 @@ class WalletDetails: Controller {
         }
     }
     
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+                                  shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = nil
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-                
+        
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        self.navigationController?.interactivePopGestureRecognizer?.delegate = self
+        
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "button-back"),
                                                            style: .plain, target: self, action: #selector(back(sender:)))
        
@@ -88,7 +100,7 @@ class WalletDetails: Controller {
         
         if let walletKey = walletKey, let w = WalletStore.shared.wallet(by: walletKey) {
             
-            walletInfo.wallet = w
+            _walletInfo.wallet = w
             
             wallet = w
             title = w.wallet?.name
@@ -149,9 +161,9 @@ class WalletDetails: Controller {
         contentView.addSubview(balance)
         contentView.addSubview(copyAddressButton)
 
-        addChildViewController(walletInfo)
-        balance.addSubview(walletInfo.view)
-        walletInfo.didMove(toParentViewController: self)
+        addChildViewController(_walletInfo)
+        balance.addSubview(_walletInfo.view)
+        _walletInfo.didMove(toParentViewController: self)
         
         qrContent.snp.remakeConstraints { (m) in
             m.top.equalTo(contentView.snp.top).offset(0)
@@ -192,72 +204,69 @@ class WalletDetails: Controller {
             m.height.equalTo(120)
         }
         
-        walletInfo.view.snp.remakeConstraints { (m) in
+        _walletInfo.view.snp.remakeConstraints { (m) in
             m.edges.equalToSuperview()
         }
         
         shadowSetup()
         
-        toolBar.sizeToFit()
-        
         contentView.addSubview(toolBar)
         
-        var b:[UIBarButtonItem] = []
         for (i,a) in actionDesc.enumerated() {
             
-            //b.append(UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil))
-
-            let item = UIButton.toolBar(title: a.title,
-                                        image: a.icon) { (sender) in
-                                            a.action?(sender)
+            let b = TollBarButton(title: a.title,
+                              image: a.icon,
+                              padding: 6) { (sender) in
+                                a.action?(sender)
             }
-            b.append(item)
             
-            if i < actionDesc.count-1 {
-                b.append(UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil))
-                let sep = Separator()
-                b.append(UIBarButtonItem(customView: sep))
-                b.append(UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil))
+            toolBar.addSubview(b)
+            
+            b.snp.makeConstraints { (m) in
+                m.centerX.equalTo(toolBar.snp.right).multipliedBy(CGFloat(i*2+1)/CGFloat(actionDesc.count*2))
+                m.top.equalTo(toolBar).offset(25)
+                m.bottom.equalTo(toolBar).offset(-20)
             }
         }
-        //b.append(UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil))
 
-        toolBar.setItems(b, animated: false)
+        for i in 0..<actionDesc.count-1 {
+            let sep = UIView()
+            sep.backgroundColor = Config.Colors.separator
+            toolBar.addSubview(sep)
+            sep.snp.makeConstraints { (m) in
+                m.centerX.equalTo(toolBar.snp.right).multipliedBy(CGFloat(i+1)/CGFloat(actionDesc.count))
+                m.width.equalTo(1)
+                m.top.equalTo(toolBar).offset(10)
+                m.bottom.equalTo(toolBar).offset(-10)
+            }
+        }
         
-        h = 90
+        h = 100
         if UIScreen.main.bounds.size.height < 640 {
-            h = 70
+            h = 80
         }
         
         toolBar.snp.makeConstraints { (m) in
             m.left.right.equalTo(view)
-            m.bottom.equalTo(contentView.snp.bottom)
+            m.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
             m.height.equalTo(h)
         }
         
-        toolBar.sizeToFit()
-
-        
         copyAddressButton.snp.remakeConstraints { (m) in
-            m.top.equalTo(balance.snp.bottom).offset(h).priority(.low)
-            m.bottom.equalTo(toolBar.snp.top).offset(-20).priority(.high)
+            m.top.lessThanOrEqualTo(balance.snp.bottom).offset(30)//.priority(.low)
+            m.bottom.lessThanOrEqualTo(toolBar.snp.top).offset(-20).priority(.low)
             m.left.right.equalTo(contentView).inset(60)
             m.height.equalTo(60)
         }
     }
-
-    let toolBar:UIToolbar = {
-        let toolBar = UIToolbar()
-        
-        toolBar.tintColor = UIColor.white
+    
+    
+    let toolBar:UIView = {
+        let toolBar = UIView()
         toolBar.backgroundColor = UIColor.white
-        toolBar.barTintColor = UIColor.white
-        toolBar.isTranslucent = false
-        toolBar.layer.borderColor = UIColor.clear.cgColor
-        toolBar.setShadowImage(UIImage(), forToolbarPosition: .bottom)
         return toolBar
     }()
-    
+
     public let qrContent:UIView = {
         let v = UIView()
         v.clipsToBounds = false
@@ -330,6 +339,8 @@ class WalletDetails: Controller {
     }
     
     
-    fileprivate var walletInfo:WalletInfo = WalletInfo()
-    fileprivate var _settingsWalletController = WalletOptions()
+    fileprivate var _walletInfo:WalletInfo = WalletInfo()
+    fileprivate var _settingsWalletController = WalletSettings()
+    private lazy var _sendCoinsChooser:SendCoinsChooser = SendCoinsChooser()
+    fileprivate var _printInvoiceController:CoinsOperation = CoinsOperation()
 }

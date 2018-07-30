@@ -10,11 +10,11 @@ import UIKit
 import MileWalletKit
 import ObjectMapper
 
-class WalletOptions: NavigationController {
+class WalletSettings: NavigationController {
     
     public var wallet:WalletContainer?
     
-    let contentController = WalletOptionsControllerImp()
+    let contentController = WalletSettingsImp()
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = Config.Colors.background
@@ -22,14 +22,14 @@ class WalletOptions: NavigationController {
     }
 }
 
-class WalletOptionsControllerImp: Controller, UITextFieldDelegate {
+class WalletSettingsImp: Controller, UITextFieldDelegate {
    
     fileprivate var wallet:WalletContainer? {
         get {
-            return (navigationController as? WalletOptions)?.wallet
+            return (navigationController as? WalletSettings)?.wallet
         }
         set {
-            (navigationController as? WalletOptions)?.wallet = newValue
+            (navigationController as? WalletSettings)?.wallet = newValue
         }
     }
 
@@ -327,7 +327,7 @@ class WalletOptionsControllerImp: Controller, UITextFieldDelegate {
     }()
 }
 
-extension WalletOptionsControllerImp: UIPrintInteractionControllerDelegate {
+extension WalletSettingsImp: UIPrintInteractionControllerDelegate {
     
     func printInteractionControllerParentViewController(_ printInteractionController: UIPrintInteractionController) -> UIViewController? {
         return self.navigationController?.topViewController
@@ -353,7 +353,7 @@ extension WalletOptionsControllerImp: UIPrintInteractionControllerDelegate {
     }
 }
 
-extension WalletOptionsControllerImp {
+extension WalletSettingsImp {
     
     @objc fileprivate func backMainHandler(sender:UIButton){
         coverDown()
@@ -365,7 +365,7 @@ extension WalletOptionsControllerImp {
         loaderStart()
         Printer.shared.printController.delegate = self
         Printer.shared.printPDF(wallet: currentWallet,
-                                formater: { return HTMLTemplate.get(wallet:$0) },
+                                formater: { return HTMLTemplate.pairAndName(wallet:$0) },
                                 complete: { _,complete,_ in
                                     self.loaderStop()
         })
@@ -440,7 +440,7 @@ extension WalletOptionsControllerImp {
                 UIAlertController(title: nil,
                                   message:  NSLocalizedString("Wallet could not be created from the secret phrase", comment: ""),
                                   preferredStyle: .alert)
-                    .addAction(title: WalletOptionsControllerImp.closeString, style: .cancel, handler: { (action) in
+                    .addAction(title: WalletSettingsImp.closeString, style: .cancel, handler: { (action) in
                         close()
                     })
                     .present(by: self)
@@ -478,7 +478,7 @@ extension WalletOptionsControllerImp {
             UIAlertController(title: nil,
                               message:  error.description,
                               preferredStyle: .alert)
-                .addAction(title: WalletOptionsControllerImp.closeString, style: .cancel, handler: { (action) in
+                .addAction(title: WalletSettingsImp.closeString, style: .cancel, handler: { (action) in
                     close()
                 })
                 .present(by: self)
@@ -494,7 +494,7 @@ extension WalletOptionsControllerImp {
             UIAlertController(title: NSLocalizedString("Wallet Error", comment: ""),
                               message:  NSLocalizedString("Wallet with the same name already exists", comment: ""),
                               preferredStyle: .alert)
-                .addAction(title: WalletOptionsControllerImp.closeString, style: .cancel)
+                .addAction(title: WalletSettingsImp.closeString, style: .cancel)
                 .present(by: self)
             return false
         }
@@ -529,7 +529,7 @@ extension WalletOptionsControllerImp {
                 UIAlertController(title: NSLocalizedString("Wallet error", comment: ""),
                                   message: NSLocalizedString("Wallet with the same public key already exists", comment: "") + fromPk.publicKey!,
                                   preferredStyle: .actionSheet)
-                    .addAction(title: WalletOptionsControllerImp.closeString, style: .cancel){ action in
+                    .addAction(title: WalletSettingsImp.closeString, style: .cancel){ action in
                         close()
                     }
                     .present(by: self)
@@ -555,7 +555,7 @@ extension WalletOptionsControllerImp {
                 UIAlertController(title: NSLocalizedString("Wallet Error", comment: ""),
                                   message:  error?.description,
                                   preferredStyle: .alert)
-                    .addAction(title: WalletOptionsControllerImp.closeString, style: .cancel) { action in
+                    .addAction(title: WalletSettingsImp.closeString, style: .cancel) { action in
                         close()
                     }
                     .present(by: self)
@@ -569,13 +569,13 @@ extension WalletOptionsControllerImp {
     }
 }
 
-extension WalletOptionsControllerImp: ColorPickerDataSource {
+extension WalletSettingsImp: ColorPickerDataSource {
     func colorPickerColors() -> [UIColor] {
         return Config.Colors.palette
     }
 }
 
-extension WalletOptionsControllerImp: ColorPickerDelegate {
+extension WalletSettingsImp: ColorPickerDelegate {
     
     func colorPicker(_ colorPickerView: ColorPicker, didSelectCell cell: ColorPickerCell) {
         cell.layer.contents = Config.Images.colorPickerOn.cgImage

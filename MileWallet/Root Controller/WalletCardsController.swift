@@ -26,23 +26,15 @@ class WalletCardsController: UIViewController {
         view.addSubview(contactsButton)
         view.addSubview(verticalLineLeft)
         view.addSubview(verticalLineRight)
-
         
-//        try? WalletStore.shared.keychain.removeAll()
-// // !!!
-//        for w in WalletStore.shared.wallets {
-//            print("... p[\(w.wallet?.name)] = \(w.wallet?.publicKey) \(w.wallet?.privateKey)")
-//            if let key = w.wallet?.name, key == "local" {
-//                continue
-//            }
-//            try? WalletStore.shared.keychain.remove(w.wallet!.publicKey!)
-//            try? WalletStore.shared.keychain.removeWalletAttr(w.wallet!.publicKey!)
-//        }
+        for w in WalletStore.shared.acitveWallets {
+            print("... p[\(w.wallet?.name)] = \(w.wallet?.publicKey) \(w.wallet?.privateKey)")
+        }
 
         verticalLineLeft.snp.makeConstraints { (m) in
             m.centerX.equalTo(view.snp.right).multipliedBy(1.0/3.0)
             m.height.equalTo(84)
-            m.bottom.equalToSuperview().offset(-20)
+            m.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
             m.width.equalTo(1)
         }
         
@@ -56,7 +48,7 @@ class WalletCardsController: UIViewController {
         newWalletButton.snp.makeConstraints { (m) in
             m.centerY.equalTo(verticalLineLeft.snp.centerY).offset(-7)
             m.centerX.equalTo(view.snp.right).multipliedBy(1.0/6.0)
-            m.bottom.equalToSuperview().offset(-27)
+            m.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-27)
             m.width.equalTo(88)
         }
         
@@ -127,7 +119,7 @@ class WalletCardsController: UIViewController {
     }()
     
     private lazy var newWalletButton:UIButton = {
-        let b = UIButton.app()
+        let b = UIButton.toolBarButton()
         b.setImage(UIImage(named: "button-new-wallet"), for: UIControlState.normal)
         b.imageView?.contentMode = .scaleAspectFit
         b.setTitle(NSLocalizedString("Add Wallet", comment: ""), for: .normal)
@@ -136,7 +128,7 @@ class WalletCardsController: UIViewController {
     }()
 
     private lazy var contactsButton:UIButton = {
-        let b = UIButton.app()
+        let b = UIButton.toolBarButton()
         b.setImage(UIImage(named: "button-contact-book"), for: UIControlState.normal)
         b.imageView?.contentMode = .scaleAspectFit
         b.setTitle(NSLocalizedString("Contacts", comment: ""), for: .normal)
@@ -145,7 +137,7 @@ class WalletCardsController: UIViewController {
     }()
 
     private lazy var archiveButton:UIButton = {
-        let b = UIButton.app()
+        let b = UIButton.toolBarButton()
         b.setImage(UIImage(named: "button-archive-wallets"), for: UIControlState.normal)
         b.imageView?.contentMode = .scaleAspectFit
         b.setTitle(NSLocalizedString("Archive", comment: ""), for: .normal)
@@ -278,7 +270,7 @@ class WalletCardsController: UIViewController {
     fileprivate var _pendingIndex: Int?
     
     fileprivate var _walletDetailsController = WalletDetails()
-    fileprivate var _newWalletController = WalletOptions()
+    fileprivate var _newWalletController = WalletSettings()
     fileprivate var _walletContacts = WalletContactsModal()
 }
 

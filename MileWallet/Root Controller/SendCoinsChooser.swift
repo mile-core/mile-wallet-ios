@@ -10,7 +10,26 @@ import UIKit
 import MileWalletKit
 import QRCodeReader
 
-class SendCoinsChooser: Controller {
+class SendCoinsChooser: NavigationController {
+    
+    public var wallet:WalletContainer? {
+        set{
+            contentController.wallet = newValue
+        }
+        get {
+            return contentController.wallet
+        }
+    }
+    
+    let contentController = SendCoinsChooserImp()
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = Config.Colors.background
+        setViewControllers([contentController], animated: true)
+    }
+}
+
+class SendCoinsChooserImp: Controller {
     
     public var wallet:WalletContainer? {
         didSet {
@@ -22,6 +41,11 @@ class SendCoinsChooser: Controller {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel,
+                                                           target: self,
+                                                           action: #selector(self.close(sender:)))
+        
         
         contentView.addSubview(bg)
         bg.contentMode = .scaleAspectFill
@@ -40,6 +64,10 @@ class SendCoinsChooser: Controller {
         }
     }
     
+    @objc private func close(sender:Any){
+        dismiss(animated: true)
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         guard let a = wallet?.attributes else {
@@ -64,9 +92,7 @@ class CoinsChooserCell: UITableViewCell {
    
     public var actionIcon:UIImage? {
         didSet{
-            //button.setImage(actionIcon, for: .normal)
             accessor.image = actionIcon
-            //accessor.sizeToFit()
         }
     }
     
@@ -118,14 +144,6 @@ class CoinsChooserCell: UITableViewCell {
         return b
     }()
 
-//    private lazy var button:UIButton = {
-//        let b = Button(image: nil,
-//                       action: { (sender) in
-//                        self.actionHandler?(self)
-//        })
-//        return b
-//    }()
-//
     private lazy var textField:UITextField = {
         let t = UITextField.nameField(placeholder: "")
         t.font = Config.Fonts.address
@@ -177,18 +195,7 @@ class SendConisChooserController: UITableViewController {
     }
     
     lazy var actions:[Action] = [
-        Action(action: { (cell) in
-            
-            //cell.placeHolder = UIPasteboard.general.string
-            self._sendCoinsController.contact = nil
-            self._sendCoinsController.wallet = self.wallet
-            self.present(self._sendCoinsController, animated: true)
-
-            
-        }, placeHolder: NSLocalizedString("Type or paste transfer address", comment: ""),
-           title: NSLocalizedString("To address", comment: ""),
-           icon: UIImage(named: "button-to-address")),
-        
+       
         Action(action: { (cell) in
             
             self._walletContacts.walletKey = self.wallet?.wallet?.publicKey
@@ -201,38 +208,29 @@ class SendConisChooserController: UITableViewController {
         Action(action: { (cell) in
             
             self.qrCodeReader.open { (reader, result) in
-                
-                reader.stopScanning()
-                
-                if result.value.hasPrefix(Config.Shared.Wallet.publicKey) {
-                    
-                    reader.dismiss(animated: true) {
-                        let pk = result.value.replacingOccurrences(of: Config.Shared.Wallet.publicKey, with: "")
-                        self._sendCoinsController.contact = nil
-                        self._sendCoinsController.newPublicKey = pk
-                        self._sendCoinsController.wallet = self.wallet
-                        self.present(self._sendCoinsController, animated: true)
-                    }
-
-                }
-                else {
-                    reader.dismiss(animated: true) {
-                        UIAlertController(title: nil,
-                                          message: NSLocalizedString("Public key is not valid", comment: ""),
-                                          preferredStyle: .actionSheet)
-                            .addAction(title: NSLocalizedString("Close", comment: ""), style: .cancel)
-                            .present(by: self)
-                    }
-                }
+                self.reader(reader, didScanResult: result)
             }
             
         }, placeHolder: NSLocalizedString("Scan address from phone camera", comment: ""),
            title: NSLocalizedString("Read", comment: ""),
            icon: UIImage(named: "button-read")),
         
+        Action(action: { (cell) in
+            
+            //cell.placeHolder = UIPasteboard.general.string
+            self._sendCoinsController.style = .publicKey
+            self._sendCoinsController.contact = nil
+            self._sendCoinsController.wallet = self.wallet
+            self.present(self._sendCoinsController, animated: true)
+            
+            
+        }, placeHolder: NSLocalizedString("Type or paste transfer address", comment: ""),
+           title: NSLocalizedString("To address", comment: ""),
+           icon: UIImage(named: "button-to-address")),
+        
         ]
     
-    fileprivate var _sendCoinsController:SendCoins = SendCoins()
+    fileprivate var _sendCoinsController:CoinsOperation = CoinsOperation()
     
     fileprivate var _walletContacts:WalletContactsModal = {
         let w = WalletContactsModal()
@@ -245,22 +243,43 @@ class SendConisChooserController: UITableViewController {
 }
 
 extension SendConisChooserController {
-//    func reader(_ reader: QRCodeReaderViewController, didScanResult result: QRCodeReaderResult) {
-//
-//        if result.value.hasPrefix(Config.Shared.Wallet.publicKey){
-//            result.value.replacingOccurrences(of: Config.Shared.Wallet.privateKey, with: "")
-//        }
-//
-//        if result.value.hasPrefix(Config.Shared.Wallet.name){
-//            currentNameQr = result.value.replacingOccurrences(of: Config.Shared.Wallet.name, with: "")
-//        }
-//
-//        if let privateKey = currentPrivateKeyQr,
-//            let name = currentNameQr {
-//            reader.stopScanning()
-//            //addWallet(name: name, privateKey: privateKey, controller: reader)
-//        }
-//    }
+    func reader(_ reader: QRCodeReaderViewController, didScanResult result: QRCodeReaderResult) {
+
+        reader.stopScanning()
+
+        if result.value.hasPrefix(Config.Shared.Wallet.publicKey) {
+            
+            reader.dismiss(animated: true) {
+                let pk = result.value.replacingOccurrences(of: Config.Shared.Wallet.publicKey, with: "")
+                self._sendCoinsController.style = .publicKey
+                self._sendCoinsController.contact = nil
+                self._sendCoinsController.newPublicKey = pk
+                self._sendCoinsController.wallet = self.wallet
+                self.present(self._sendCoinsController, animated: true)
+            }
+            
+        }
+        else if let invoice = result.value.qrCodePayment {
+            
+            reader.dismiss(animated: true) {
+                self._sendCoinsController.contact = nil
+                self._sendCoinsController.style = .publicKey
+                self._sendCoinsController.invoice = (publicKey:invoice.publicKey, assets:invoice.assets, amount:invoice.amount)
+                self._sendCoinsController.wallet = self.wallet
+                self.present(self._sendCoinsController, animated: true)
+            }
+            
+        }
+        else {
+            reader.dismiss(animated: true) {
+                UIAlertController(title: nil,
+                                  message: NSLocalizedString("Public key is not valid", comment: ""),
+                                  preferredStyle: .actionSheet)
+                    .addAction(title: NSLocalizedString("Close", comment: ""), style: .cancel)
+                    .present(by: self)
+            }
+        }
+    }
 }
 
 // MARK: - Datasource

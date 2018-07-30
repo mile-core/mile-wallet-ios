@@ -121,6 +121,8 @@ public class NavigationController: UINavigationController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        
+
         self.navigationBar.prefersLargeTitles = true
         view.insertSubview(bg, at: 0)
         bg.backgroundColor = titleColor
@@ -131,6 +133,6 @@ public class NavigationController: UINavigationController {
             m.right.equalToSuperview()
             m.bottom.equalTo(navigationBar.snp.bottom)
         }
-    }
+    }        
 }
 

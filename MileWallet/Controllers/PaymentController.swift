@@ -27,7 +27,7 @@ extension PaymentControllerImp {
     
     @objc func printPayments(sender:Any){
         Printer.shared.printPDF(wallet: self.wallet, 
-                                formater: { return HTMLTemplate.getAmount(wallet:$0, assets: self.currentAssets, amount: self.amount ) }
+                                formater: { return HTMLTemplate.invoice(wallet:$0, assets: self.currentAssets, amount: self.amount ) }
         ){ (controller, completed, error) in                                            
             if completed {
                 self.dismiss(animated: true) 
@@ -37,7 +37,7 @@ extension PaymentControllerImp {
     
     func printSecretPaper() {                            
         Printer.shared.printPDF(wallet: wallet, 
-                                formater: { return HTMLTemplate.get(wallet:$0) }, 
+                                formater: { return HTMLTemplate.pairAndName(wallet:$0) }, 
                                 complete: nil)                    
     }    
 }

@@ -16,10 +16,15 @@ enum ViewBorder: String {
 
 extension UIView {
     
+    //private static let __tag = UUID().hashValue
+    
     func add(border: ViewBorder, color: UIColor, width: CGFloat, padding: UIEdgeInsets) {
-        let borderLayer = UIView()//CALayer()
-        borderLayer.backgroundColor = color//.cgColor
+        let borderLayer = UIView()
+        
+        borderLayer.backgroundColor = color
         borderLayer.layer.name = border.rawValue
+        borderLayer.tag = border.hashValue
+        
         addSubview(borderLayer)
         switch border {
         case .left:
@@ -53,17 +58,16 @@ extension UIView {
         }
     }
     
-//    func remove(border: ViewBorder) {
-//        guard let sublayers = self.layer.sublayers else { return }
-//        var layerForRemove: CALayer?
-//        for layer in sublayers {
-//            if layer.name == border.rawValue {
-//                layerForRemove = layer
-//            }
-//        }
-//        if let layer = layerForRemove {
-//            layer.removeFromSuperlayer()
-//        }
-//    }
+    func remove(border: ViewBorder) {
+        var forRemove:UIView?
+        for v in subviews {
+            if v.tag == border.hashValue {
+                forRemove = v
+            }
+        }
+        if let layer = forRemove {
+            layer.removeFromSuperview()
+        }
+    }
     
 }

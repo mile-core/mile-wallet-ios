@@ -19,7 +19,7 @@
             
             #title {
                 align-items: center;
-                max-width: 30%;
+                max-width: 50%;
             }
             
             #qrs {
@@ -27,11 +27,11 @@
                 justify-content: space-between;
             }
             
-             #qrs > div {
+            #qrs > div {
                 align-items: center;
                 display: flex;
                 flex: 1 1 auto;
-                max-width: 30%;
+                max-width: 50%;
             }
             
             #qrs > div > figure {
@@ -78,26 +78,35 @@
                 <div>
                     <figure>
                         <div>
-                            <img id="payment-qr" />
+                            <img id="public-key-qr" />
                         </div>
                     </figure>
-                    <p>Payment Data</p>
-                </div>               
+                    <p>Address</p>
+                </div>
+                <div>
+                    <figure>
+                        <div>
+                            <img  id="name-qr" />
+                        </div>
+                    </figure>
+                    <p>Wallet name</p>
+                </div>
             </div>
             <p>
-            Payment address:
+            Your address:
             <br />
-            {{address}}
+            {{public-key}}
             </p>
             <p>
-            Payment Amount:
+            Wallet name:
             <br />
-            {{amount}}
+            {{name}}
             </p>
         </div>
         
         <script type="text/javascript">
-            document.querySelector("#payment-qr").src = "{{payment-qr}}"
+            document.querySelector("#public-key-qr").src = "{{public-key-qr}}"
+            document.querySelector("#name-qr").src = "{{name-qr}}"
             </script>
     </body>
 </html>

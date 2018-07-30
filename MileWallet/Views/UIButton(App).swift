@@ -23,16 +23,17 @@ extension UIButton {
 class Button: UIButton {
     fileprivate var handler:((_ sender:UIButton)->Void)?
     
-    convenience init(image:UIImage?, action: ((_ sender:UIButton)->Void)?) {
+    convenience init(title: String?=nil, image:UIImage?, action: ((_ sender:UIButton)->Void)?) {
         self.init()
         handler = action
-        setImage(image, for: UIControlState.normal)
+        setImage(image, for: .normal)
+        setTitle(title, for: .normal)
         imageView?.contentMode = .scaleAspectFit
         titleLabel?.font = Config.Fonts.toolBar
-        addTarget(self, action:#selector(self.__actionHandler(sender:)), for: UIControlEvents.touchUpInside)
+        addTarget(self, action:#selector(self.__0actionHandler(sender:)), for: .touchUpInside)
     }
     
-    @objc private func __actionHandler(sender:UIButton){
+    @objc fileprivate func __0actionHandler(sender:UIButton){
         (sender as? Button)?.handler?(sender)
     }
     
@@ -60,7 +61,7 @@ class RoundButton: Button {
     }
 }
 
-class AppButton: Button {
+class TollBarButton: Button {
     
     override func titleRect(forContentRect contentRect: CGRect) -> CGRect {
         let titleRect = super.titleRect(forContentRect: contentRect)
@@ -73,7 +74,7 @@ class AppButton: Button {
     }
     
     override func imageRect(forContentRect contentRect: CGRect) -> CGRect {
-        let imageRect = super.imageRect(forContentRect: contentRect) //contentRect //super.imageRect(forContentRect: contentRect)
+        let imageRect = super.imageRect(forContentRect: contentRect)
         let titleRect = self.titleRect(forContentRect: contentRect)
         
         return CGRect(x: contentRect.width/2.0 - imageRect.width/2.0,
@@ -82,34 +83,26 @@ class AppButton: Button {
                       height: imageRect.height)
     }
     
-    private let padding: CGFloat
-
+    private var padding: CGFloat
+    
+    convenience init(title: String?=nil, image:UIImage?, padding:CGFloat = 12, action: ((_ sender:UIButton)->Void)?) {
+        self.init(padding: padding)
+        self.titleLabel?.textAlignment = .center
+        handler = action
+        setImage(image, for: .normal)
+        setTitle(title, for: .normal)
+        imageView?.contentMode = .scaleAspectFit
+        titleLabel?.font = Config.Fonts.toolBar
+        addTarget(self, action:#selector(self.__0actionHandler(sender:)), for: .touchUpInside)
+    }
+        
     init(padding: CGFloat) {
         self.padding = padding
-        
         super.init(frame: .zero)
         self.titleLabel?.textAlignment = .center
     }
     
     required init?(coder aDecoder: NSCoder) { fatalError() }
-}
-
-class ToolButton: Button {
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        centerTextAndImage()
-    }
-    
-    func centerTextAndImage() {
-        let size = bounds.size
-        let insetAmount = -size.width/2/2
-        let titleRect = self.titleRect(forContentRect: bounds)
-        let offset = titleRect.size.height/2
-        imageEdgeInsets = UIEdgeInsets(top: -offset, left: -insetAmount, bottom: 0, right: insetAmount)
-        titleEdgeInsets = UIEdgeInsets(top: size.height+offset, left: insetAmount, bottom: 0, right: -insetAmount)
-        contentEdgeInsets = UIEdgeInsets(top: 0, left: insetAmount, bottom: 0, right: insetAmount)
-    }
 }
 
 class Separator: UIButton {
@@ -125,7 +118,7 @@ class Separator: UIButton {
         return CGRect(x: imageRect.origin.x, y: imageRect.origin.y+imageRect.size.height*padding, width: imageRect.size.width, height: imageRect.size.height-imageRect.size.height*padding*2)
     }
     
-    init(padding:CGFloat = 0.1, style: Style = .vertical) {
+    init(padding:CGFloat = 0.05, style: Style = .vertical) {
         self.padding = padding
 
         super.init(frame: .zero)
@@ -145,35 +138,9 @@ class Separator: UIButton {
 
 extension UIButton {
     
-    static func app(padding: CGFloat = 16) -> UIButton {
-        let app = AppButton(padding: padding)
+    static func toolBarButton(padding: CGFloat = 16) -> UIButton {
+        let app = TollBarButton(padding: padding)
         app.titleLabel?.font =  Config.Fonts.button
         return app
-    }
-    
-    static func toolBar(title: String?, image: UIImage?, handler: ((_ sender:UIButton)->Void)?=nil) -> UIBarButtonItem {
-        let app = ToolButton()
-        app.handler = handler
-
-        app.setImage(image, for: UIControlState.normal)
-        app.imageView?.contentMode = .scaleAspectFit
-        app.setTitle(title, for: .normal)
-        app.titleLabel?.font = Config.Fonts.toolBar
-        app.addTarget(self, action:#selector(UIButton.actionHandler(sender:)), for: UIControlEvents.touchUpInside)
-        
-        let item = UIBarButtonItem(customView: app)
-        
-// WTF!??
-//
-//        let item = UIBarButtonItem(title: title, style: UIBarButtonItemStyle.done, target: self, action:#selector(UIButton.actionHandler(sender:)))
-//        item.title = title
-//        item.tintColor = UIColor.black
-//        item.image = image
-        
-        return item
-    }
-    
-     @objc static private func actionHandler(sender:UIButton){
-        (sender as? Button)?.handler?(sender)
     }
 }
