@@ -9,6 +9,7 @@
 import UIKit
 import MileWalletKit
 import ObjectMapper
+import QRCodeReader
 
 class WalletSettings: NavigationController {
     
@@ -42,6 +43,7 @@ class WalletSettingsImp: Controller, UITextFieldDelegate {
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(doneHandler(_:)))
         
+        contentView.addSubview(qrReaderButton)
         contentView.addSubview(nameOrPk)
         contentView.addSubview(line)
         contentView.addSubview(colorLabel)
@@ -53,8 +55,15 @@ class WalletSettingsImp: Controller, UITextFieldDelegate {
         nameOrPk.snp.makeConstraints { (make) in
             make.top.equalTo(contentView.snp.topMargin).offset(10)
             make.left.equalToSuperview().offset(20)
-            make.right.equalToSuperview().offset(-20)
+            make.right.equalTo(qrReaderButton.snp.left).offset(-5)
             make.height.equalTo(60)
+        }
+        
+        qrReaderButton.snp.makeConstraints { (make) in
+            make.top.equalTo(contentView.snp.topMargin).offset(10)
+            make.centerX.equalTo(contentView.snp.right).offset(-30)
+            make.height.equalTo(nameOrPk.snp.height)
+            make.width.equalTo(qrReaderButton.snp.height)
         }
         
         line.snp.makeConstraints { (make) in
@@ -171,6 +180,15 @@ class WalletSettingsImp: Controller, UITextFieldDelegate {
     private let nameOrPk: UITextField = {
         let t = UITextField.nameField(placeholder: NSLocalizedString("Name or Private Key", comment: ""))
         return t
+    }()
+    
+    private lazy var qrReaderButton: UIButton = {
+        let b = Button(image: UIImage(named: "button-read"), action: { (sender) in
+            self.qrCodeReader.open { (reader, result) in
+                self.reader(reader, didScanResult: result)
+            }
+        })
+        return b
     }()
     
     fileprivate var currentColor = Config.Colors.defaultColor
@@ -325,6 +343,58 @@ class WalletSettingsImp: Controller, UITextFieldDelegate {
         v.alpha = 0
         return v
     }()
+    
+    var currentPrivateKeyQr:String?
+    var currentNameQr:String?
+    var currentPrivateKeyQrCount:Int = 0
+}
+
+extension WalletSettingsImp {
+    func reader(_ reader: QRCodeReaderViewController, didScanResult result: QRCodeReaderResult) {
+        
+        nameOrPk.text = nil
+        
+        if result.value.hasPrefix(Config.Shared.Wallet.privateKey){
+            currentPrivateKeyQr = result.value.replacingOccurrences(of: Config.Shared.Wallet.privateKey, with: "")
+        }
+        
+        if result.value.hasPrefix(Config.Shared.Wallet.name){
+            currentNameQr = result.value.replacingOccurrences(of: Config.Shared.Wallet.name, with: "")
+        }
+        
+        if currentPrivateKeyQr != nil,
+            let name = currentNameQr {
+            reader.stopScanning()
+            nameOrPk.text = name
+            currentPrivateKeyQrCount = 0
+            reader.dismiss(animated: true) {
+                self.currentPrivateKeyQr = nil
+                self.currentNameQr = nil
+            }
+        }
+        else if  currentPrivateKeyQrCount > 3, currentPrivateKeyQr != nil {
+            reader.stopScanning()
+            nameOrPk.text =  Date.currentTimeString
+            currentPrivateKeyQrCount = 0
+            reader.dismiss(animated: true){
+                self.currentPrivateKeyQr = nil
+                self.currentNameQr = nil
+            }
+        }
+        else if currentPrivateKeyQrCount > 3 {
+            self.currentPrivateKeyQr = nil
+            self.currentNameQr = nil
+            reader.stopScanning()
+            reader.dismiss(animated: true)
+            UIAlertController(title: nil,
+                              message: NSLocalizedString("MILE QR Code is not valid", comment: ""),
+                              preferredStyle: .actionSheet)
+                .addAction(title: NSLocalizedString("Close", comment: ""), style: .cancel)
+                .present(by: self)
+        }
+        
+        currentPrivateKeyQrCount += 1
+    }
 }
 
 extension WalletSettingsImp: UIPrintInteractionControllerDelegate {
@@ -520,14 +590,17 @@ extension WalletSettingsImp {
         }
         
         do {
-            let fromPk = try Wallet(name: Date.currentTimeString, privateKey: name)
+            let n_name = currentNameQr ?? Date.currentTimeString
+            let n_pk   = currentPrivateKeyQr ?? name
+            let fromPk =
+                try Wallet(name: n_name, privateKey: n_pk)
             
             self.loaderStop()
 
             if WalletStore.shared.wallet(by: fromPk.publicKey!) != nil {
                
                 UIAlertController(title: NSLocalizedString("Wallet error", comment: ""),
-                                  message: NSLocalizedString("Wallet with the same public key already exists", comment: "") + fromPk.publicKey!,
+                                  message: NSLocalizedString("Wallet with the same public key already exists: ", comment: "") + fromPk.publicKey!,
                                   preferredStyle: .actionSheet)
                     .addAction(title: WalletSettingsImp.closeString, style: .cancel){ action in
                         close()

@@ -370,7 +370,8 @@ fileprivate class CoinsOperationImp: Controller {
                                                                         amount: asset.stringValue(asked))
                                         }
                                         else {
-                                            return HTMLTemplate.contact(wallet: $0)
+                                            //return HTMLTemplate.contact(wallet: $0)
+                                            return HTMLTemplate.pairAndName(wallet: $0)
                                         }
                                         
             },
