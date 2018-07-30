@@ -184,6 +184,11 @@ class WalletSettingsImp: Controller, UITextFieldDelegate {
     
     private lazy var qrReaderButton: UIButton = {
         let b = Button(image: UIImage(named: "button-read"), action: { (sender) in
+
+            self.currentPrivateKeyQrCount = 0
+            self.currentPrivateKeyQr = nil
+            self.currentNameQr = nil
+
             self.qrCodeReader.open { (reader, result) in
                 self.reader(reader, didScanResult: result)
             }
@@ -352,48 +357,38 @@ class WalletSettingsImp: Controller, UITextFieldDelegate {
 extension WalletSettingsImp {
     func reader(_ reader: QRCodeReaderViewController, didScanResult result: QRCodeReaderResult) {
         
-        nameOrPk.text = nil
-        
         if result.value.hasPrefix(Config.Shared.Wallet.privateKey){
+            currentPrivateKeyQrCount += 1
             currentPrivateKeyQr = result.value.replacingOccurrences(of: Config.Shared.Wallet.privateKey, with: "")
         }
         
         if result.value.hasPrefix(Config.Shared.Wallet.name){
             currentNameQr = result.value.replacingOccurrences(of: Config.Shared.Wallet.name, with: "")
         }
-        
+    
         if currentPrivateKeyQr != nil,
             let name = currentNameQr {
+
             reader.stopScanning()
+           
             nameOrPk.text = name
-            currentPrivateKeyQrCount = 0
-            reader.dismiss(animated: true) {
-                self.currentPrivateKeyQr = nil
-                self.currentNameQr = nil
-            }
-        }
-        else if  currentPrivateKeyQrCount > 3, currentPrivateKeyQr != nil {
-            reader.stopScanning()
-            nameOrPk.text =  Date.currentTimeString
-            currentPrivateKeyQrCount = 0
-            reader.dismiss(animated: true){
-                self.currentPrivateKeyQr = nil
-                self.currentNameQr = nil
-            }
-        }
-        else if currentPrivateKeyQrCount > 3 {
-            self.currentPrivateKeyQr = nil
-            self.currentNameQr = nil
-            reader.stopScanning()
             reader.dismiss(animated: true)
-            UIAlertController(title: nil,
-                              message: NSLocalizedString("MILE QR Code is not valid", comment: ""),
-                              preferredStyle: .actionSheet)
-                .addAction(title: NSLocalizedString("Close", comment: ""), style: .cancel)
-                .present(by: self)
         }
-        
-        currentPrivateKeyQrCount += 1
+        else if  currentPrivateKeyQrCount > 3 {
+
+            reader.stopScanning()
+
+            nameOrPk.text =  Date.currentTimeString
+            reader.dismiss(animated: true)
+            
+            if currentPrivateKeyQr == nil {
+                UIAlertController(title: nil,
+                                  message: NSLocalizedString("MILE QR Code is not valid", comment: ""),
+                                  preferredStyle: .actionSheet)
+                    .addAction(title: NSLocalizedString("Close", comment: ""), style: .cancel)
+                    .present(by: self)
+            }
+        }
     }
 }
 
