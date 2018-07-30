@@ -61,12 +61,16 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
     }
 
     @objc func sendLink(_ sender:Any) {
-        print("..... sendLink \(sender)")
+        guard var url = wallet?.wallet?.publicKeyLink() else { return }
+        url = url.replacingOccurrences(of: "https:", with: Config.appSchema)
+        let activity = UIActivityViewController(activityItems: ["This is my MILE wallet address link", url], applicationActivities:nil)
+        present(activity, animated: true)
     }
 
     @objc func sendInvoice(_ sender:Any) {
-        print("..... sendInvoice \(sender)")
-
+        _printInvoiceController.style = .invoiceLink
+        _printInvoiceController.wallet = wallet
+        present(_printInvoiceController, animated: true)
     }
     
     private var wallet:WalletContainer? {

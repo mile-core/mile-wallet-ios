@@ -15,6 +15,7 @@ class CoinsOperation: NavigationController {
         case contact
         case publicKey
         case print
+        case invoiceLink
     }
     
     public var style:Style {
@@ -187,6 +188,7 @@ fileprivate class CoinsOperationImp: Controller {
         var title:String
         headerView.remove(border: .bottom)
         switch style {
+            
         case .contact, .publicKey:
             contactView.alpha = 1
             qrCodeHeader.alpha = 0
@@ -194,10 +196,13 @@ fileprivate class CoinsOperationImp: Controller {
                            color: Config.Colors.bottomLine,
                            width: 1, padding: UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20))
             title = NSLocalizedString("Done", comment: "")
-        case .print:
+            
+        case .print, .invoiceLink:
+            
             contactView.alpha = 0
             qrCodeUpdate()
-            title = NSLocalizedString("Print", comment: "")
+            title = NSLocalizedString("Next", comment: "")
+            
         }
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: title, style: .plain,
@@ -330,26 +335,27 @@ fileprivate class CoinsOperationImp: Controller {
     @objc private func doneHandler(_ sender: UIButton) {
         
         view.endEditing(true)
+        let asset = Asset.list[self.coinsPicker.selectedRow(inComponent: 0)]
+
+        func amounNotEnough(){
+            UIAlertController(title: nil,
+                              message: NSLocalizedString("Amount is not valid", comment: ""),
+                              preferredStyle: .actionSheet)
+                .addAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel)
+                .present(by: self)
+        }
         
         switch style {
         case .contact, .publicKey:
             
-            guard let asked = amount.text?.floatValue,
-                asked > 0.0 else {
-                    
-                    UIAlertController(title: nil,
-                                      message: NSLocalizedString("Amount is not valid", comment: ""),
-                                      preferredStyle: .actionSheet)
-                        .addAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel)
-                        .present(by: self)
-                    
-                    return
+            guard let asked = amount.text?.floatValue, asked > 0.0 else {
+                amounNotEnough()
+                return
             }
             
             send(amount: asked)
             
         case .print:
-            let asset = Asset.list[self.coinsPicker.selectedRow(inComponent: 0)]
             
             let asked = amount.text?.floatValue ?? 0.0
             
@@ -371,6 +377,19 @@ fileprivate class CoinsOperationImp: Controller {
                                     complete: { _,complete,_ in
                                         self.loaderStop()
             })
+            
+        case .invoiceLink:
+            
+            guard let asked = amount.text?.floatValue, asked > 0.0 else {
+                amounNotEnough()
+                return
+            }
+            
+            guard var url = wallet?.wallet?.paymentLink(assets: asset.name, amount: asset.stringValue(asked)) else { return }
+            
+            url = url.replacingOccurrences(of: "https:", with: Config.appSchema)
+            let activity = UIActivityViewController(activityItems: ["Please send your coins to the address", url], applicationActivities:nil)
+            present(activity, animated: true)
         }
     }
     
