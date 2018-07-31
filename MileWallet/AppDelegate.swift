@@ -19,10 +19,7 @@ public class WalletUniversalLink {
     
     public var invoice:Invoice? {
         didSet{
-            print("\n............ new url")
-            print("#  p = \(invoice)")
-            print("\n............ ")
-
+        
             if invoice != nil {
                 NotificationCenter.default.post(Notification(name: WalletUniversalLink.kDidUpdateNotification))
             }
@@ -183,9 +180,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
             }
             updateUniversalLinkClick(url: url)
         }
-        
-        NotificationCenter.default.post(Notification(name: WalletUniversalLink.kDidUpdateNotification))
-        
         return true
     }
     

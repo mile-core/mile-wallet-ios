@@ -44,8 +44,8 @@ class CoinsOperation: Controller {
                 contactView.avatar = contact?.photo
             }
             
-            if let t = invoice?.amount?.floatValue, let a = invoice?.assets {
-                amountTextFeild.text = Asset(name: a)?.stringValue(t)
+            if let t = invoice?.amount?.floatValue {
+                amountTextFeild.text = currentAsset.stringValue(t)
             }
             
             currentAssetIndex = idx ?? 0
@@ -92,6 +92,7 @@ class CoinsOperation: Controller {
         super.viewDidDisappear(animated)
         amountTextFeild.isUserInteractionEnabled = true
         coinsPicker.isUserInteractionEnabled = true
+        amountTextFeild.text = nil
     }
     
     override func viewDidLoad() {
@@ -103,6 +104,10 @@ class CoinsOperation: Controller {
                                                            target: self,
                                                            action: #selector(self.closeHandler(sender:)))
         
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Next", comment: ""), style: .plain,
+                                                            target: self,
+                                                            action: #selector(doneHandler(_:)))
+
         let bg = UIView()
         bg.backgroundColor = UIColor.white
         contentView.addSubview(bg)
@@ -167,7 +172,9 @@ class CoinsOperation: Controller {
     
     fileprivate func headerViewLayout(){
         var title:String
+        
         headerView.remove(border: .bottom)
+        
         switch style {
             
         case .contact, .publicKey:
@@ -184,12 +191,9 @@ class CoinsOperation: Controller {
             qrCodeHeader.alpha = 1
             qrCodeUpdate()
             title = NSLocalizedString("Next", comment: "")
-            
         }
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: title, style: .plain,
-                                                            target: self,
-                                                            action: #selector(doneHandler(_:)))
+        navigationItem.rightBarButtonItem?.title = title
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -207,7 +211,6 @@ class CoinsOperation: Controller {
         }
         
         amountTextFeild.placeholder = amountTextFeild.text
-        amountTextFeild.text = nil
         (navigationController as? NavigationController)?.titleColor = UIColor(hex: a.color)
     }
     

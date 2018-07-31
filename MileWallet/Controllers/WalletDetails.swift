@@ -100,6 +100,7 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
         
         if let payment = WalletUniversalLink.shared.invoice,
             payment.amount != nil {
+            _invoiceController.wallet = wallet
             _invoiceController.invoice = WalletUniversalLink.shared.invoice
             _invoiceController.style = .publicKey
             WalletUniversalLink.shared.invoice = nil
