@@ -11,28 +11,9 @@ import MileWalletKit
 import ObjectMapper
 import QRCodeReader
 
-class WalletSettings: NavigationController {
-    
-    public var wallet:WalletContainer?
-    
-    let contentController = WalletSettingsImp()
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = Config.Colors.background
-        setViewControllers([contentController], animated: true)
-    }
-}
-
-class WalletSettingsImp: Controller, UITextFieldDelegate {
+class WalletSettings: Controller, UITextFieldDelegate {
    
-    fileprivate var wallet:WalletContainer? {
-        get {
-            return (navigationController as? WalletSettings)?.wallet
-        }
-        set {
-            (navigationController as? WalletSettings)?.wallet = newValue
-        }
-    }
+    public var wallet:WalletContainer?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,6 +24,7 @@ class WalletSettingsImp: Controller, UITextFieldDelegate {
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(doneHandler(_:)))
         
+        contentView.backgroundColor = Config.Colors.background
         contentView.addSubview(qrReaderButton)
         contentView.addSubview(nameOrPk)
         contentView.addSubview(line)
@@ -109,7 +91,14 @@ class WalletSettingsImp: Controller, UITextFieldDelegate {
         view.endEditing(true)
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+       
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
+        
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+
         super.viewWillAppear(animated)
         if let wallet = self.wallet {
             title = NSLocalizedString("Settings", comment: "")
@@ -126,6 +115,8 @@ class WalletSettingsImp: Controller, UITextFieldDelegate {
             return
         }
         
+        (navigationController as? NavigationController)?.titleColor = UIColor(hex: a.color)
+        
         if a.isActive {
             nameOrPk.placeholder = NSLocalizedString("Wallet Name", comment: "")
             archiveButton.setTitle(NSLocalizedString("Archive wallet", comment: ""), for: .normal)
@@ -140,7 +131,7 @@ class WalletSettingsImp: Controller, UITextFieldDelegate {
         }) {
             pickerView.selectCellAtIndex(index)
         }
-    }
+    }    
     
     @objc private func closePayments(sender:Any){
         dismiss(animated: true)
@@ -354,7 +345,7 @@ class WalletSettingsImp: Controller, UITextFieldDelegate {
     var currentPrivateKeyQrCount:Int = 0
 }
 
-extension WalletSettingsImp {
+extension WalletSettings {
     func reader(_ reader: QRCodeReaderViewController, didScanResult result: QRCodeReaderResult) {
         
         if result.value.hasPrefix(Config.Shared.Wallet.privateKey){
@@ -392,7 +383,7 @@ extension WalletSettingsImp {
     }
 }
 
-extension WalletSettingsImp: UIPrintInteractionControllerDelegate {
+extension WalletSettings: UIPrintInteractionControllerDelegate {
     
     func printInteractionControllerParentViewController(_ printInteractionController: UIPrintInteractionController) -> UIViewController? {
         return self.navigationController?.topViewController
@@ -418,7 +409,7 @@ extension WalletSettingsImp: UIPrintInteractionControllerDelegate {
     }
 }
 
-extension WalletSettingsImp {
+extension WalletSettings {
     
     @objc fileprivate func backMainHandler(sender:UIButton){
         coverDown()
@@ -505,7 +496,7 @@ extension WalletSettingsImp {
                 UIAlertController(title: nil,
                                   message:  NSLocalizedString("Wallet could not be created from the secret phrase", comment: ""),
                                   preferredStyle: .alert)
-                    .addAction(title: WalletSettingsImp.closeString, style: .cancel, handler: { (action) in
+                    .addAction(title: WalletSettings.closeString, style: .cancel, handler: { (action) in
                         close()
                     })
                     .present(by: self)
@@ -543,7 +534,7 @@ extension WalletSettingsImp {
             UIAlertController(title: nil,
                               message:  error.description,
                               preferredStyle: .alert)
-                .addAction(title: WalletSettingsImp.closeString, style: .cancel, handler: { (action) in
+                .addAction(title: WalletSettings.closeString, style: .cancel, handler: { (action) in
                     close()
                 })
                 .present(by: self)
@@ -559,7 +550,7 @@ extension WalletSettingsImp {
             UIAlertController(title: NSLocalizedString("Wallet Error", comment: ""),
                               message:  NSLocalizedString("Wallet with the same name already exists", comment: ""),
                               preferredStyle: .alert)
-                .addAction(title: WalletSettingsImp.closeString, style: .cancel)
+                .addAction(title: WalletSettings.closeString, style: .cancel)
                 .present(by: self)
             return false
         }
@@ -569,21 +560,27 @@ extension WalletSettingsImp {
     
     fileprivate func addWallet()  {
         
-        guard let name = nameOrPk.text else { return }
-        
-        guard !name.isEmpty else { return }
-        
-        if !checkWallet(name: name) {
-            return
-        }
-        
-        loaderStart()
-        
         func close() {
             self.loaderStop()
             self.dismiss(animated: true, completion: nil)
         }
         
+        guard let name = nameOrPk.text, !name.isEmpty  else {
+
+            UIAlertController(title: NSLocalizedString("Wallet error", comment: ""),
+                              message: NSLocalizedString("Wallet name is empty", comment: ""),
+                              preferredStyle: .actionSheet)
+                .addAction(title: WalletSettings.closeString, style: .cancel)
+                .present(by: self)
+            return
+        }
+                
+        if !checkWallet(name: name) {
+            return
+        }
+        
+        loaderStart()
+
         do {
             let n_name = currentNameQr ?? Date.currentTimeString
             let n_pk   = currentPrivateKeyQr ?? name
@@ -597,7 +594,7 @@ extension WalletSettingsImp {
                 UIAlertController(title: NSLocalizedString("Wallet error", comment: ""),
                                   message: NSLocalizedString("Wallet with the same public key already exists: ", comment: "") + fromPk.publicKey!,
                                   preferredStyle: .actionSheet)
-                    .addAction(title: WalletSettingsImp.closeString, style: .cancel){ action in
+                    .addAction(title: WalletSettings.closeString, style: .cancel){ action in
                         close()
                     }
                     .present(by: self)
@@ -623,7 +620,7 @@ extension WalletSettingsImp {
                 UIAlertController(title: NSLocalizedString("Wallet Error", comment: ""),
                                   message:  error?.description,
                                   preferredStyle: .alert)
-                    .addAction(title: WalletSettingsImp.closeString, style: .cancel) { action in
+                    .addAction(title: WalletSettings.closeString, style: .cancel) { action in
                         close()
                     }
                     .present(by: self)
@@ -637,13 +634,13 @@ extension WalletSettingsImp {
     }
 }
 
-extension WalletSettingsImp: ColorPickerDataSource {
+extension WalletSettings: ColorPickerDataSource {
     func colorPickerColors() -> [UIColor] {
         return Config.Colors.palette
     }
 }
 
-extension WalletSettingsImp: ColorPickerDelegate {
+extension WalletSettings: ColorPickerDelegate {
     
     func colorPicker(_ colorPickerView: ColorPicker, didSelectCell cell: ColorPickerCell) {
         cell.layer.contents = Config.Images.colorPickerOn.cgImage

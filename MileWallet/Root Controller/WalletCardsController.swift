@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import MileWalletKit
 
-class WalletCardsController: UIViewController {
+class WalletCardsController: Controller {
 
     public var currentIndex:Int {
         return _currentIndex ?? NSNotFound
@@ -18,8 +18,6 @@ class WalletCardsController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        navigationController?.navigationBar.prefersLargeTitles = false
         
         view.addSubview(newWalletButton)
         view.addSubview(archiveButton)
@@ -151,6 +149,7 @@ class WalletCardsController: UIViewController {
         lastIndex = _currentIndex ?? 0
     }
     
+    
     ///
     /// Apple does not motivate to use UIPageViewController with dinamic content.
     /// so, TODO: rewrite the part of the code with custom controller.
@@ -208,7 +207,7 @@ class WalletCardsController: UIViewController {
     }
     
     @objc private func newWallet(sender:UIButton) {
-        present(_newWalletController, animated: true)
+        presentInNavigationController(_newWalletController, animated: true)
     }
     
     @objc private func openContact(sender:UIButton) {
@@ -218,8 +217,7 @@ class WalletCardsController: UIViewController {
                 return
             }
             _walletContacts.walletKey = WalletStore.shared.acitveWallets[currentIndex].wallet?.publicKey
-            present(_walletContacts, animated: true)
-            //navigationController?.pushViewController(_walletContacts, animated: true)
+            presentInNavigationController(_walletContacts, animated: true)
         }
     }
     
@@ -259,7 +257,7 @@ class WalletCardsController: UIViewController {
         if u.count == 0 {
             let v = EmptyWallet()
             v.addWalletHandler = {
-                 self.present(self._newWalletController, animated: true)
+                 self.navigationController?.present(self._newWalletController, animated: true)
             }
             u.append(v)
         }
@@ -271,7 +269,7 @@ class WalletCardsController: UIViewController {
     
     fileprivate var _walletDetailsController = WalletDetails()
     fileprivate var _newWalletController = WalletSettings()
-    fileprivate var _walletContacts = WalletContactsModal()
+    fileprivate var _walletContacts = WalletContacts()
 }
 
 

@@ -12,6 +12,24 @@ import AVFoundation
 import MileWalletKit
 import KeychainAccess
 
+extension UIViewController {    
+    func presentInNavigationController(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
+        let nc =  NavigationController()
+        nc.view.backgroundColor = Config.Colors.defaultColor
+        nc.setViewControllers([viewControllerToPresent], animated: true)
+        if let root = self.navigationController {
+            root.present(nc,
+                         animated: flag,
+                         completion: completion)
+        }
+        else {
+            present(nc,
+                          animated: flag,
+                          completion: completion)
+        }
+    }
+}
+
 class Controller: UIViewController {
 
     public var chainInfo:Chain?
@@ -19,9 +37,6 @@ class Controller: UIViewController {
     public lazy var qrCodeReader:QRReader = {return QRReader(controller: self)}() 
     
     public let contentView = UIView()
-    
-    private let activiti = UIActivityIndicatorView(activityIndicatorStyle: .gray)
-    private lazy var dimView = UIView(frame: self.view.bounds)        
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,6 +56,14 @@ class Controller: UIViewController {
         }
     }
 
+    override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+        if presentingViewController is UINavigationController {
+            super.dismiss(animated: true, completion: nil)
+        } else {
+            navigationController!.popViewController(animated: true)
+        }
+    }
+    
     func loaderStart()  {
         DispatchQueue.main.async {
             self.dimView.backgroundColor = UIColor.white.withAlphaComponent(0.8)
@@ -95,6 +118,9 @@ class Controller: UIViewController {
         
         complete(chain)
     }
+    
+    private let activiti = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+    private lazy var dimView = UIView(frame: self.view.bounds)
 }
 
 public class NavigationController: UINavigationController {
@@ -122,7 +148,6 @@ public class NavigationController: UINavigationController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         
-
         self.navigationBar.prefersLargeTitles = true
         view.insertSubview(bg, at: 0)
         bg.backgroundColor = titleColor

@@ -10,26 +10,7 @@ import UIKit
 import MileWalletKit
 import QRCodeReader
 
-class SendCoinsChooser: NavigationController {
-    
-    public var wallet:WalletContainer? {
-        set{
-            contentController.wallet = newValue
-        }
-        get {
-            return contentController.wallet
-        }
-    }
-    
-    let contentController = SendCoinsChooserImp()
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = Config.Colors.background
-        setViewControllers([contentController], animated: true)
-    }
-}
-
-class SendCoinsChooserImp: Controller {
+class SendCoinsChooser: Controller {
     
     public var wallet:WalletContainer? {
         didSet {
@@ -45,7 +26,6 @@ class SendCoinsChooserImp: Controller {
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel,
                                                            target: self,
                                                            action: #selector(self.close(sender:)))
-        
         
         contentView.addSubview(bg)
         bg.contentMode = .scaleAspectFill
@@ -162,7 +142,7 @@ class CoinsChooserCell: UITableViewCell {
     }
 }
 
-class SendConisChooserController: UITableViewController {
+fileprivate class SendConisChooserController: UITableViewController {
     fileprivate let cellReuseIdendifier = "cell"
     public lazy var qrCodeReader:QRReader = {return QRReader(controller: self)}()
 
@@ -199,7 +179,7 @@ class SendConisChooserController: UITableViewController {
         Action(action: { (cell) in
             
             self._walletContacts.walletKey = self.wallet?.wallet?.publicKey
-            self.present(self._walletContacts, animated: true)
+            self.presentInNavigationController(self._walletContacts, animated: true)
             
         }, placeHolder: NSLocalizedString("Choose recipient from address book", comment: ""),
            title: NSLocalizedString("To contact", comment: ""),
@@ -221,7 +201,7 @@ class SendConisChooserController: UITableViewController {
             self._sendCoinsController.style = .publicKey
             self._sendCoinsController.contact = nil
             self._sendCoinsController.wallet = self.wallet
-            self.present(self._sendCoinsController, animated: true)
+            self.presentInNavigationController(self._sendCoinsController, animated: true)
             
             
         }, placeHolder: NSLocalizedString("Type or paste transfer address", comment: ""),
@@ -232,8 +212,8 @@ class SendConisChooserController: UITableViewController {
     
     fileprivate var _sendCoinsController:CoinsOperation = CoinsOperation()
     
-    fileprivate var _walletContacts:WalletContactsModal = {
-        let w = WalletContactsModal()
+    fileprivate var _walletContacts:WalletContacts = {
+        let w = WalletContacts()
         w.isBook = true
         return w
     }()
@@ -255,7 +235,7 @@ extension SendConisChooserController {
                 self._sendCoinsController.contact = nil
                 self._sendCoinsController.newPublicKey = pk
                 self._sendCoinsController.wallet = self.wallet
-                self.present(self._sendCoinsController, animated: true)
+                self.presentInNavigationController(self._sendCoinsController, animated: true)
             }
             
         }
@@ -266,7 +246,7 @@ extension SendConisChooserController {
                 self._sendCoinsController.style = .publicKey
                 self._sendCoinsController.invoice = (publicKey:invoice.publicKey, assets:invoice.assets, amount:invoice.amount)
                 self._sendCoinsController.wallet = self.wallet
-                self.present(self._sendCoinsController, animated: true)
+                self.presentInNavigationController(self._sendCoinsController, animated: true)
             }
             
         }

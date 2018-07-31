@@ -51,13 +51,13 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
     
     @objc func sendCoins(_ sender:Any) {
         _sendCoinsChooser.wallet = wallet
-        present(_sendCoinsChooser, animated: true)
+        presentInNavigationController(_sendCoinsChooser, animated: true)
     }
 
     @objc func printTicket(_ sender:Any) {
         _printInvoiceController.style = .print
         _printInvoiceController.wallet = wallet
-        present(_printInvoiceController, animated: true)
+        presentInNavigationController(_printInvoiceController, animated: true)
     }
 
     @objc func sendLink(_ sender:Any) {
@@ -70,7 +70,7 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
     @objc func sendInvoice(_ sender:Any) {
         _printInvoiceController.style = .invoiceLink
         _printInvoiceController.wallet = wallet
-        present(_printInvoiceController, animated: true)
+        presentInNavigationController(_printInvoiceController, animated: true)
     }
     
     private var wallet:WalletContainer? {
@@ -129,12 +129,12 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
     }
     
     @objc private func back(sender:Any) {
-        navigationController?.popToRootViewController(animated: true)
+        navigationController?.popToRootViewController(animated: true)        
     }
     
     @objc private func settings(sender:Any) {
         _settingsWalletController.wallet = wallet
-        present(_settingsWalletController, animated: true)
+        navigationController?.present(_settingsWalletController, animated: true)
     }
     
     var actionH:CGFloat = 80

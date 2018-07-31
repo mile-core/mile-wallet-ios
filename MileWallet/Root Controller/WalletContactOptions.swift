@@ -10,37 +10,10 @@ import UIKit
 import MileCsaLight
 import MileWalletKit
 
-class WalletContactOptions: NavigationController {
+class WalletContactOptions: Controller, UITextFieldDelegate {
     
-    public var wallet:WalletContainer? {
-        set{
-            contentController.wallet = newValue
-        }
-        get {
-            return contentController.wallet
-        }
-    }
+    public var wallet:WalletContainer?
     public var contact:Contact? {
-        set{
-            contentController.contact = newValue
-        }
-        get {
-            return contentController.contact
-        }
-    }
-
-    let contentController = WalletContactOptionsControllerImp()
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = Config.Colors.background
-        setViewControllers([contentController], animated: true)
-    }
-}
-
-class WalletContactOptionsControllerImp: Controller, UITextFieldDelegate {
-    
-    fileprivate var wallet:WalletContainer?
-    fileprivate var contact:Contact? {
         didSet{
             if contact == nil {
                 _tableController.avatarImage = nil
@@ -99,7 +72,6 @@ class WalletContactOptionsControllerImp: Controller, UITextFieldDelegate {
     
     @objc private func doneHandler(_ sender: UIButton) {
         if let contact = self.contact {
-            //self.updateWallet(wallet: wallet)
         }
         else {
             addContact()
@@ -108,7 +80,8 @@ class WalletContactOptionsControllerImp: Controller, UITextFieldDelegate {
     
     private func addContact() {
         guard let name = self._tableController.name.text,
-            let publicKey = self._tableController.publicKey.text, !name.isEmpty, !publicKey.isEmpty
+            let publicKey = self._tableController.publicKey.text,
+            !name.isEmpty, !publicKey.isEmpty
             else {
                UIAlertController(title: nil,
                                  message: NSLocalizedString("Name and Public key must be defined", comment: ""),
@@ -160,7 +133,7 @@ class WalletContactOptionsControllerImp: Controller, UITextFieldDelegate {
     }
 }
 
-class ContactController: UITableViewController {
+fileprivate class ContactController: UITableViewController {
     
     let cellReuseIdendifier = "cell"
     

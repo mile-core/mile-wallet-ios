@@ -197,7 +197,7 @@ class MasterViewController: UITableViewController, AuthenticationID {
                           message: nil, 
                           preferredStyle: .actionSheet)
             .addAction(title: NSLocalizedString("New Wallet", comment: ""), style: .default) { (alert) in
-                self.present(self.newWalletViewController, animated: true) 
+                self.presentInNavigationController(self.newWalletViewController, animated: true) 
             }
             .addAction(title: NSLocalizedString("Import Wallet", comment: ""), style: .default) { (alert) in
                 self.qrCodeReader.open { (controller, result) in                    

@@ -9,7 +9,7 @@
 import UIKit
 import MileWalletKit
 
-class CoinsOperation: NavigationController {
+class CoinsOperation: Controller {
     
     enum Style {
         case contact
@@ -18,48 +18,13 @@ class CoinsOperation: NavigationController {
         case invoiceLink
     }
     
-    public var style:Style {
-        set{ contentController.style = newValue }
-        get { return contentController.style }
-    }
-    
-    public var wallet:WalletContainer? {
-        set{ contentController.wallet = newValue }
-        get { return contentController.wallet }
-    }
-    
-    public var invoice:(publicKey:String, assets:String?, amount:String?)?{
-        set{ contentController.invoice = newValue }
-        get { return contentController.invoice }
-    }
-    
-    public var newPublicKey:String?{
-        get { return contentController.newPublicKey }
-        set { contentController.newPublicKey = newValue }
-    }
-    
-    public var contact:Contact? {
-        set{ contentController.contact = newValue }
-        get { return contentController.contact }
-    }
-    
-    fileprivate let contentController = CoinsOperationImp()
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = Config.Colors.background
-        setViewControllers([contentController], animated: true)
-    }
-}
-
-fileprivate class CoinsOperationImp: Controller {
-    
-    fileprivate var style:CoinsOperation.Style = .contact {
+    public var style:CoinsOperation.Style = .contact {
         didSet{
             headerViewLayout()
         }
     }
     
-    fileprivate var wallet:WalletContainer?
+    public var wallet:WalletContainer?
     
     public var invoice:(publicKey:String, assets:String?, amount:String?)? {
         didSet {
@@ -91,7 +56,7 @@ fileprivate class CoinsOperationImp: Controller {
         }
     }
     
-    fileprivate var newPublicKey:String? {
+    public var newPublicKey:String? {
         didSet{
             contactView.isEdited = false
             contactView.publicKey = newPublicKey
@@ -428,7 +393,7 @@ fileprivate class CoinsOperationImp: Controller {
     }()
 }
 
-extension CoinsOperationImp: UIPrintInteractionControllerDelegate {
+extension CoinsOperation: UIPrintInteractionControllerDelegate {
     
     func printInteractionControllerParentViewController(_ printInteractionController: UIPrintInteractionController) -> UIViewController? {
         return self.navigationController?.topViewController
@@ -454,7 +419,7 @@ extension CoinsOperationImp: UIPrintInteractionControllerDelegate {
     }
 }
 
-extension CoinsOperationImp: UITextFieldDelegate {
+extension CoinsOperation: UITextFieldDelegate {
 
     @objc fileprivate func amountChainging(_ sender:UITextField) {
         qrCodeUpdate()
@@ -488,7 +453,7 @@ extension CoinsOperationImp: UITextFieldDelegate {
 }
 
 // MARK: - datasource
-extension CoinsOperationImp: UIPickerViewDataSource {
+extension CoinsOperation: UIPickerViewDataSource {
     static let coins = Asset.list
 
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
@@ -499,16 +464,16 @@ extension CoinsOperationImp: UIPickerViewDataSource {
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return CoinsOperationImp.coins.count
+        return CoinsOperation.coins.count
     }
 }
 
-extension CoinsOperationImp: UIPickerViewDelegate{
+extension CoinsOperation: UIPickerViewDelegate{
     // delegate method to return the value shown in the picker
     func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
         let coin:UILabel = UILabel()
         coin.textAlignment = .left
-        coin.text = CoinsOperationImp.coins[row].name
+        coin.text = CoinsOperation.coins[row].name
         return coin
     }
 }

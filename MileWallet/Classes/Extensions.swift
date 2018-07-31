@@ -20,4 +20,3 @@ public extension UIAlertController {
         viewController.present(self, animated: true)
     }
 }
-

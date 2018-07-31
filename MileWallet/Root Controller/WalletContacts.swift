@@ -10,193 +10,93 @@ import UIKit
 import MileWalletKit
 import SnapKit
 
-class ContactView: UIView {
+class WalletContacts: Controller {
     
-    public var isEdited = false {
+    fileprivate var isModal:Bool = false
+    
+    public var isBook:Bool = false {
         didSet{
-            pablicKeyLabelConstraint()
-            iconView.alpha = isEdited ? 0.0 : 1.0
-            publicKeyLabel.isUserInteractionEnabled = isEdited
-            publicKeyLabel.placeholder = isEdited ? NSLocalizedString("Type or paste transfer address", comment: "") : ""
+            _tableController.isBook = isBook
         }
     }
     
-    public var avatar:Data? {
+    private var wallet:WalletContainer? {
         didSet{
-            guard let d = avatar else {
-                return
-            }
-            iconView.image = UIImage(data: d)
+            _tableController.wallet = wallet
+            bg.backgroundColor = UIColor(hex: wallet?.attributes?.color ?? 0)
         }
     }
     
-    public var publicKey:String? {
-        set{
-            publicKeyLabel.text = newValue
-        }
-        get {
-            return publicKeyLabel.text
-        }
-    }
-    
-    public var name:String? = "" {
+    public var walletKey:String? {
         didSet{
-            if let str = name, str.count > 0 {
-                litera.text = String(str.prefix(1))
+            if let w = walletKey {
+                wallet = WalletStore.shared.wallet(by: w)
             }
-            nameLabel.text = name
         }
     }
     
-    fileprivate var nameLabel = UILabel()
+    fileprivate let _tableController = ContactsController()
+    private let _contactOptionsController = WalletContactOptions()
     
-    private lazy var publicKeyLabel:UITextField = {
-        let t = UITextField.nameField(placeholder: "")
-        t.font = Config.Fonts.address
-        t.adjustsFontSizeToFitWidth = true
-        t.isUserInteractionEnabled = false
-        t.clearButtonMode = .whileEditing
-        return t
-    }()
-    
-    fileprivate var iconView = UIImageView()
-    fileprivate var litera = UILabel()
-    
-    fileprivate var publicKeyLeft:ConstraintMakerExtendable!
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    private let bg = UIImageView(image: Config.Images.basePattern)
+    override func viewDidLoad() {
         
-        iconView.backgroundColor = UIColor(hex: 0xD5E9F5)
-        iconView.layer.cornerRadius = iconView.frame.size.width  / 2
-        iconView.clipsToBounds = true
-        iconView.contentMode = .scaleAspectFill
+        super.viewDidLoad()
         
-        addSubview(nameLabel)
-        addSubview(publicKeyLabel)
-        addSubview(iconView)
-        
-        iconView.snp.makeConstraints { (m) in
-            m.left.equalToSuperview().offset(20)
-            m.top.equalTo(self).offset(16)
-            m.bottom.equalTo(self).offset(-16)
-            m.width.equalTo(iconView.snp.height)
+        contentView.addSubview(bg)
+        bg.contentMode = .scaleAspectFill
+        bg.snp.makeConstraints { (m) in
+            m.edges.equalTo(view.snp.edges)
         }
         
-        nameLabel.textAlignment = .left
-        nameLabel.font = Config.Fonts.caption
-        nameLabel.textColor = UIColor.black
-        nameLabel.backgroundColor = UIColor.clear
+        addChildViewController(_tableController)
+        contentView.addSubview(_tableController.view)
+        _tableController.didMove(toParentViewController: self)
         
-        publicKeyLabel.textAlignment = .left
-        publicKeyLabel.font = Config.Fonts.contacts
-        publicKeyLabel.textColor = UIColor.black
-        publicKeyLabel.backgroundColor = UIColor.clear
-        
-        nameLabel.snp.makeConstraints { (m) in
-            m.left.equalTo(iconView.snp.right).offset(10)
-            m.top.equalToSuperview().offset(5)
-            m.bottom.equalTo(self.snp.centerY)
-            m.right.equalToSuperview().offset(-10)
-        }
-        
-        pablicKeyLabelConstraint()
-        
-        litera.textAlignment = .center
-        litera.font = Config.Fonts.header
-        litera.textColor = UIColor.white
-        litera.backgroundColor = UIColor.clear
-        
-        iconView.addSubview(litera)
-        litera.snp.makeConstraints { (m) in
-            m.center.equalTo(iconView)
-            m.width.equalTo(iconView)
-            m.height.equalTo(litera.snp.width)
+        _tableController.view.snp.makeConstraints { (m) in
+            m.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            m.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+            m.left.right.equalTo(contentView)
         }
     }
     
-    private func pablicKeyLabelConstraint() {
-        publicKeyLabel.snp.remakeConstraints { (m) in
-            if !isEdited {
-                m.left.equalTo(iconView.snp.right).offset(10)
-            }
-            else {
-                m.left.equalToSuperview().offset(20)
-            }
-            m.top.equalTo(nameLabel.snp.centerY).offset(5)
-            m.bottom.equalTo(self).offset(5)
-            m.right.equalToSuperview().offset(-10)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        title = NSLocalizedString("Send coins", comment: "")
+        
+        navigationController?.navigationBar.prefersLargeTitles = true
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel,
+                                                           target: self, action: #selector(back(sender:)))
+        
+        if !isBook {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.add,
+                                                                target: self,
+                                                                action: #selector(add(sender:)))
         }
+        
+        if let walletKey = walletKey,
+            let w = WalletStore.shared.wallet(by: walletKey) {
+            wallet = w
+            bg.backgroundColor = UIColor(hex: w.attributes?.color ?? 0)
+        }
+        
+        _tableController.tableView.reloadData()
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    @objc private func back(sender:Any) {
+        dismiss(animated: true)
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        iconView.layer.cornerRadius = iconView.frame.size.width  / 2
-        iconView.layer.masksToBounds = true
-        iconView.clipsToBounds = true
-        if avatar == nil {
-            litera.alpha = 1
-        }
-        else {
-            litera.alpha = 0
-        }
+    @objc private func add(sender:Any) {
+        _contactOptionsController.contact = nil
+        _contactOptionsController.wallet = self.wallet
+        presentInNavigationController(_contactOptionsController, animated: true)
     }
 }
 
-class ConactCell: UITableViewCell {
-    
-    var avatar:Data? {
-        set{ contactView.avatar = newValue}
-        get{ return contactView.avatar }
-    }
-    
-    var publicKey:String?  {
-        set{ contactView.publicKey = newValue}
-        get{ return contactView.publicKey }
-    }
-    
-    var name:String? {
-        set{ contactView.name = newValue}
-        get{ return contactView.name }
-    }
-    
-    fileprivate let contactView = ContactView()
-    
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        selectionStyle = .none
-        
-        contentView.addSubview(contactView)
-        contactView.snp.makeConstraints { (m) in
-            m.edges.equalToSuperview()
-        }
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-    
-    
-    override func setHighlighted(_ highlighted: Bool, animated: Bool) {
-        let c = contactView.iconView.backgroundColor
-        super.setHighlighted(highlighted, animated: animated)
-        backgroundColor = UIColor.clear
-        contactView.iconView.backgroundColor = c
-    }
-    
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        let c = contactView.iconView.backgroundColor
-        super.setSelected(selected, animated: animated)
-        contactView.iconView.backgroundColor = c
-    }
-}
-
-class ContactsController: UITableViewController {
+fileprivate class ContactsController: UITableViewController {
     
     fileprivate var style:CoinsOperation.Style  {
         set{
@@ -289,7 +189,7 @@ extension ContactsController {
         cell.backgroundColor = UIColor.black.withAlphaComponent(0.03)
         _sendCoinsController.wallet = self.wallet
         _sendCoinsController.contact = Contact.list[indexPath.row]
-        present(_sendCoinsController, animated: true)
+        presentInNavigationController(_sendCoinsController, animated: true)
 
     }
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -320,134 +220,3 @@ extension ContactsController {
         }
     }
 }
-
-class WalletContacts: Controller {
-    
-    fileprivate var isModal:Bool = false
-    
-   
-    public var isBook:Bool = false {
-        didSet{
-            _tableController.isBook = isBook
-        }
-    }
-    
-    private var wallet:WalletContainer? {
-        didSet{
-            _tableController.wallet = wallet
-            bg.backgroundColor = UIColor(hex: wallet?.attributes?.color ?? 0)
-        }
-    }
-    
-    public var walletKey:String? {
-        didSet{
-            if let w = walletKey {
-                wallet = WalletStore.shared.wallet(by: w)
-            }
-        }
-    }
-    
-    fileprivate let _tableController = ContactsController()
-    private let _contactOptionsController = WalletContactOptions()
-
-    private let bg = UIImageView(image: Config.Images.basePattern)
-    override func viewDidLoad() {
-        
-        super.viewDidLoad()
-        
-        contentView.addSubview(bg)
-        bg.contentMode = .scaleAspectFill
-        bg.snp.makeConstraints { (m) in
-            m.edges.equalTo(view.snp.edges)
-        }
-        
-        addChildViewController(_tableController)
-        contentView.addSubview(_tableController.view)
-        _tableController.didMove(toParentViewController: self)
-
-        _tableController.view.snp.makeConstraints { (m) in
-            m.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            m.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
-            m.left.right.equalTo(contentView)
-        }
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        title = NSLocalizedString("Send coins", comment: "")
-
-        navigationController?.navigationBar.prefersLargeTitles = true
-
-        if isModal {
-            navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel,
-                                                               target: self, action: #selector(back(sender:)))
-        }
-        else {
-            navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "button-back"),
-                                                               style: .plain,
-                                                               target: self,
-                                                               action: #selector(back(sender:)))
-        }
-        
-        if !isBook {
-            navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.add,
-                                                            target: self,
-                                                            action: #selector(add(sender:)))
-        }
-        
-        if let walletKey = walletKey,
-            let w = WalletStore.shared.wallet(by: walletKey) {
-            wallet = w
-            bg.backgroundColor = UIColor(hex: w.attributes?.color ?? 0)
-        }
-        
-        _tableController.tableView.reloadData()
-    }
-    
-    @objc private func back(sender:Any) {
-        if isModal {
-            dismiss(animated: true)
-        }
-        else {
-            navigationController?.popToRootViewController(animated: true)
-        }
-    }
-    
-    @objc private func add(sender:Any) {
-        _contactOptionsController.contact = nil
-        _contactOptionsController.wallet = self.wallet
-        present(_contactOptionsController, animated: true)
-    }
-}
-
-class WalletContactsModal: NavigationController {
-
-    public var style:CoinsOperation.Style = .contact {
-        didSet{
-            contentController._tableController._sendCoinsController.style = style
-        }
-    }
-    
-    public var isBook:Bool = false {
-        didSet{
-            contentController.isBook = true
-        }
-    }
-
-    public var walletKey:String? {
-        didSet{
-           contentController.walletKey = walletKey
-        }
-    }
-
-    let contentController = WalletContacts()
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        contentController.isBook = isBook
-        contentController.isModal = true
-        view.backgroundColor = Config.Colors.background
-        setViewControllers([contentController], animated: true)
-    }
-}
-

@@ -9,11 +9,11 @@
 import UIKit
 import CoreData
 
-class RootController: UINavigationController {
+class RootController: NavigationController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.clear
+        //view.backgroundColor = UIColor.clear
 
 //        let contact = Contact()
 //
