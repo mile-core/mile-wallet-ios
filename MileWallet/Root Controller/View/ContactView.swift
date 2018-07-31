@@ -175,6 +175,12 @@ class ConactCell: UITableViewCell {
         contactView.snp.makeConstraints { (m) in
             m.edges.equalToSuperview()
         }
+        
+        add(border: .bottom,
+                             color: Config.Colors.bottomLine,
+                             width: 1,
+                             padding: UIEdgeInsets(top: 0, left: 90, bottom: 0, right: 0)
+        )
     }
     
     required init?(coder aDecoder: NSCoder) {

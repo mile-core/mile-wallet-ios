@@ -157,7 +157,8 @@ class WalletCardsController: Controller {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        contentView.backgroundColor = UIColor.white
+        view.backgroundColor = Config.Colors.background
+        contentView.backgroundColor = Config.Colors.background
         navigationController?.navigationBar.prefersLargeTitles = false
 
         var newIndex = lastIndex

@@ -35,9 +35,6 @@ class WalletContacts: Controller {
         }
     }
     
-    fileprivate let _tableController = ContactsController()
-    private let _contactOptionsController = WalletContactOptions()
-    
     private let bg = UIImageView(image: Config.Images.basePattern)
     override func viewDidLoad() {
         
@@ -94,6 +91,9 @@ class WalletContacts: Controller {
         _contactOptionsController.wallet = self.wallet
         presentInNavigationController(_contactOptionsController, animated: true)
     }
+    
+    fileprivate let _tableController = ContactsController()
+    private let _contactOptionsController = WalletContactOptions()
 }
 
 fileprivate class ContactsController: UITableViewController {
@@ -156,11 +156,6 @@ extension ContactsController {
         cell.avatar = contact.photo
         
         cell.contentView.remove(border: .bottom)
-        cell.contentView.add(border: .bottom,
-                             color: Config.Colors.bottomLine,
-                             width: 1,
-                             padding: UIEdgeInsets(top: 0, left: 90, bottom: 0, right: 0)
-        )
         
         return cell
     }
@@ -192,6 +187,7 @@ extension ContactsController {
         presentInNavigationController(_sendCoinsController, animated: true)
 
     }
+    
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return !isBook
     }

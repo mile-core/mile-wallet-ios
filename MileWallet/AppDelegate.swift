@@ -29,10 +29,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
         
         Config.url = "https://wallet.testnet.mile.global"
         
-        UINavigationBar.appearance()
-            .titleTextAttributes = [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarTitle,
-                                    NSAttributedStringKey.font: Config.Fonts.navigationBarTitle]
-
+        UINavigationBar.appearance().titleTextAttributes = [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarTitle,
+                                                            NSAttributedStringKey.font: Config.Fonts.navigationBarTitle]
+        
         UINavigationBar.appearance().largeTitleTextAttributes =
             [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarLargeTitle,
              NSAttributedStringKey.font: Config.Fonts.navigationBarLargeTitle]

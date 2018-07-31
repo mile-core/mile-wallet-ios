@@ -103,9 +103,9 @@ class WalletCell: Controller {
         content.layer.cornerRadius = shadow.layer.cornerRadius
         shadowBorder.layer.cornerRadius = shadow.layer.cornerRadius
         
-        shadowBorder.layer.shadowRadius = 8
-        shadowBorder.layer.shadowOffset = CGSize(width: 0, height: 1)
+        shadowBorder.layer.shadowRadius = 6
+        shadowBorder.layer.shadowOffset = CGSize(width: 0, height: 0)
         shadowBorder.layer.shadowColor = UIColor.black.cgColor
-        shadowBorder.layer.shadowOpacity = 0.17
+        shadowBorder.layer.shadowOpacity = 0.13
     }
 }

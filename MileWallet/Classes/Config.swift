@@ -27,7 +27,6 @@ extension Config {
             UIImage.gradient(colors: [
                 UIColor(hex: 0xEAF1FF),
                 UIColor(hex: 0xEAF1FF),
-                UIColor(hex: 0xEAF1FF),
                 UIColor.white
                 ],
                              with: UIScreen.main.bounds)!)

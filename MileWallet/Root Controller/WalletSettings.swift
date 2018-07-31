@@ -13,16 +13,13 @@ import QRCodeReader
 
 class WalletSettings: Controller, UITextFieldDelegate {
    
+    public var isModal:Bool = true
     public var wallet:WalletContainer?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         title = NSLocalizedString("New wallet", comment: "")
-        
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.closeHandler(sender:)))
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(doneHandler(_:)))
         
         contentView.backgroundColor = Config.Colors.background
         contentView.addSubview(qrReaderButton)
@@ -91,11 +88,22 @@ class WalletSettings: Controller, UITextFieldDelegate {
         view.endEditing(true)
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-       
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
+        
+        if isModal {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel,
+                                                               target: self,
+                                                               action: #selector(self.closeHandler(sender:)))
+        }
+        else {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "button-back"),
+                                                               style: .plain,
+                                                               target: self,
+                                                               action: #selector(closeHandler(sender:)))
+            
+        }
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(doneHandler(_:)))
         
         self.navigationController?.navigationBar.prefersLargeTitles = true
 
@@ -536,6 +544,15 @@ extension WalletSettings {
         }
         
         return true
+    }
+    
+    override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+        if isModal {
+            super.dismiss(animated: flag, completion: completion)
+        }
+        else {
+            navigationController?.popToRootViewController(animated: true)
+        }
     }
     
     fileprivate func addWallet()  {
