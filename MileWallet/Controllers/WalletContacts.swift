@@ -12,9 +12,9 @@ import SnapKit
 
 class WalletContacts: Controller {
     
-    public var isBook:Bool = false {
+    public var sendingConinsState:Bool = false {
         didSet{
-            _tableController.isBook = isBook
+            _tableController.isBook = sendingConinsState
         }
     }
     
@@ -51,14 +51,19 @@ class WalletContacts: Controller {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        title = NSLocalizedString("Send coins", comment: "")
+        if sendingConinsState {
+            title = NSLocalizedString("Send coins", comment: "")
+        }
+        else {
+            title = NSLocalizedString("Address Book", comment: "")
+        }
         
         navigationController?.navigationBar.prefersLargeTitles = true
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel,
                                                            target: self, action: #selector(back(sender:)))
         
-        if !isBook {
+        if !sendingConinsState {
             navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.add,
                                                                 target: self,
                                                                 action: #selector(add(sender:)))
@@ -205,10 +210,8 @@ extension ContactsController {
             
             do{
                 try Model.shared.context.save()
-                if l.count == 1 {
-                    tableView.deleteSections(IndexSet(integer: indexPath.section), with: .automatic)
-                    tableView.reloadRows(at:[indexPath], with: .automatic)
-                } else {
+                
+                if l.count >= 1 {
                     tableView.deleteRows(at: [indexPath], with: .automatic)
                 }
             }
