@@ -27,10 +27,7 @@ class WalletCardsController: Controller {
         view.addSubview(contactsButton)
         view.addSubview(verticalLineLeft)
         view.addSubview(verticalLineRight)
-//
-//        for w in WalletStore.shared.acitveWallets {
-//            print("... p[\(w.wallet?.name)] = \(w.wallet?.publicKey) \(w.wallet?.privateKey)")
-//        }
+        
 
         verticalLineLeft.snp.makeConstraints { (m) in
             m.centerX.equalTo(view.snp.right).multipliedBy(1.0/3.0)
@@ -108,21 +105,23 @@ class WalletCardsController: Controller {
     
     func updateConstraints()  {
         UIView.animate(withDuration: Config.animationDuration) {
-            if self.viewControllers.first!.isKind(of: EmptyWallet.self) {
-                self.newWalletButton.alpha = 0
-                self.verticalLineLeft.alpha = 0
-                self.verticalLineRight.alpha = 0
-                self.archiveButton.alpha = 0
-            }
-            else {
-                self.newWalletButton.alpha = 1
-                self.verticalLineLeft.alpha = 1
-                self.verticalLineRight.alpha = 1
-                self.archiveButton.alpha = 1
-            }
-            
-            if self.viewControllers.count > 1 {
-                self.pagerOffset?.update(offset: Config.iPhoneX ? -140 : -110)
+            if WalletStore.shared.archivedWallets.count == 0 {
+                if self.viewControllers.first!.isKind(of: EmptyWallet.self) {
+                    self.newWalletButton.alpha = 0
+                    self.verticalLineLeft.alpha = 0
+                    self.verticalLineRight.alpha = 0
+                    self.archiveButton.alpha = 0
+                }
+                else {
+                    self.newWalletButton.alpha = 1
+                    self.verticalLineLeft.alpha = 1
+                    self.verticalLineRight.alpha = 1
+                    self.archiveButton.alpha = 1
+                }
+                
+                if self.viewControllers.count > 1 {
+                    self.pagerOffset?.update(offset: Config.iPhoneX ? -140 : -110)
+                }
             }
         }
     }
@@ -193,6 +192,9 @@ class WalletCardsController: Controller {
             }
             else if newIndex >= WalletStore.shared.acitveWallets.count {
                 newIndex -= 1
+                if newIndex < 0 {
+                    newIndex = 0
+                }
             }
             reloadData()
         }
@@ -237,19 +239,21 @@ class WalletCardsController: Controller {
     }
     
     @objc private func openContact(sender:UIButton) {
-        print("Open contact")        
         if viewControllers.count > 0 {
             if viewControllers.first!.isKind(of: EmptyWallet.self) {
-                return
+                //return
             }
-            _walletContacts.walletKey = WalletStore.shared.acitveWallets[currentIndex].wallet?.publicKey
+            else {
+                _walletContacts.walletKey = WalletStore.shared.acitveWallets[currentIndex].wallet?.publicKey
+            }
             presentInNavigationController(_walletContacts, animated: true)
         }
     }
     
     @objc private func archiveWallet(sender:UIButton) {
-        print("Archive wallet")
-        _archivedWallets.wallet = WalletStore.shared.acitveWallets[currentIndex]
+        if currentIndex < WalletStore.shared.acitveWallets.count {
+            _archivedWallets.wallet = WalletStore.shared.acitveWallets[currentIndex]
+        }
         presentInNavigationController(_archivedWallets, animated: true)
     }
     
@@ -285,7 +289,7 @@ class WalletCardsController: Controller {
         if u.count == 0 {
             let v = EmptyWallet()
             v.addWalletHandler = {
-                 self.navigationController?.present(self._newWalletController, animated: true)
+                self.presentInNavigationController(self._newWalletController, animated: true)
             }
             u.append(v)
         }

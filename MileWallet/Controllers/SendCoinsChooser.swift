@@ -213,7 +213,7 @@ fileprivate class SendConisChooserController: UITableViewController {
     
     fileprivate var _walletContacts:WalletContacts = {
         let w = WalletContacts()
-        w.isBook = true
+        w.sendingConinsState = true
         return w
     }()
     
