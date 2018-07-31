@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+            <title></title>
+            <style>
+                html,
+                body {
+                    font-family: sans-serif;
+                    margin: 0;
+                    padding: 0;
+                }
+            
+            #container {
+                display: flex;
+                flex-direction: column;
+                padding: 20px;
+            }
+            
+            #title {
+                align-items: center;
+                max-width: 50%;
+            }
+            
+            #qrs {
+                display: flex;
+                justify-content: space-between;
+            }
+            
+            #qrs > div {
+                align-items: center;
+                display: flex;
+                flex: 1 1 auto;
+                max-width: 50%;
+            }
+            
+            #qrs > div > figure {
+                flex: 1 0 auto;
+                margin: 0 20px 0 0;
+                padding: 10px;
+                position: relative;
+            }
+            
+            #qrs > div > figure > div {
+                height: 0;
+                padding-top: 100%;
+                position: relative;
+                width: 100%;
+            }
+            
+            #qrs > div > figure > div > img {
+                height: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+            }
+            
+            #qrs > div > p {
+                margin: 0;
+                text-transform: uppercase;
+                transform: rotate(180deg);
+                writing-mode: vertical-lr;
+            }
+            
+            #container > p {
+                margin: 20px 0 0;
+                padding: 0 10px;
+            }
+            </style>
+            </head>
+    <body>
+        <div id="container">
+            <div id="title">
+                <p>MILE</p>
+            </div>
+            <div id="qrs">
+                <div>
+                    <figure>
+                        <div>
+                            <img id="payment-qr" />
+                        </div>
+                    </figure>
+                    <p>Invoice Data</p>
+                </div>               
+            </div>
+            <p>
+            Payment address:
+            <br />
+            {{address}}
+            </p>
+            <p>
+            Payment Amount:
+            <br />
+            {{amount}}
+            </p>
+        </div>
+        
+        <script type="text/javascript">
+            document.querySelector("#payment-qr").src = "{{payment-qr}}"
+            </script>
+    </body>
+</html>

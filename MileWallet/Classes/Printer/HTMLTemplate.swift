@@ -20,7 +20,7 @@ class HTMLTemplate {
      
      - returns: The transformed HTML code.
      */
-    class func get(wallet: Wallet) -> String {
+    class func pairAndName(wallet: Wallet) -> String {
         
         guard let htmlFile = Bundle.main.url(forResource: "PrintSecretTemplate", withExtension: "html")
             else { fatalError("Error locating HTML file.") }
@@ -44,9 +44,32 @@ class HTMLTemplate {
         return htmlContent
     }
     
-    class func getAmount(wallet: Wallet, assets:String, amount: String) -> String {
+    class func contact(wallet: Wallet) -> String {
         
-        guard let htmlFile = Bundle.main.url(forResource: "PrintPaymentTemplate", withExtension: "html")
+        guard let htmlFile = Bundle.main.url(forResource: "PrintContactTemplate", withExtension: "html")
+            else { fatalError("Error locating HTML file.") }
+        
+        guard var htmlContent = try? String(contentsOf: htmlFile)
+            else { fatalError("Error getting HTML file content.") }
+        
+        
+        let items = ["public-key": (wallet.publicKey,  wallet.publicKeyQr?.imageSrc),
+                     "name":       (wallet.name,       wallet.nameQr?.imageSrc)]
+                
+        for k in items.keys {
+            if let (what, src) = items[k] {
+                htmlContent = htmlContent.replacingOccurrences(of: "{{\(k)}}",
+                    with: what ?? "-")
+                htmlContent = htmlContent.replacingOccurrences(of: "{{\(k+"-qr")}}", with: src ?? "")
+            }
+        }
+        
+        return htmlContent
+    }
+    
+    class func invoice(wallet: Wallet, assets:String, amount: String) -> String {
+        
+        guard let htmlFile = Bundle.main.url(forResource: "PrintInvoiceTemplate", withExtension: "html")
             else { fatalError("Error locating HTML file.") }
         
         guard var htmlContent = try? String(contentsOf: htmlFile)

@@ -15,7 +15,7 @@ public class Printer {
     
     public lazy var printController:UIPrintInteractionController = {
         let p = UIPrintInteractionController.shared                
-        p.printInfo = printInfo
+        p.printInfo = printInfo        
         return p
     }()
     
