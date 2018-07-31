@@ -82,17 +82,12 @@ class WalletInfo: Controller {
             }){ (chain) in
                 self.chainInfo = chain
                 self.update(timer: nil)
-                
-                DispatchQueue.main.async {
-                    self.timerSetup()
-                }
-                
                 self.firstTime = false
             }
         }
-        else {
+        DispatchQueue.main.async {
             self.timerSetup()
-        }        
+        }
     }
     
     private func  timerSetup(){

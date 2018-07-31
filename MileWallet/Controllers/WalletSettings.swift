@@ -12,7 +12,7 @@ import ObjectMapper
 import QRCodeReader
 
 class WalletSettings: Controller, UITextFieldDelegate {
-   
+    
     public var isModal:Bool = true
     public var wallet:WalletContainer?
 

@@ -12,18 +12,9 @@ import SnapKit
 
 class WalletContacts: Controller {
     
-    fileprivate var isModal:Bool = false
-    
     public var isBook:Bool = false {
         didSet{
             _tableController.isBook = isBook
-        }
-    }
-    
-    private var wallet:WalletContainer? {
-        didSet{
-            _tableController.wallet = wallet
-            bg.backgroundColor = UIColor(hex: wallet?.attributes?.color ?? 0)
         }
     }
     
@@ -80,6 +71,17 @@ class WalletContacts: Controller {
         }
         
         _tableController.tableView.reloadData()
+        
+        if WalletUniversalLink.shared.invoice != nil {
+            add(sender: self)
+        }
+    }
+       
+    private var wallet:WalletContainer? {
+        didSet{
+            _tableController.wallet = wallet
+            bg.backgroundColor = UIColor(hex: wallet?.attributes?.color ?? 0)
+        }
     }
     
     @objc private func back(sender:Any) {

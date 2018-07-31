@@ -47,6 +47,12 @@ class WalletContactOptions: Controller, UITextFieldDelegate {
         }
     }
 
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        _tableController.publicKey.isUserInteractionEnabled = true
+        WalletUniversalLink.shared.invoice = nil
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -64,6 +70,12 @@ class WalletContactOptions: Controller, UITextFieldDelegate {
         if let a = wallet?.attributes{
             (navigationController as? NavigationController)?.titleColor = UIColor(hex: a.color)
         }
+        
+        _tableController.publicKey.text = WalletUniversalLink.shared.invoice?.publicKey
+        if WalletUniversalLink.shared.invoice?.publicKey != nil {
+            _tableController.publicKey.isUserInteractionEnabled = false
+        }
+        WalletUniversalLink.shared.invoice = nil
     }
     
     @objc private func closePayments(sender:Any){
@@ -74,6 +86,7 @@ class WalletContactOptions: Controller, UITextFieldDelegate {
         if let contact = self.contact {
         }
         else {
+            WalletUniversalLink.shared.invoice = nil
             addContact()
         }
     }

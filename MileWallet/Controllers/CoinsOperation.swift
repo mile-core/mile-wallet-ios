@@ -26,11 +26,13 @@ class CoinsOperation: Controller {
     
     public var wallet:WalletContainer?
     
-    public var invoice:(publicKey:String, assets:String?, amount:String?)? {
+    public var invoice:WalletUniversalLink.Invoice? {
         didSet {
             
+            currentAsset = Asset(name: invoice?.assets ?? Asset.mile.name) ?? currentAsset
+
             let idx =  Asset.list.index(where: { (i) -> Bool in
-                return i.name == invoice?.assets ?? Asset.mile.name
+                return i.name == currentAsset.name
             })
             
             contactView.isEdited = false
@@ -43,12 +45,20 @@ class CoinsOperation: Controller {
             }
             
             if let t = invoice?.amount?.floatValue, let a = invoice?.assets {
-                amount.text = Asset(name: a)?.stringValue(t)
+                amountTextFeild.text = Asset(name: a)?.stringValue(t)
             }
-            coinsPicker.selectedRow(inComponent: idx ?? 0)
+            
+            currentAssetIndex = idx ?? 0
+            coinsPicker.selectRow(currentAssetIndex, inComponent: 0, animated: false)
+            
+            amountTextFeild.isUserInteractionEnabled = false
+            coinsPicker.isUserInteractionEnabled = false
         }
     }
 
+    private var currentAsset:Asset = .mile
+    private var currentAssetIndex = 0
+    
     private func updateAvatar() {
         if let pk = contactView.publicKey {
             let contact = Contact.find(pk, for: "publicKey").first
@@ -76,6 +86,12 @@ class CoinsOperation: Controller {
                 contactView.publicKey = contact?.publicKey
             }
         }
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        amountTextFeild.isUserInteractionEnabled = true
+        coinsPicker.isUserInteractionEnabled = true
     }
     
     override func viewDidLoad() {
@@ -120,15 +136,15 @@ class CoinsOperation: Controller {
             m.width.equalTo(qrCodePreview.snp.height)
         })
         
-        contentView.addSubview(amount)
+        contentView.addSubview(amountTextFeild)
         
-        amount.snp.makeConstraints { (m) in
+        amountTextFeild.snp.makeConstraints { (m) in
             m.top.equalTo(headerView.snp.bottom).offset(10)
             m.height.equalTo(60)
             m.left.equalToSuperview().offset(20)
             m.right.equalToSuperview().offset(-20)
         }
-        amount.add(border: .bottom,
+        amountTextFeild.add(border: .bottom,
                         color: Config.Colors.bottomLine,
                         width: 1, padding: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0))
         
@@ -136,7 +152,7 @@ class CoinsOperation: Controller {
         
         coinsPicker.showsSelectionIndicator = false
         coinsPicker.snp.makeConstraints { (m) in
-            m.top.equalTo(amount.snp.bottom).offset(-5)
+            m.top.equalTo(amountTextFeild.snp.bottom).offset(-5)
             m.height.equalTo(95)
             m.left.equalTo(contentView.snp.right).offset(-60)
             m.right.equalToSuperview().offset(-20)
@@ -165,6 +181,7 @@ class CoinsOperation: Controller {
         case .print, .invoiceLink:
             
             contactView.alpha = 0
+            qrCodeHeader.alpha = 1
             qrCodeUpdate()
             title = NSLocalizedString("Next", comment: "")
             
@@ -183,12 +200,14 @@ class CoinsOperation: Controller {
         super.viewWillAppear(animated)
         headerViewLayout()
 
+        coinsPicker.selectRow(currentAssetIndex, inComponent: 0, animated: false)
+
         guard let a = wallet?.attributes else {
             return
         }
         
-        amount.placeholder = amount.text
-        amount.text = nil
+        amountTextFeild.placeholder = amountTextFeild.text
+        amountTextFeild.text = nil
         (navigationController as? NavigationController)?.titleColor = UIColor(hex: a.color)
     }
     
@@ -313,7 +332,7 @@ class CoinsOperation: Controller {
         switch style {
         case .contact, .publicKey:
             
-            guard let asked = amount.text?.floatValue, asked > 0.0 else {
+            guard let asked = amountTextFeild.text?.floatValue, asked > 0.0 else {
                 amounNotEnough()
                 return
             }
@@ -322,7 +341,7 @@ class CoinsOperation: Controller {
             
         case .print:
             
-            let asked = amount.text?.floatValue ?? 0.0
+            let asked = amountTextFeild.text?.floatValue ?? 0.0
             
             loaderStart()
             Printer.shared.printController.delegate = self
@@ -346,7 +365,7 @@ class CoinsOperation: Controller {
             
         case .invoiceLink:
             
-            guard let asked = amount.text?.floatValue, asked > 0.0 else {
+            guard let asked = amountTextFeild.text?.floatValue, asked > 0.0 else {
                 amounNotEnough()
                 return
             }
@@ -359,10 +378,10 @@ class CoinsOperation: Controller {
         }
     }
     
-    lazy var headerView:UIView = UIView()
+    fileprivate lazy var headerView:UIView = UIView()
     
-    lazy var contactView:ContactView = ContactView()
-    lazy var qrCodePreview:UIImageView = {
+    fileprivate lazy var contactView:ContactView = ContactView()
+    fileprivate lazy var qrCodePreview:UIImageView = {
         let image = UIImageView()
         image.image = "0.0".qrCodeImage
         image.contentMode = .scaleAspectFit
@@ -372,19 +391,19 @@ class CoinsOperation: Controller {
         return image
     }()
     
-    lazy var qrCodeHeader:UIView = {
+    fileprivate lazy var qrCodeHeader:UIView = {
         let u = UIView()
         return u
     }()
     
-    lazy var amount:UITextField = {
+    fileprivate lazy var amountTextFeild:UITextField = {
        let a = UITextField.decimalsField()
         a.delegate = self
         a.addTarget(self, action: #selector(amountChainging(_:)), for: UIControlEvents.allEditingEvents)
         return a
     }()
     
-    lazy var coinsPicker:UIPickerView = UIPickerView()
+    fileprivate lazy var coinsPicker:UIPickerView = UIPickerView()
     
     fileprivate lazy var printControllerBg:UIImageView = {
         let v = UIImageView(image: Config.Images.basePattern)
@@ -431,8 +450,9 @@ extension CoinsOperation: UITextFieldDelegate {
     }
 
     func qrCodeUpdate()  {
-        guard style == .print else { return }
-        if let t = amount.text?.floatValue, t > 0.0 {
+        //guard style == .print else { return }
+        
+        if let t = amountTextFeild.text?.floatValue, t > 0.0 {
             qrCodePreview.image = "\(t)".qrCodeImage
             UIView.animate(withDuration: Config.animationDuration) {
                 self.qrCodePreview.alpha = 1
@@ -446,8 +466,8 @@ extension CoinsOperation: UITextFieldDelegate {
     }
 
     func textFieldDidEndEditing(_ textField: UITextField, reason: UITextFieldDidEndEditingReason) {
-        if amount.text != nil {
-            amount.placeholder = nil
+        if amountTextFeild.text != nil {
+            amountTextFeild.placeholder = nil
         }
     }
 }

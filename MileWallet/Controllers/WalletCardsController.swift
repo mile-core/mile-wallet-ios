@@ -19,15 +19,18 @@ class WalletCardsController: Controller {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+         NotificationCenter.default.addObserver(self, selector: #selector(unifersalLinkUpdated(notification:)), name: WalletUniversalLink.kDidUpdateNotification, object: nil)
+        
         view.addSubview(newWalletButton)
         view.addSubview(archiveButton)
         view.addSubview(contactsButton)
         view.addSubview(verticalLineLeft)
         view.addSubview(verticalLineRight)
-        
-        for w in WalletStore.shared.acitveWallets {
-            print("... p[\(w.wallet?.name)] = \(w.wallet?.publicKey) \(w.wallet?.privateKey)")
-        }
+//
+//        for w in WalletStore.shared.acitveWallets {
+//            print("... p[\(w.wallet?.name)] = \(w.wallet?.publicKey) \(w.wallet?.privateKey)")
+//        }
 
         verticalLineLeft.snp.makeConstraints { (m) in
             m.centerX.equalTo(view.snp.right).multipliedBy(1.0/3.0)
@@ -79,6 +82,26 @@ class WalletCardsController: Controller {
         tap.numberOfTapsRequired = 1
         tap.numberOfTouchesRequired = 1
         pageViewController.view.addGestureRecognizer(tap)
+    }
+    
+    @objc private func unifersalLinkUpdated(notification:Notification) {
+        if WalletUniversalLink.shared.invoice?.amount != nil {
+            let wallet_name = WalletUniversalLink.shared.invoice?.name ?? WalletUniversalLink.shared.invoice?.publicKey ?? ""
+            UIAlertController(title: NSLocalizedString("Invoice", comment: ""),
+                              message: NSLocalizedString("Choose Wallet to send coins to: ", comment: "") + wallet_name,
+                              preferredStyle: UIAlertControllerStyle.actionSheet)
+                .addAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel) { (action) in
+                    WalletUniversalLink.shared.invoice = nil
+                }
+                .addAction(title: NSLocalizedString("Send", comment: ""), style: .default) { (action) in
+                    
+            }
+            .present(by: self)
+        }
+        else if  WalletUniversalLink.shared.invoice?.publicKey != nil {
+            _walletContacts.walletKey = WalletStore.shared.acitveWallets[currentIndex].wallet?.publicKey
+            presentInNavigationController(_walletContacts, animated: true)
+        }
     }
     
     private var pagerOffset:Constraint?

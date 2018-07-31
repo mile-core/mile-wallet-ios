@@ -55,9 +55,9 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
     }
     
     @objc func printTicket(_ sender:Any) {
-        _printInvoiceController.style = .print
-        _printInvoiceController.wallet = wallet
-        presentInNavigationController(_printInvoiceController, animated: true)
+        _invoiceController.style = .print
+        _invoiceController.wallet = wallet
+        presentInNavigationController(_invoiceController, animated: true)
     }
     
     @objc func sendLink(_ sender:Any) {
@@ -68,9 +68,9 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
     }
     
     @objc func sendInvoice(_ sender:Any) {
-        _printInvoiceController.style = .invoiceLink
-        _printInvoiceController.wallet = wallet
-        presentInNavigationController(_printInvoiceController, animated: true)
+        _invoiceController.style = .invoiceLink
+        _invoiceController.wallet = wallet
+        presentInNavigationController(_invoiceController, animated: true)
     }
     
     private var wallet:WalletContainer? {
@@ -97,6 +97,14 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
         
         updateState()
+        
+        if let payment = WalletUniversalLink.shared.invoice,
+            payment.amount != nil {
+            _invoiceController.invoice = WalletUniversalLink.shared.invoice
+            _invoiceController.style = .publicKey
+            WalletUniversalLink.shared.invoice = nil
+            presentInNavigationController(_invoiceController, animated: true)
+        }
     }
     
     private func updateState() {
@@ -378,5 +386,5 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
     fileprivate var _walletInfo:WalletInfo = WalletInfo()
     fileprivate var _settingsWalletController = WalletSettings()
     private lazy var _sendCoinsChooser:SendCoinsChooser = SendCoinsChooser()
-    fileprivate var _printInvoiceController:CoinsOperation = CoinsOperation()
+    fileprivate var _invoiceController:CoinsOperation = CoinsOperation()
 }

@@ -158,8 +158,7 @@ fileprivate class SendConisChooserController: UITableViewController {
         tableView.keyboardDismissMode = .onDrag
         tableView.register(CoinsChooserCell.self, forCellReuseIdentifier: cellReuseIdendifier)
     }
-    
-    
+        
     class Action {
         @objc var action:((_ sender:CoinsChooserCell) -> ())?
         let title:String?
@@ -244,7 +243,7 @@ extension SendConisChooserController {
             reader.dismiss(animated: true) {
                 self._sendCoinsController.contact = nil
                 self._sendCoinsController.style = .publicKey
-                self._sendCoinsController.invoice = (publicKey:invoice.publicKey, assets:invoice.assets, amount:invoice.amount)
+                self._sendCoinsController.invoice = (publicKey:invoice.publicKey, assets:invoice.assets, amount:invoice.amount, name:nil)
                 self._sendCoinsController.wallet = self.wallet
                 self.presentInNavigationController(self._sendCoinsController, animated: true)
             }

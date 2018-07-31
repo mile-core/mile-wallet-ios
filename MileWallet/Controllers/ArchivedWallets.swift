@@ -195,7 +195,6 @@ fileprivate class WalletsController: UITableViewController {
     }    
 }
 
-
 // MARK: - Datasource
 extension WalletsController {
     
