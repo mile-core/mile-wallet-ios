@@ -97,7 +97,7 @@ class WalletInfo: Controller {
     
     private func  timerSetup(){
         reloadTimer?.invalidate()
-        reloadTimer = Timer.scheduledTimer(timeInterval: 5,
+        reloadTimer = Timer.scheduledTimer(timeInterval: Config.reloadTimerInterval,
                                            target: self,
                                            selector: #selector(self.update(timer:)),
                                            userInfo: nil,

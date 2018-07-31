@@ -149,6 +149,7 @@ public class NavigationController: UINavigationController {
         super.viewDidLoad()
         
         self.navigationBar.prefersLargeTitles = true
+        
         view.insertSubview(bg, at: 0)
         bg.backgroundColor = titleColor
         bg.contentMode = .scaleAspectFill

@@ -156,6 +156,8 @@ class WalletCardsController: Controller {
     ///
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        contentView.backgroundColor = UIColor.white
         navigationController?.navigationBar.prefersLargeTitles = false
 
         var newIndex = lastIndex
@@ -283,6 +285,7 @@ extension WalletCardsController: WalletCellDelegate {
     
     func walletCell(_ item: WalletCell, didPresent wallet: WalletContainer?) {
         navigationItem.title = wallet?.wallet?.name ?? "-"
+        (navigationController as? NavigationController)?.titleColor = UIColor(hex: wallet?.attributes?.color ?? 255)
     }
 }
 

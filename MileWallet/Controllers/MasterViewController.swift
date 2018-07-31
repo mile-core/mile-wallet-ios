@@ -49,8 +49,10 @@ class MasterViewController: UITableViewController, AuthenticationID {
                 
         //newWalletViewController = storyboard?.instantiateViewController(withIdentifier: "NewWalletViewControllerId") as? NewWalletViewController
         
-        NotificationCenter.default.addObserver(self, selector: #selector(didLaunch), name: .UIApplicationDidFinishLaunching, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(didLaunch), name: .UIApplicationWillEnterForeground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didLaunch),
+                                               name: .UIApplicationDidFinishLaunching, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didLaunch),
+                                               name: .UIApplicationWillEnterForeground, object: nil)
         
     }
     
