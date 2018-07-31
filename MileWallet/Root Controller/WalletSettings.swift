@@ -20,7 +20,7 @@ class WalletSettings: Controller, UITextFieldDelegate {
         
         title = NSLocalizedString("New wallet", comment: "")
         
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.closePayments(sender:)))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.closeHandler(sender:)))
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(doneHandler(_:)))
         
@@ -133,7 +133,7 @@ class WalletSettings: Controller, UITextFieldDelegate {
         }
     }    
     
-    @objc private func closePayments(sender:Any){
+    @objc private func closeHandler(sender:Any){
         dismiss(animated: true)
     }
     
@@ -492,32 +492,12 @@ extension WalletSettings {
                 }
             }
             
-            guard let json = Mapper<Wallet>().toJSONString(wallet) else {
-                UIAlertController(title: nil,
-                                  message:  NSLocalizedString("Wallet could not be created from the secret phrase", comment: ""),
-                                  preferredStyle: .alert)
-                    .addAction(title: WalletSettings.closeString, style: .cancel, handler: { (action) in
-                        close()
-                    })
-                    .present(by: self)
-                return
-            }
-            
-            try WalletStore.shared.keychain.set(json, key: key)
-            
             let walletAttr = WalletAttributes(
                 publicKey: key,
                 color: self.currentColor.hex,
                 isActive: isActive)
             
-            guard let attr = Mapper<WalletAttributes>().toJSONString(walletAttr) else {
-                self.loaderStop()
-                self.dismiss(animated: true, completion: nil)
-                close()
-                return
-            }
-            
-            try WalletStore.shared.keychain.setWalletAttr(attr, key: key)
+            try WalletStore.shared.save(wallet: WalletContainer(wallet: wallet, attributes: walletAttr))
             
             self.loaderStop()
 

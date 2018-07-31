@@ -128,6 +128,36 @@ public class WalletStore {
         }
     }
     
+    public func save(wallet container:WalletContainer) throws {
+        
+        guard let wallet = container.wallet, let key = wallet.publicKey else {
+            throw NSError(domain: "global.mile.wallet.app",
+                          code: -1,
+                          userInfo: [NSLocalizedDescriptionKey :  NSLocalizedString("Wallet could not be created from empty public key", comment: ""),
+                                     NSLocalizedFailureReasonErrorKey:  NSLocalizedString("Wallet error", comment: "")])
+        }
+        
+        guard let json = Mapper<Wallet>().toJSONString(wallet) else {
+            throw NSError(domain: "global.mile.wallet.app",
+                          code: -1,
+                          userInfo: [NSLocalizedDescriptionKey :
+                            NSLocalizedString("Wallet could not be created for: ", comment: "") + key,
+                                     NSLocalizedFailureReasonErrorKey:
+                                        NSLocalizedString("Wallet error", comment: "")])
+        }
+        
+        try WalletStore.shared.keychain.set(json, key: key)
+        
+        guard let attributes = container.attributes, let attr = Mapper<WalletAttributes>().toJSONString(attributes) else {
+            throw NSError(domain: "global.mile.wallet.app",
+                          code: -1,
+                          userInfo: [NSLocalizedDescriptionKey :  NSLocalizedString("Wallet could not update attributes", comment: ""),
+                                     NSLocalizedFailureReasonErrorKey:  NSLocalizedString("Wallet error", comment: "")])
+        }
+        
+        try WalletStore.shared.keychain.setWalletAttr(attr, key: key)
+    }
+    
     private init() {}
 }
 

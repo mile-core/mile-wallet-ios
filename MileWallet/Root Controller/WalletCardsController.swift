@@ -225,6 +225,8 @@ class WalletCardsController: Controller {
     
     @objc private func archiveWallet(sender:UIButton) {
         print("Archive wallet")
+        _archivedWallets.wallet = WalletStore.shared.acitveWallets[currentIndex]
+        presentInNavigationController(_archivedWallets, animated: true)
     }
     
     private lazy var pageViewController: UIPageViewController = {
@@ -272,6 +274,7 @@ class WalletCardsController: Controller {
     fileprivate var _walletDetailsController = WalletDetails()
     fileprivate var _newWalletController = WalletSettings()
     fileprivate var _walletContacts = WalletContacts()
+    fileprivate var _archivedWallets = ArchivedWallets()
 }
 
 

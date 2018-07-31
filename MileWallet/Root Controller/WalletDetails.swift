@@ -47,26 +47,26 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
         Action(action: sendInvoice,
                title: NSLocalizedString("Invoice", comment: ""),
                icon: UIImage(named: "button-send-invoice")!),
-    ]
+        ]
     
     @objc func sendCoins(_ sender:Any) {
         _sendCoinsChooser.wallet = wallet
         presentInNavigationController(_sendCoinsChooser, animated: true)
     }
-
+    
     @objc func printTicket(_ sender:Any) {
         _printInvoiceController.style = .print
         _printInvoiceController.wallet = wallet
         presentInNavigationController(_printInvoiceController, animated: true)
     }
-
+    
     @objc func sendLink(_ sender:Any) {
         guard var url = wallet?.wallet?.publicKeyLink() else { return }
         url = url.replacingOccurrences(of: "https:", with: Config.appSchema)
         let activity = UIActivityViewController(activityItems: ["This is my MILE wallet address link", url], applicationActivities:nil)
         present(activity, animated: true)
     }
-
+    
     @objc func sendInvoice(_ sender:Any) {
         _printInvoiceController.style = .invoiceLink
         _printInvoiceController.wallet = wallet
@@ -96,11 +96,10 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
         
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "button-back"),
-                                                           style: .plain, target: self, action: #selector(back(sender:)))
-       
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "button-settings"),
-                                                           style: .plain, target: self, action: #selector(settings(sender:)))
+        updateState()
+    }
+    
+    private func updateState() {
         
         if let walletKey = walletKey, let w = WalletStore.shared.wallet(by: walletKey) {
             
@@ -112,18 +111,21 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
             bg.backgroundColor = UIColor(hex: w.attributes?.color ?? 0)
         }
         
-        if let a = wallet?.attributes {
-            if a.isActive {
-                copyAddressButton.isUserInteractionEnabled = true
-                qrContent.alpha = 1
-                toolBar.alpha = 1
-                toolBar.isUserInteractionEnabled = true
-            }
-            else {
-                copyAddressButton.isUserInteractionEnabled = false
-                qrContent.alpha = 0.5
-                toolBar.alpha = 0.5
-                toolBar.isUserInteractionEnabled = false
+        UIView.animate(withDuration: Config.animationDuration) {
+            if let a = self.wallet?.attributes {
+                if a.isActive {
+                    self.copyAddressButton.setTitle(NSLocalizedString("Copy address", comment: ""), for: .normal)
+                    self.qrContent.alpha = 1
+                    self.toolBar.alpha = 1
+                    self.toolBar.isUserInteractionEnabled = true
+                }
+                else {
+                    
+                    self.copyAddressButton.setTitle(NSLocalizedString("Restore wallet", comment: ""), for: .normal)
+                    self.qrContent.alpha = 0.5
+                    self.toolBar.alpha = 0.5
+                    self.toolBar.isUserInteractionEnabled = false
+                }
             }
         }
     }
@@ -134,16 +136,22 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
     
     @objc private func settings(sender:Any) {
         _settingsWalletController.wallet = wallet
-        navigationController?.present(_settingsWalletController, animated: true)
+        presentInNavigationController(_settingsWalletController, animated: true)
     }
     
     var actionH:CGFloat = 80
     let topPadding:CGFloat = 10
-
+    
     private let bg = UIImageView(image: Config.Images.basePattern)
     
     override func viewDidLoad() {
-      super.viewDidLoad()
+        super.viewDidLoad()
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "button-back"),
+                                                           style: .plain, target: self, action: #selector(back(sender:)))
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "button-settings"),
+                                                            style: .plain, target: self, action: #selector(settings(sender:)))
         
         if UIScreen.main.bounds.size.height < 640 {
             actionH = 60
@@ -164,7 +172,7 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
         
         contentView.addSubview(balance)
         contentView.addSubview(copyAddressButton)
-
+        
         addChildViewController(_walletInfo)
         balance.addSubview(_walletInfo.view)
         _walletInfo.didMove(toParentViewController: self)
@@ -219,9 +227,9 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
         for (i,a) in actionDesc.enumerated() {
             
             let b = TollBarButton(title: a.title,
-                              image: a.icon,
-                              padding: 6) { (sender) in
-                                a.action?(sender)
+                                  image: a.icon,
+                                  padding: 6) { (sender) in
+                                    a.action?(sender)
             }
             
             toolBar.addSubview(b)
@@ -232,7 +240,7 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
                 m.bottom.equalTo(toolBar).offset(-20)
             }
         }
-
+        
         for i in 0..<actionDesc.count-1 {
             let sep = UIView()
             sep.backgroundColor = Config.Colors.separator
@@ -264,13 +272,12 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
         }
     }
     
-    
     let toolBar:UIView = {
         let toolBar = UIView()
         toolBar.backgroundColor = UIColor.white
         return toolBar
     }()
-
+    
     public let qrContent:UIView = {
         let v = UIView()
         v.clipsToBounds = false
@@ -279,7 +286,7 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
     }()
     
     private let shadow:UIView = {
-       let s = UIView()
+        let s = UIView()
         s.backgroundColor = UIColor.white
         return s
     }()
@@ -320,9 +327,34 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
         return copy
     }()
     
-    @objc func copyAddress(sender:UIButton){ 
-        if let publicKey = wallet?.wallet?.publicKey {
-            UIPasteboard.general.string = publicKey
+    @objc func copyAddress(sender:UIButton){
+        
+        guard let w = wallet?.wallet, let a = wallet?.attributes else {
+            return
+        }
+        
+        if a.isActive {
+            if let publicKey = w.publicKey {
+                UIPasteboard.general.string = publicKey
+            }
+        }
+        else {
+            var attr = a
+            attr.isActive = true
+            do {
+                try WalletStore.shared.save(wallet: WalletContainer(wallet: w, attributes: attr))
+            }
+            catch let error {
+                UIAlertController(title: nil,
+                                  message:  error.description,
+                                  preferredStyle: .alert)
+                    .addAction(title: NSLocalizedString("Close", comment: ""),
+                               style: .cancel, handler: { (action) in
+                        self.updateState()
+                    })
+                    .present(by: self)
+            }
+            updateState()
         }
     }
     
