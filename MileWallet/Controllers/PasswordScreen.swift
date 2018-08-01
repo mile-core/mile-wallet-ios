@@ -36,8 +36,11 @@ class PasscodeScreen: UIViewController {
         
         super.viewDidLoad()
         
+        view.backgroundColor = Config.Colors.background
+        
         passwordContainerView = PasswordContainerView.create(in: passwordStackView, digit: kPasswordDigit)
         passwordContainerView.delegate = self
+        passwordContainerView.passwordDotView.tintColor = Config.Colors.defaultColor
         passwordContainerView.deleteButtonLocalizedTitle = NSLocalizedString("Delete", comment: "")
         
         passwordContainerView.tintColor = Config.Colors.caption
@@ -45,6 +48,9 @@ class PasscodeScreen: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        if settingsMode {
+            firstView?.alpha = 1
+        }
         super.viewWillAppear(animated)
         passwordTitle.text = NSLocalizedString("Enter Passcode", comment: "")
         passwordContainerView.touchAuthenticationEnabled = !settingsMode

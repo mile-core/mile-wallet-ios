@@ -25,6 +25,9 @@
 		3164197F2111F69100E6650E /* PasscodeScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3164197D2111F69100E6650E /* PasscodeScreen.xib */; };
 		316419812112054D00E6650E /* PasswordScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316419802112054D00E6650E /* PasswordScreen.swift */; };
 		316419832112077A00E6650E /* PasscodeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316419822112077A00E6650E /* PasscodeStore.swift */; };
+		3164198C21125A6600E6650E /* icon-launch-screen.png in Resources */ = {isa = PBXBuildFile; fileRef = 3164198921125A6600E6650E /* icon-launch-screen.png */; };
+		3164198D21125A6600E6650E /* icon-launch-screen@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3164198A21125A6600E6650E /* icon-launch-screen@2x.png */; };
+		3164198E21125A6600E6650E /* icon-launch-screen@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3164198B21125A6600E6650E /* icon-launch-screen@3x.png */; };
 		3164FD8120C950ED00294A9F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3164FD8020C950ED00294A9F /* AppDelegate.swift */; };
 		3164FD8D20C950ED00294A9F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3164FD8B20C950ED00294A9F /* LaunchScreen.storyboard */; };
 		3182CDC320D1C462000C3C68 /* HTMLTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3182CDC220D1C462000C3C68 /* HTMLTemplate.swift */; };
@@ -76,6 +79,10 @@
 		3164197D2111F69100E6650E /* PasscodeScreen.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PasscodeScreen.xib; sourceTree = "<group>"; };
 		316419802112054D00E6650E /* PasswordScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordScreen.swift; sourceTree = "<group>"; };
 		316419822112077A00E6650E /* PasscodeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasscodeStore.swift; sourceTree = "<group>"; };
+		31641987211258A900E6650E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		3164198921125A6600E6650E /* icon-launch-screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-launch-screen.png"; sourceTree = "<group>"; };
+		3164198A21125A6600E6650E /* icon-launch-screen@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-launch-screen@2x.png"; sourceTree = "<group>"; };
+		3164198B21125A6600E6650E /* icon-launch-screen@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-launch-screen@3x.png"; sourceTree = "<group>"; };
 		3164FD7D20C950ED00294A9F /* MileWallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MileWallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3164FD8020C950ED00294A9F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3164FD8C20C950ED00294A9F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -175,6 +182,16 @@
 			path = Fonts;
 			sourceTree = "<group>";
 		};
+		3164198821125A5300E6650E /* Icons */ = {
+			isa = PBXGroup;
+			children = (
+				3164198921125A6600E6650E /* icon-launch-screen.png */,
+				3164198A21125A6600E6650E /* icon-launch-screen@2x.png */,
+				3164198B21125A6600E6650E /* icon-launch-screen@3x.png */,
+			);
+			path = Icons;
+			sourceTree = "<group>";
+		};
 		3164FD7420C950ED00294A9F = {
 			isa = PBXGroup;
 			children = (
@@ -197,6 +214,7 @@
 		3164FD7F20C950ED00294A9F /* MileWallet */ = {
 			isa = PBXGroup;
 			children = (
+				3164198821125A5300E6650E /* Icons */,
 				3185BBF321071936004CDBEF /* Assets.xcassets */,
 				31A9FE9F20DBD50900779F60 /* MileWallet.entitlements */,
 				3144B6562106183400ED27BF /* Controllers */,
@@ -378,11 +396,14 @@
 				3164FD8D20C950ED00294A9F /* LaunchScreen.storyboard in Resources */,
 				3164197F2111F69100E6650E /* PasscodeScreen.xib in Resources */,
 				3144B6672106727800ED27BF /* SF-Pro-Text-Semibold.otf in Resources */,
+				3164198E21125A6600E6650E /* icon-launch-screen@3x.png in Resources */,
 				3182CDC920D2AA9E000C3C68 /* PrintInvoiceTemplate.html in Resources */,
 				3185BBF421071937004CDBEF /* Assets.xcassets in Resources */,
 				31F2CFE520D177A000C1770B /* PrintSecretTemplate.html in Resources */,
 				313F13DB20E3FA900074796D /* MileWallet-AASA in Resources */,
 				3144B6662106727800ED27BF /* SF-Pro-Text-Regular.otf in Resources */,
+				3164198D21125A6600E6650E /* icon-launch-screen@2x.png in Resources */,
+				3164198C21125A6600E6650E /* icon-launch-screen.png in Resources */,
 				3144B6652106727800ED27BF /* SF-Pro-Display-Bold.otf in Resources */,
 				3198353D210F6B4B00E7718F /* PrintContactTemplate.html in Resources */,
 			);
@@ -527,6 +548,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				3164FD8C20C950ED00294A9F /* Base */,
+				31641987211258A900E6650E /* en */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";

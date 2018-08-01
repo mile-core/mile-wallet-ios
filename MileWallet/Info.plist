@@ -36,7 +36,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>208</string>
+	<string>240</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -46,6 +46,8 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>QRCode Scaner</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Access to the MILE Wallet Private Keys store</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Contact book usage</string>
 	<key>UIAppFonts</key>
