@@ -9,14 +9,15 @@
 import UIKit
 import MileWalletKit
 
-class RootController: NavigationController {
 
-    override func viewDidLoad() {
-        super.viewDidLoad()        
-    }
+class RootController: NavigationController {
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+    }
+       
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-
 }

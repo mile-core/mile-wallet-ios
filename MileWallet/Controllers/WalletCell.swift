@@ -37,8 +37,9 @@ class WalletCell: Controller {
     fileprivate let shadowBorder = UIView()
        
     override func viewDidLoad() {
+
         super.viewDidLoad()
-        
+                
         content.backgroundColor = UIColor.white
         shadow.backgroundColor = content.backgroundColor
         shadowBorder.backgroundColor = content.backgroundColor

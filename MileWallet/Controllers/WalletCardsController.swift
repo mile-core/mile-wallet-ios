@@ -16,11 +16,36 @@ class WalletCardsController: Controller {
         return _currentIndex ?? NSNotFound
     }
     
+    private var passcodeScreen = PasscodeScreen()
+
+    private func presentPasscodeScreen(){
+        
+        if PasscodeStrore.shared.isRegistered {
+            guard passcodeScreen.presentingViewController == nil else { return }
+            self.passcodeScreen.settingsMode = false
+            present(passcodeScreen, animated: true)
+        }
+        else {
+            if passcodeScreen.presentingViewController != nil { passcodeScreen.dismiss(animated: false)}
+            UIAlertController(title: NSLocalizedString("Security Alert!", comment: ""),
+                              message: NSLocalizedString("To avoid insecure access MILE Wallet please configure access with passcode", comment: ""),
+                              preferredStyle: .actionSheet)
+                .addAction(title: NSLocalizedString("Cancel", comment: ""),
+                           style: UIAlertActionStyle.cancel)
+                .addAction(title: NSLocalizedString("Open passcode settings", comment: ""),
+                           style: .default, handler: { (action) in
+                        self.passcodeScreen.settingsMode = true
+                        self.present(self.passcodeScreen, animated: true)
+                })
+                .present(by: self)
+        }
+    }
+    
     override func viewDidLoad() {
+
+        presentPasscodeScreen()
+
         super.viewDidLoad()
-        
-        
-         NotificationCenter.default.addObserver(self, selector: #selector(unifersalLinkUpdated(notification:)), name: WalletUniversalLink.kDidUpdateNotification, object: nil)
         
         view.addSubview(newWalletButton)
         view.addSubview(archiveButton)
@@ -84,6 +109,24 @@ class WalletCardsController: Controller {
         tap.numberOfTapsRequired = 1
         tap.numberOfTouchesRequired = 1
         pageViewController.view.addGestureRecognizer(tap)
+        
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(unifersalLinkUpdated(notification:)), name: WalletUniversalLink.kDidUpdateNotification, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(enterForeground(_:)), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(enterBackground(_:)), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+   
+        NotificationCenter.default.addObserver(self, selector: #selector(enterBackground(_:)), name: NSNotification.Name.UIApplicationWillTerminate, object: nil)
+
+    }
+
+    @objc private func enterBackground(_ notification:NSNotification) {
+        presentPasscodeScreen()
+    }
+    
+    @objc private func enterForeground(_ notification:NSNotification) {
+        presentPasscodeScreen()
     }
     
     @objc private func unifersalLinkUpdated(notification:Notification) {
@@ -163,7 +206,6 @@ class WalletCardsController: Controller {
         super.viewDidDisappear(animated)
         lastIndex = _currentIndex ?? 0
     }
-    
     
     ///
     /// Apple does not motivate to use UIPageViewController with dinamic content.
@@ -380,4 +422,5 @@ extension WalletCardsController {
         return viewControllers.index(of: viewController) ?? NSNotFound
     }
 }
+
 

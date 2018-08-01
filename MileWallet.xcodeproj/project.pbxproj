@@ -22,6 +22,9 @@
 		3144B6652106727800ED27BF /* SF-Pro-Display-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3144B6622106727800ED27BF /* SF-Pro-Display-Bold.otf */; };
 		3144B6662106727800ED27BF /* SF-Pro-Text-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3144B6632106727800ED27BF /* SF-Pro-Text-Regular.otf */; };
 		3144B6672106727800ED27BF /* SF-Pro-Text-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3144B6642106727800ED27BF /* SF-Pro-Text-Semibold.otf */; };
+		3164197F2111F69100E6650E /* PasscodeScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3164197D2111F69100E6650E /* PasscodeScreen.xib */; };
+		316419812112054D00E6650E /* PasswordScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316419802112054D00E6650E /* PasswordScreen.swift */; };
+		316419832112077A00E6650E /* PasscodeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316419822112077A00E6650E /* PasscodeStore.swift */; };
 		3164FD8120C950ED00294A9F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3164FD8020C950ED00294A9F /* AppDelegate.swift */; };
 		3164FD8D20C950ED00294A9F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3164FD8B20C950ED00294A9F /* LaunchScreen.storyboard */; };
 		3182CDC320D1C462000C3C68 /* HTMLTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3182CDC220D1C462000C3C68 /* HTMLTemplate.swift */; };
@@ -34,7 +37,6 @@
 		3185C50F210F175E004E8717 /* CoinsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3185C50E210F175E004E8717 /* CoinsOperation.swift */; };
 		318B694720EBCB1A00DCDDB1 /* TextField(App).swift in Sources */ = {isa = PBXBuildFile; fileRef = 318B694620EBCB1A00DCDDB1 /* TextField(App).swift */; };
 		3198353D210F6B4B00E7718F /* PrintContactTemplate.html in Resources */ = {isa = PBXBuildFile; fileRef = 3198353C210F6B4B00E7718F /* PrintContactTemplate.html */; };
-		319AC52B20E642B000FB0D65 /* 00-03-logo-fill-blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 319AC52A20E642AF00FB0D65 /* 00-03-logo-fill-blue.png */; };
 		31A9FE9E20DBD2EB00779F60 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A9FE9D20DBD2EB00779F60 /* Config.swift */; };
 		31B13C12210CB87C00446E9D /* WalletContacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B13C11210CB87C00446E9D /* WalletContacts.swift */; };
 		31B169102109A0570004DE8E /* WalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B1690F2109A0570004DE8E /* WalletCell.swift */; };
@@ -71,6 +73,9 @@
 		3144B6622106727800ED27BF /* SF-Pro-Display-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro-Display-Bold.otf"; sourceTree = "<group>"; };
 		3144B6632106727800ED27BF /* SF-Pro-Text-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro-Text-Regular.otf"; sourceTree = "<group>"; };
 		3144B6642106727800ED27BF /* SF-Pro-Text-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro-Text-Semibold.otf"; sourceTree = "<group>"; };
+		3164197D2111F69100E6650E /* PasscodeScreen.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PasscodeScreen.xib; sourceTree = "<group>"; };
+		316419802112054D00E6650E /* PasswordScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordScreen.swift; sourceTree = "<group>"; };
+		316419822112077A00E6650E /* PasscodeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasscodeStore.swift; sourceTree = "<group>"; };
 		3164FD7D20C950ED00294A9F /* MileWallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MileWallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3164FD8020C950ED00294A9F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3164FD8C20C950ED00294A9F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -85,7 +90,6 @@
 		3185C50E210F175E004E8717 /* CoinsOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoinsOperation.swift; sourceTree = "<group>"; };
 		318B694620EBCB1A00DCDDB1 /* TextField(App).swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TextField(App).swift"; sourceTree = "<group>"; };
 		3198353C210F6B4B00E7718F /* PrintContactTemplate.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = PrintContactTemplate.html; sourceTree = "<group>"; };
-		319AC52A20E642AF00FB0D65 /* 00-03-logo-fill-blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "00-03-logo-fill-blue.png"; sourceTree = "<group>"; };
 		31A9FE9D20DBD2EB00779F60 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		31A9FE9F20DBD50900779F60 /* MileWallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MileWallet.entitlements; sourceTree = "<group>"; };
 		31B13C11210CB87C00446E9D /* WalletContacts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletContacts.swift; sourceTree = "<group>"; };
@@ -155,6 +159,8 @@
 				31848E6E2110671700C5A427 /* ArchivedWallets.swift */,
 				3185C50E210F175E004E8717 /* CoinsOperation.swift */,
 				3140C4DD210DD99D00DFD4B7 /* SendCoinsChooser.swift */,
+				316419802112054D00E6650E /* PasswordScreen.swift */,
+				3164197D2111F69100E6650E /* PasscodeScreen.xib */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -255,6 +261,7 @@
 				31F1C86A210C926600C1DF8E /* Model.swift */,
 				31F1C873210C9DEE00C1DF8E /* Model.xcdatamodeld */,
 				31BB792420EA787400AC301A /* WalletStore.swift */,
+				316419822112077A00E6650E /* PasscodeStore.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -263,7 +270,6 @@
 			isa = PBXGroup;
 			children = (
 				3144B6612106727800ED27BF /* Fonts */,
-				319AC52A20E642AF00FB0D65 /* 00-03-logo-fill-blue.png */,
 				3182CDC820D2AA9D000C3C68 /* PrintInvoiceTemplate.html */,
 				31F2CFE420D177A000C1770B /* PrintSecretTemplate.html */,
 				3198353C210F6B4B00E7718F /* PrintContactTemplate.html */,
@@ -370,9 +376,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				3164FD8D20C950ED00294A9F /* LaunchScreen.storyboard in Resources */,
+				3164197F2111F69100E6650E /* PasscodeScreen.xib in Resources */,
 				3144B6672106727800ED27BF /* SF-Pro-Text-Semibold.otf in Resources */,
 				3182CDC920D2AA9E000C3C68 /* PrintInvoiceTemplate.html in Resources */,
-				319AC52B20E642B000FB0D65 /* 00-03-logo-fill-blue.png in Resources */,
 				3185BBF421071937004CDBEF /* Assets.xcassets in Resources */,
 				31F2CFE520D177A000C1770B /* PrintSecretTemplate.html in Resources */,
 				313F13DB20E3FA900074796D /* MileWallet-AASA in Resources */,
@@ -484,10 +490,12 @@
 				31848E6F2110671700C5A427 /* ArchivedWallets.swift in Sources */,
 				31BB792320EA703300AC301A /* Printer.swift in Sources */,
 				3140C4DE210DD99D00DFD4B7 /* SendCoinsChooser.swift in Sources */,
+				316419812112054D00E6650E /* PasswordScreen.swift in Sources */,
 				31B6091C2109A2C500B66FD8 /* EmptyWallet.swift in Sources */,
 				31848E6D2110533D00C5A427 /* ContactView.swift in Sources */,
 				3185BBF621072918004CDBEF /* UIButton(App).swift in Sources */,
 				31B169142109A1BF0004DE8E /* WalletPreview.swift in Sources */,
+				316419832112077A00E6650E /* PasscodeStore.swift in Sources */,
 				3144B65A210618F900ED27BF /* WalletCardsController.swift in Sources */,
 				31BB792520EA787400AC301A /* WalletStore.swift in Sources */,
 				3182CDC320D1C462000C3C68 /* HTMLTemplate.swift in Sources */,
