@@ -28,10 +28,14 @@ class WalletCardsController: Controller {
         view.addSubview(verticalLineLeft)
         view.addSubview(verticalLineRight)
         
-
+        var h:CGFloat = 88
+            if UIScreen.main.bounds.size.height < 640 {
+                    h = 66
+            }
+        
         verticalLineLeft.snp.makeConstraints { (m) in
             m.centerX.equalTo(view.snp.right).multipliedBy(1.0/3.0)
-            m.height.equalTo(84)
+            m.height.equalTo(h)
             m.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
             m.width.equalTo(1)
         }
@@ -44,23 +48,21 @@ class WalletCardsController: Controller {
         }
         
         newWalletButton.snp.makeConstraints { (m) in
-            m.centerY.equalTo(verticalLineLeft.snp.centerY).offset(-7)
             m.centerX.equalTo(view.snp.right).multipliedBy(1.0/6.0)
-            m.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-27)
-            m.width.equalTo(88)
+            m.top.equalTo(verticalLineLeft.snp.top).offset(15)
+            m.bottom.equalTo(verticalLineLeft.snp.bottom).offset(-15)
         }
         
         archiveButton.snp.makeConstraints { (m) in
-            m.centerY.equalTo(newWalletButton.snp.centerY)
             m.centerX.equalTo(view.snp.right).multipliedBy(5.0/6.0)
+            m.centerY.equalTo(newWalletButton.snp.centerY)
             m.bottom.equalTo(newWalletButton.snp.bottom)
-            m.width.equalTo(88)
         }
         
         contactsButton.snp.makeConstraints { (m) in
-            m.centerY.equalTo(newWalletButton.snp.centerY)
             m.centerX.equalToSuperview()
-            m.width.equalTo(88)
+            m.centerY.equalTo(newWalletButton.snp.centerY)
+            m.bottom.equalTo(newWalletButton.snp.bottom)
         }
         
         addChildViewController(pageViewController)
@@ -70,7 +72,10 @@ class WalletCardsController: Controller {
             m.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(Config.iPhoneX ? 20 : 0)
             m.left.equalTo(view).offset(0)
             m.right.equalTo(view).offset(0)
-            pagerOffset = m.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(Config.iPhoneX ? -160 : -140).constraint
+            pagerOffset = m.bottom
+                .equalTo(view.safeAreaLayoutGuide.snp.bottom)
+                .offset(Config.iPhoneX ? -160 : -140)
+                .constraint
         }
         
         pageViewController.didMove(toParentViewController: self)
@@ -118,10 +123,13 @@ class WalletCardsController: Controller {
                     self.verticalLineRight.alpha = 1
                     self.archiveButton.alpha = 1
                 }
-                
-                if self.viewControllers.count > 1 {
-                    self.pagerOffset?.update(offset: Config.iPhoneX ? -140 : -110)
-                }
+            }
+            
+            if self.viewControllers.count > 1 {
+                self.pagerOffset?.update(offset: Config.iPhoneX ? -140 : UIScreen.main.bounds.height < 640 ? -90 : -120)
+            }
+            else {
+                self.pagerOffset?.update(offset: Config.iPhoneX ? -160 : UIScreen.main.bounds.height < 640 ? -110  : -140)
             }
         }
     }
@@ -138,33 +146,18 @@ class WalletCardsController: Controller {
         return v
     }()
     
-    private lazy var newWalletButton:UIButton = {
-        let b = UIButton.toolBarButton()
-        b.setImage(UIImage(named: "button-new-wallet"), for: UIControlState.normal)
-        b.imageView?.contentMode = .scaleAspectFit
-        b.setTitle(NSLocalizedString("Add Wallet", comment: ""), for: .normal)
-        b.addTarget(self, action:#selector(newWallet(sender:)), for: UIControlEvents.touchUpInside)
-        return b
-    }()
-
-    private lazy var contactsButton:UIButton = {
-        let b = UIButton.toolBarButton()
-        b.setImage(UIImage(named: "button-contact-book"), for: UIControlState.normal)
-        b.imageView?.contentMode = .scaleAspectFit
-        b.setTitle(NSLocalizedString("Contacts", comment: ""), for: .normal)
-        b.addTarget(self, action:#selector(openContact(sender:)), for: UIControlEvents.touchUpInside)
-        return b
-    }()
-
-    private lazy var archiveButton:UIButton = {
-        let b = UIButton.toolBarButton()
-        b.setImage(UIImage(named: "button-archive-wallets"), for: UIControlState.normal)
-        b.imageView?.contentMode = .scaleAspectFit
-        b.setTitle(NSLocalizedString("Archive", comment: ""), for: .normal)
-        b.addTarget(self, action:#selector(archiveWallet(sender:)), for: UIControlEvents.touchUpInside)
-        return b
-    }()
+    private lazy var newWalletButton:UIButton = UIButton.toolBarButton(image: UIImage(named: "button-new-wallet"),
+                                                                       title: NSLocalizedString("Add Wallet", comment: ""),
+                                                                       target: self, action: #selector(newWallet(sender:)))
     
+    private lazy var contactsButton:UIButton = UIButton.toolBarButton(image: UIImage(named: "button-contact-book"),
+                                                                      title: NSLocalizedString("Contacts", comment: ""),
+                                                                      target: self, action:  #selector(openContact(sender:)))
+   
+    private lazy var archiveButton:UIButton = UIButton.toolBarButton(image: UIImage(named: "button-archive-wallets"),
+                                                                     title: NSLocalizedString("Archive", comment: ""),
+                                                                     target: self, action: #selector(archiveWallet(sender:)))
+       
     fileprivate var lastIndex = 0
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)

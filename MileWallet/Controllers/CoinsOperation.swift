@@ -375,7 +375,11 @@ class CoinsOperation: Controller {
             guard var url = wallet?.wallet?.paymentLink(assets: asset.name, amount: asset.stringValue(asked)) else { return }
             
             url = url.replacingOccurrences(of: "https:", with: Config.appSchema)
-            let activity = UIActivityViewController(activityItems: ["Please send your coins to the address", url], applicationActivities:nil)
+           
+            let activity = UIActivityViewController(
+                activityItems: ["Please send your coins to the address", url],
+                applicationActivities:nil)
+            
             present(activity, animated: true)
         }
     }
@@ -422,6 +426,7 @@ extension CoinsOperation: UIPrintInteractionControllerDelegate {
     
     func printInteractionControllerWillPresentPrinterOptions(_ printInteractionController: UIPrintInteractionController) {
         UIApplication.shared.keyWindow?.addSubview(printControllerBg)
+            
         printControllerBg.snp.makeConstraints { (m) in
             m.edges.equalToSuperview().inset(UIEdgeInsets(top: -200, left: 0, bottom: 0, right: 0))
         }

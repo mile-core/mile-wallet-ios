@@ -29,6 +29,18 @@ public class WalletUniversalLink {
     private init (){}
 }
 
+extension UINavigationBar {
+    @objc public var substituteTitleColor : [NSAttributedStringKey : Any]? {
+        get {
+            return largeTitleTextAttributes
+        }
+        set {
+            largeTitleTextAttributes = newValue
+        }
+    }
+}
+
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
     
@@ -60,16 +72,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
         }
 
         
-        UINavigationBar.appearance().titleTextAttributes = [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarTitle,
-                                                            NSAttributedStringKey.font: Config.Fonts.navigationBarTitle]
+        UINavigationBar.appearance()
+            .titleTextAttributes = [NSAttributedStringKey.font: Config.Fonts.navigationBarTitle]
+      
+        UINavigationBar.appearance(whenContainedInInstancesOf: [Controller.self])
+            .titleTextAttributes = [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarTitle]
+
+        UINavigationBar.appearance(whenContainedInInstancesOf: [NavigationController.self])
+            .titleTextAttributes = [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarTitle]
+
         
-        UINavigationBar.appearance().largeTitleTextAttributes =
+        UINavigationBar.appearance().substituteTitleColor =
             [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarLargeTitle,
              NSAttributedStringKey.font: Config.Fonts.navigationBarLargeTitle]
         
         UIBarButtonItem.appearance()
-            .setTitleTextAttributes([NSAttributedStringKey.foregroundColor: Config.Colors.title,
-                                     NSAttributedStringKey.font: Config.Fonts.title], for: .normal)
+            .setTitleTextAttributes([NSAttributedStringKey.font: Config.Fonts.title], for: .normal)
+
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [Controller.self])
+            .setTitleTextAttributes([NSAttributedStringKey.foregroundColor: Config.Colors.title], for: .normal)
+
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [NavigationController.self])
+            .setTitleTextAttributes([NSAttributedStringKey.foregroundColor: Config.Colors.title], for: .normal)
+
         
         UINavigationBar.appearance().prefersLargeTitles = true
         UINavigationBar.appearance().barStyle = .default

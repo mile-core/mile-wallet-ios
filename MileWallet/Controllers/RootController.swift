@@ -7,12 +7,12 @@
 //
 
 import UIKit
-import CoreData
+import MileWalletKit
 
 class RootController: NavigationController {
 
     override func viewDidLoad() {
-        super.viewDidLoad()
+        super.viewDidLoad()        
     }
     
     override func didReceiveMemoryWarning() {

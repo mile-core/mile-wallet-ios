@@ -193,10 +193,10 @@
 			children = (
 				3185BBF321071936004CDBEF /* Assets.xcassets */,
 				31A9FE9F20DBD50900779F60 /* MileWallet.entitlements */,
+				3144B6562106183400ED27BF /* Controllers */,
 				3140C4DA210DAA8F00DFD4B7 /* Utils */,
 				311A40422107CA1E0015952B /* Color Picker */,
 				31F1C869210C8F7C00C1DF8E /* Model */,
-				3144B6562106183400ED27BF /* Controllers */,
 				318B694820EBCB4200DCDDB1 /* Views(Extension) */,
 				31F2CFE320D1772800C1770B /* Resources */,
 				31A77C8120C9527500462923 /* Classes */,

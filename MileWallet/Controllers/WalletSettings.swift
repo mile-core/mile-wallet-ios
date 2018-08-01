@@ -399,6 +399,7 @@ extension WalletSettings: UIPrintInteractionControllerDelegate {
     
     func printInteractionControllerWillPresentPrinterOptions(_ printInteractionController: UIPrintInteractionController) {
         UIApplication.shared.keyWindow?.addSubview(printControllerBg)
+      
         printControllerBg.snp.makeConstraints { (m) in
             m.edges.equalToSuperview().inset(UIEdgeInsets(top: -200, left: 0, bottom: 0, right: 0))
         }

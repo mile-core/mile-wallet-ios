@@ -62,8 +62,13 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
     
     @objc func sendLink(_ sender:Any) {
         guard var url = wallet?.wallet?.publicKeyLink() else { return }
+        
         url = url.replacingOccurrences(of: "https:", with: Config.appSchema)
-        let activity = UIActivityViewController(activityItems: ["This is my MILE wallet address link", url], applicationActivities:nil)
+        
+        let activity = UIActivityViewController(
+            activityItems: ["This is my MILE wallet address link", url],
+            applicationActivities:nil)
+        
         present(activity, animated: true)
     }
     
@@ -274,7 +279,7 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
         }
         
         copyAddressButton.snp.remakeConstraints { (m) in
-            m.top.lessThanOrEqualTo(balance.snp.bottom).offset(30)//.priority(.low)
+            m.top.lessThanOrEqualTo(balance.snp.bottom).offset(30)
             m.bottom.lessThanOrEqualTo(toolBar.snp.top).offset(-20).priority(.low)
             m.left.right.equalTo(contentView).inset(60)
             m.height.equalTo(60)

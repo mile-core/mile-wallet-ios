@@ -40,6 +40,7 @@ class Controller: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         view.backgroundColor = UIColor.clear
         contentView.backgroundColor = UIColor.clear
         view.addSubview(contentView)
@@ -148,7 +149,23 @@ public class NavigationController: UINavigationController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.navigationBar.prefersLargeTitles = true
+        navigationBar
+            .titleTextAttributes =
+            [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarTitle,
+             NSAttributedStringKey.font: Config.Fonts.navigationBarTitle]
+        
+        navigationBar
+            .largeTitleTextAttributes =
+            [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarLargeTitle,
+             NSAttributedStringKey.font: Config.Fonts.navigationBarLargeTitle]
+        
+        navigationBar.barStyle = .default
+        navigationBar.tintColor = UIColor.white
+        navigationBar.isTranslucent = true
+        navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationBar.shadowImage = UIImage()
+        
+        navigationBar.prefersLargeTitles = true
         
         view.insertSubview(bg, at: 0)
         bg.backgroundColor = titleColor
