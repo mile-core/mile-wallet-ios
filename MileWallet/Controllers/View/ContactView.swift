@@ -68,6 +68,7 @@ class ContactView: UIView {
         super.init(frame: frame)
         
         iconView.backgroundColor = UIColor(hex: 0xD5E9F5)
+        iconView.frame = CGRect(x: 0, y: 0, width: 60, height: 60)
         iconView.layer.cornerRadius = iconView.frame.size.width  / 2
         iconView.clipsToBounds = true
         iconView.contentMode = .scaleAspectFill
@@ -78,8 +79,10 @@ class ContactView: UIView {
         
         iconView.snp.makeConstraints { (m) in
             m.left.equalToSuperview().offset(20)
-            m.top.equalTo(self).offset(16)
-            m.bottom.equalTo(self).offset(-16)
+            //m.top.equalTo(self).offset(16)
+            //m.bottom.equalTo(self).offset(-16)
+            m.centerY.equalToSuperview()
+            m.height.equalTo(60)
             m.width.equalTo(iconView.snp.height)
         }
         

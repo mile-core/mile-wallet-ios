@@ -82,7 +82,12 @@ class WalletContacts: Controller {
             add(sender: self)
         }
     }
-       
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        UIButton.appearance().setTitleColor(Config.Colors.button, for: .normal)
+    }
+    
     private var wallet:WalletContainer? {
         didSet{
             _tableController.wallet = wallet
@@ -199,6 +204,19 @@ extension ContactsController {
 
     }
     
+    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        let delete = UITableViewRowAction(style: UITableViewRowActionStyle.destructive,
+                                          title: NSLocalizedString("Delete", comment: ""))
+        { (action, indexPath) in
+            self.tableView(tableView,
+                           commit: UITableViewCellEditingStyle.delete, forRowAt: indexPath)
+        }
+        
+        UIButton.appearance().setTitleColor(UIColor.white, for: .normal)
+        
+        return [delete]
+    }
+    
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return !isBook
     }
@@ -206,22 +224,32 @@ extension ContactsController {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         
         if editingStyle == .delete {
-            
+
             let l = list
             let contact = l[indexPath.row]
-                        
-            Model.shared.context.delete(contact)
             
-            do{
-                try Model.shared.context.save()
-                
-                if l.count >= 1 {
-                    tableView.deleteRows(at: [indexPath], with: .automatic)
-                }
+            UIAlertController(title: NSLocalizedString("Delete: ", comment: "") + (contact.name ?? " - "),
+                              message: NSLocalizedString("Are you sure you want to permanently delete the contact?", comment: ""),
+                              preferredStyle: .actionSheet)
+                .addAction(title: NSLocalizedString("Cancel", comment: ""),
+                           style: .cancel)
+                .addAction(title: NSLocalizedString("Delete", comment: ""), style: .destructive) { (action) in
+                    Model.shared.context.delete(contact)
+                    
+                    do{
+                        try Model.shared.context.save()
+                       
+                        if l.count >= 1 {
+                            self.tableView.beginUpdates()
+                            self.tableView.deleteRows(at: [indexPath], with: .automatic)
+                            self.tableView.endUpdates()
+                        }
+                    }
+                    catch let error {
+                        print("Model error: \(error)")
+                    }
             }
-            catch let error {
-                print("Model error: \(error)")
-            }
+            .present(by: self)
         }
     }
 }
