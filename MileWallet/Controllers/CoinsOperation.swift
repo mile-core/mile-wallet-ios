@@ -104,7 +104,8 @@ class CoinsOperation: Controller {
                                                            target: self,
                                                            action: #selector(self.closeHandler(sender:)))
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Next", comment: ""), style: .plain,
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Next", comment: ""),
+                                                            style: .plain,
                                                             target: self,
                                                             action: #selector(doneHandler(_:)))
 
@@ -305,7 +306,6 @@ class CoinsOperation: Controller {
             return
         }
         
-        
         loaderStart()
         
         Balance.update(wallet: w, error: { (error) in
@@ -409,39 +409,17 @@ class CoinsOperation: Controller {
         return a
     }()
     
-    fileprivate lazy var coinsPicker:UIPickerView = UIPickerView()
-    
-    fileprivate lazy var printControllerBg:UIImageView = {
-        let v = UIImageView(image: Config.Images.basePattern)
-        v.alpha = 0
-        return v
-    }()
+    fileprivate lazy var coinsPicker:UIPickerView = UIPickerView()       
 }
 
 extension CoinsOperation: UIPrintInteractionControllerDelegate {
     
     func printInteractionControllerParentViewController(_ printInteractionController: UIPrintInteractionController) -> UIViewController? {
-        return self.navigationController?.topViewController
+        return self.navigationController
     }
     
     func printInteractionControllerWillPresentPrinterOptions(_ printInteractionController: UIPrintInteractionController) {
-        UIApplication.shared.keyWindow?.addSubview(printControllerBg)
-            
-        printControllerBg.snp.makeConstraints { (m) in
-            m.edges.equalToSuperview().inset(UIEdgeInsets(top: -200, left: 0, bottom: 0, right: 0))
-        }
-        printControllerBg.backgroundColor = UIColor(hex: wallet?.attributes?.color ?? 255)
-        UIView.animate(withDuration: Config.animationDuration) {
-            self.printControllerBg.alpha = 1
-        }
-    }
-    
-    func printInteractionControllerDidDismissPrinterOptions(_ printInteractionController: UIPrintInteractionController) {
-        UIView.animate(withDuration: Config.animationDuration, animations: {
-            self.printControllerBg.alpha = 0
-        }) { (flag) in
-            self.printControllerBg.removeFromSuperview()
-        }
+        self.navigationController?.navigationBar.backgroundColor =  UIColor.clear
     }
 }
 
@@ -449,7 +427,6 @@ extension CoinsOperation: UITextFieldDelegate {
 
     @objc fileprivate func amountChainging(_ sender:UITextField) {
         qrCodeUpdate()
-
     }
     
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {

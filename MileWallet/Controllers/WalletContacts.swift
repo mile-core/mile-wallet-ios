@@ -78,6 +78,7 @@ class WalletContacts: Controller {
         _tableController.tableView.reloadData()
         
         if WalletUniversalLink.shared.invoice != nil {
+            //_tableController.view.alpha = 0
             add(sender: self)
         }
     }
@@ -96,6 +97,9 @@ class WalletContacts: Controller {
     @objc private func add(sender:Any) {
         _contactOptionsController.contact = nil
         _contactOptionsController.wallet = self.wallet
+        UIView.animate(withDuration: Config.animationDuration) {
+            self._tableController.view.alpha = 1
+        }
         presentInNavigationController(_contactOptionsController, animated: true)
     }
     

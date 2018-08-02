@@ -16,6 +16,7 @@ extension Config {
     public static let walletService = "GHD7Y8FG8V.global.mile.wallet"  //GHD7Y8FG8V
     public static var isWalletKeychainSynchronizable = true
     
+    public static let activeWalletsLimit = 16
     public static let reloadTimerInterval:TimeInterval = 5
     public static let pageControlsNumbers = 5
     public static let animationDuration:TimeInterval = 0.2
@@ -36,6 +37,7 @@ extension Config {
         public static let name = UIColor.white
         public static let title = name
         public static let button = UIColor(hex: 0xBCC3C3)
+        public static let archivedCell = UIColor(hex: 0xBEC5CB)
         public static let blueButton = UIColor(hex: 0x2371B3)
         public static let redButton = UIColor(hex: 0xFF3B30)
         public static let back = UIColor(hex: 0x3E50CE)

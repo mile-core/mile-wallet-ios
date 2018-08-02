@@ -20,7 +20,6 @@
 		3140C4DC210DAAAF00DFD4B7 /* Date(Formater).swift in Sources */ = {isa = PBXBuildFile; fileRef = 3140C4DB210DAAAF00DFD4B7 /* Date(Formater).swift */; };
 		3140C4DE210DD99D00DFD4B7 /* SendCoinsChooser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3140C4DD210DD99D00DFD4B7 /* SendCoinsChooser.swift */; };
 		3144B658210618D900ED27BF /* RootController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3144B657210618D900ED27BF /* RootController.swift */; };
-		3144B65A210618F900ED27BF /* WalletCardsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3144B659210618F900ED27BF /* WalletCardsController.swift */; };
 		3144B6602106311E00ED27BF /* UImage(Gradient).swift in Sources */ = {isa = PBXBuildFile; fileRef = 3144B65F2106311E00ED27BF /* UImage(Gradient).swift */; };
 		3144B6652106727800ED27BF /* SF-Pro-Display-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3144B6622106727800ED27BF /* SF-Pro-Display-Bold.otf */; };
 		3144B6662106727800ED27BF /* SF-Pro-Text-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3144B6632106727800ED27BF /* SF-Pro-Text-Regular.otf */; };
@@ -50,6 +49,7 @@
 		31BB792520EA787400AC301A /* WalletStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31BB792420EA787400AC301A /* WalletStore.swift */; };
 		31D1333420D9A1E200E2E8D9 /* LocalAuthentication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31D1333320D9A1E200E2E8D9 /* LocalAuthentication.framework */; };
 		31D26322210A74E600797080 /* WalletInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31D26321210A74E600797080 /* WalletInfo.swift */; };
+		31D7D1092113620500CC57C8 /* WalletsPager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31D7D1082113620400CC57C8 /* WalletsPager.swift */; };
 		31E4E06421076B0900ACE8FD /* WalletDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E4E06321076B0900ACE8FD /* WalletDetails.swift */; };
 		31E6BF4020D91A6D00C40A80 /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E6BF3F20D91A6D00C40A80 /* Controller.swift */; };
 		31F1C86B210C926600C1DF8E /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31F1C86A210C926600C1DF8E /* Model.swift */; };
@@ -73,7 +73,6 @@
 		3140C4DB210DAAAF00DFD4B7 /* Date(Formater).swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date(Formater).swift"; sourceTree = "<group>"; };
 		3140C4DD210DD99D00DFD4B7 /* SendCoinsChooser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendCoinsChooser.swift; sourceTree = "<group>"; };
 		3144B657210618D900ED27BF /* RootController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootController.swift; sourceTree = "<group>"; };
-		3144B659210618F900ED27BF /* WalletCardsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletCardsController.swift; sourceTree = "<group>"; };
 		3144B65F2106311E00ED27BF /* UImage(Gradient).swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UImage(Gradient).swift"; sourceTree = "<group>"; };
 		3144B6622106727800ED27BF /* SF-Pro-Display-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro-Display-Bold.otf"; sourceTree = "<group>"; };
 		3144B6632106727800ED27BF /* SF-Pro-Text-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro-Text-Regular.otf"; sourceTree = "<group>"; };
@@ -107,6 +106,7 @@
 		31BB792420EA787400AC301A /* WalletStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletStore.swift; sourceTree = "<group>"; };
 		31D1333320D9A1E200E2E8D9 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = System/Library/Frameworks/LocalAuthentication.framework; sourceTree = SDKROOT; };
 		31D26321210A74E600797080 /* WalletInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletInfo.swift; sourceTree = "<group>"; };
+		31D7D1082113620400CC57C8 /* WalletsPager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WalletsPager.swift; sourceTree = "<group>"; };
 		31E4E06321076B0900ACE8FD /* WalletDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetails.swift; sourceTree = "<group>"; };
 		31E6BF3F20D91A6D00C40A80 /* Controller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
 		31F1C86A210C926600C1DF8E /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
@@ -152,7 +152,7 @@
 				31848E6B2110532E00C5A427 /* View */,
 				31E6BF3F20D91A6D00C40A80 /* Controller.swift */,
 				3144B657210618D900ED27BF /* RootController.swift */,
-				3144B659210618F900ED27BF /* WalletCardsController.swift */,
+				31D7D1082113620400CC57C8 /* WalletsPager.swift */,
 				31B1690F2109A0570004DE8E /* WalletCell.swift */,
 				31D26321210A74E600797080 /* WalletInfo.swift */,
 				31B169132109A1BF0004DE8E /* WalletPreview.swift */,
@@ -505,6 +505,7 @@
 				318B694720EBCB1A00DCDDB1 /* TextField(App).swift in Sources */,
 				3182CDC520D1C481000C3C68 /* PDF.swift in Sources */,
 				31848E6F2110671700C5A427 /* ArchivedWallets.swift in Sources */,
+				31D7D1092113620500CC57C8 /* WalletsPager.swift in Sources */,
 				31BB792320EA703300AC301A /* Printer.swift in Sources */,
 				3140C4DE210DD99D00DFD4B7 /* SendCoinsChooser.swift in Sources */,
 				316419812112054D00E6650E /* PasswordScreen.swift in Sources */,
@@ -513,7 +514,6 @@
 				3185BBF621072918004CDBEF /* UIButton(App).swift in Sources */,
 				31B169142109A1BF0004DE8E /* WalletPreview.swift in Sources */,
 				316419832112077A00E6650E /* PasscodeStore.swift in Sources */,
-				3144B65A210618F900ED27BF /* WalletCardsController.swift in Sources */,
 				31BB792520EA787400AC301A /* WalletStore.swift in Sources */,
 				3182CDC320D1C462000C3C68 /* HTMLTemplate.swift in Sources */,
 				31E6BF4020D91A6D00C40A80 /* Controller.swift in Sources */,

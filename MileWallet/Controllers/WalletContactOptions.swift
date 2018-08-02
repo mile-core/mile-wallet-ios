@@ -50,7 +50,7 @@ class WalletContactOptions: Controller, UITextFieldDelegate {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         _tableController.publicKey.isUserInteractionEnabled = true
-        WalletUniversalLink.shared.invoice = nil
+        //WalletUniversalLink.shared.invoice = nil
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -82,7 +82,8 @@ class WalletContactOptions: Controller, UITextFieldDelegate {
     
     @objc private func closePayments(sender:Any){
         WalletUniversalLink.shared.invoice = nil
-        dismiss(animated: true)
+        dismiss(animated: true){
+        }
     }
     
     @objc private func doneHandler(_ sender: UIButton) {

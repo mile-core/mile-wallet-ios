@@ -17,14 +17,7 @@ public class WalletUniversalLink {
     
     public static let kDidUpdateNotification = Notification.Name("CameraQRDidUpdate")
     
-    public var invoice:Invoice? {
-        didSet{
-        
-            if invoice != nil {
-                NotificationCenter.default.post(Notification(name: WalletUniversalLink.kDidUpdateNotification))
-            }
-        }
-    }
+    public var invoice:Invoice?
     public static var shared = WalletUniversalLink()
     private init (){}
 }
@@ -47,7 +40,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
     
     var window: UIWindow?
     var navigationController:RootController?
-    var viewController:WalletCardsController?
+    var viewController:WalletsPager?
+    
+    var passcodeScreen = PasscodeScreen()
+
     
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -97,7 +93,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
 
         
         UINavigationBar.appearance().prefersLargeTitles = true
-        UINavigationBar.appearance().barStyle = .default
+        UINavigationBar.appearance().barStyle = .blackTranslucent
         UINavigationBar.appearance().tintColor = UIColor.white
         UINavigationBar.appearance().isTranslucent = true
         UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
@@ -120,14 +116,84 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
         
         window?.backgroundColor = Config.Colors.background
         
-        viewController = WalletCardsController()
-        
-        navigationController = RootController(rootViewController: viewController!)
-        window?.rootViewController = navigationController;
+        viewController = WalletsPager()
+
+        navigationController = RootController()
+        navigationController?.setViewControllers([viewController!], animated: true)
+
+        if PasscodeStrore.shared.isRegistered {
+            window?.rootViewController = passcodeScreen
+        }
+        else {
+            window?.rootViewController = navigationController
+        }
         window?.makeKeyAndVisible()
+
+        passcodeScreen.didVerifyHandler = { controller in
+            
+            guard PasscodeStrore.shared.isRegistered else { return }
+            
+            self.navigationController?.view.alpha = 0
+
+            UIView.animate(withDuration: Config.animationDuration, animations: {
+                
+                self.passcodeScreen.view.alpha = 0
+                
+            }, completion: { (flag) in
+                
+                self.passcodeScreen.removeFromParentViewController()
+                
+                self.window?.rootViewController = self.navigationController
+            
+                UIView.animate(withDuration: Config.animationDuration, animations: {
+                    
+                    self.navigationController?.view.alpha = 1
+                    
+                }, completion: { (flag) in
+                    if WalletUniversalLink.shared.invoice != nil {
+                        NotificationCenter.default.post(Notification(name: WalletUniversalLink.kDidUpdateNotification))
+                    }
+                })
+            })
+        }
+        
         return true
     }
     
+    func applicationWillResignActive(_ application: UIApplication) {
+        
+        guard PasscodeStrore.shared.isRegistered else { return }
+
+        UIView.animate(withDuration: Config.animationDuration, animations: {
+            
+            self.navigationController?.view.alpha = 0
+            
+        }) { (flag) in
+            self.passcodeScreen.view.alpha = 1
+            self.window?.rootViewController = self.passcodeScreen
+        }
+    }
+    
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        if WalletUniversalLink.shared.invoice != nil {
+            
+            viewController?.removeFromParentViewController()
+            navigationController?.removeFromParentViewController()
+            navigationController = RootController()
+            navigationController?.setViewControllers([viewController!], animated: true)
+            
+            if PasscodeStrore.shared.isRegistered {
+                window?.rootViewController = passcodeScreen
+            }
+            else {
+                window?.rootViewController = navigationController
+            }
+        }
+        else {
+            PasscodeScreen.isUnlocked = false
+            viewController?.presentPasscodeScreen()
+        }
+    }
     
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.

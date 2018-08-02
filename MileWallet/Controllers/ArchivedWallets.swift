@@ -51,11 +51,13 @@ fileprivate class WalletTableCell: UITableViewCell {
     var wallet:WalletContainer? {
         didSet{
             name.text = wallet?.wallet?.name
-            name.textColor = UIColor(hex: wallet?.attributes?.color ?? UIColor.black.hex)
+            let c = UIColor(hex: wallet?.attributes?.color ?? UIColor.black.hex)
+            containerView.backgroundColor = Config.Colors.archivedCell.mix(infusion: c, alpha: 0.03)
             startActivities()
         }
     }
     
+    private var containerView = UIView()
     private var name:UILabel = UILabel()
 
     var xdrLabel:UILabel = UILabel()
@@ -64,10 +66,8 @@ fileprivate class WalletTableCell: UITableViewCell {
     var xdrAmountLabel:UILabel = UILabel()
     var mileAmountLabel:UILabel = UILabel()
     
-    private var line = UIView()
-    
     private func activityLoader(place:UIView)  -> UIActivityIndicatorView {
-        let a = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+        let a = UIActivityIndicatorView(activityIndicatorStyle: .white)
         a.hidesWhenStopped = true
         place.addSubview(a)
         a.snp.makeConstraints { (make) in
@@ -90,63 +90,73 @@ fileprivate class WalletTableCell: UITableViewCell {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
+        
+        let bg = containerView
+        
+        bg.layer.cornerRadius = Config.buttonRadius
+        bg.layer.masksToBounds = true
+        bg.clipsToBounds = true
+        
+        bg.backgroundColor = Config.Colors.archivedCell
+        contentView.addSubview(bg)
         contentView.addSubview(name)
-        contentView.addSubview(line)
-        contentView.addSubview(xdrLabel)
-        contentView.addSubview(mileLabel)
-        contentView.addSubview(xdrAmountLabel)
-        contentView.addSubview(mileAmountLabel)
+        bg.addSubview(xdrLabel)
+        bg.addSubview(mileLabel)
+        bg.addSubview(xdrAmountLabel)
+        bg.addSubview(mileAmountLabel)
 
         name.textAlignment = .left
         name.numberOfLines = 3
-        name.font = Config.Fonts.amount
-
-        line.backgroundColor = Config.Colors.bottomLine
+        name.textColor = UIColor.black
+        name.font = Config.Fonts.name
+        
+        xdrLabel.textColor = UIColor.white
+        mileLabel.textColor = UIColor.white
         
         xdrAmountLabel.textAlignment = .left
-        xdrAmountLabel.textColor = UIColor.black
-        xdrAmountLabel.font = Config.Fonts.amount
+        xdrAmountLabel.textColor = UIColor.white
+        xdrAmountLabel.font = Config.Fonts.caption
         xdrAmountLabel.minimumScaleFactor = 0.5
         xdrAmountLabel.adjustsFontSizeToFitWidth = true
         
         mileAmountLabel.textAlignment = .left
-        mileAmountLabel.textColor = UIColor.black
-        mileAmountLabel.font = Config.Fonts.amount
+        mileAmountLabel.textColor = UIColor.white
+        mileAmountLabel.font = Config.Fonts.caption
         mileAmountLabel.minimumScaleFactor = 0.5
         mileAmountLabel.adjustsFontSizeToFitWidth = true
 
         name.snp.makeConstraints { (m) in
+            m.left.equalToSuperview().offset(25)
+            m.top.equalToSuperview().offset(20)
+            m.right.equalToSuperview().offset(-20)
+        }
+        
+        bg.snp.makeConstraints { (m) in
+            m.top.equalTo(name.snp.bottom).offset(6)
             m.left.equalToSuperview().offset(20)
-            m.bottom.top.equalToSuperview()
-            m.right.equalTo(contentView.snp.centerX).multipliedBy(2.0/3.0)
+            m.right.equalToSuperview().offset(-20)
+            m.height.equalTo(60)
         }
         
         xdrLabel.snp.makeConstraints { (m) in
-            m.left.equalTo(name.snp.right).offset(10)
+            m.top.equalToSuperview()
+            m.left.equalToSuperview().offset(18)
+            m.bottom.equalToSuperview()
             m.width.equalTo(40)
-            m.top.equalToSuperview().offset(5)
-            m.bottom.equalTo(contentView.snp.centerY)
         }
         
         mileLabel.snp.makeConstraints { (m) in
-            m.left.equalTo(xdrLabel.snp.left)
+            m.top.equalToSuperview()
+            m.left.equalTo(bg.snp.centerX)
+            m.bottom.equalToSuperview()
             m.width.equalTo(40)
-            m.top.equalTo(contentView.snp.centerY)
-            m.bottom.equalToSuperview().offset(-5)
-        }
-        
-        line.snp.makeConstraints { (m) in
-            m.centerY.equalTo(contentView.snp.centerY)
-            m.left.equalTo(xdrLabel.snp.left)
-            m.right.equalToSuperview().offset(-20)
-            m.height.equalTo(1)
         }
         
         xdrAmountLabel.snp.makeConstraints { (m) in
             m.left.equalTo(xdrLabel.snp.right).offset(10)
             m.top.equalTo(xdrLabel)
             m.bottom.equalTo(xdrLabel)
-            m.right.equalToSuperview().offset(-20)
+            m.right.equalTo(bg.snp.centerX).offset(-20)
         }
 
         mileAmountLabel.snp.makeConstraints { (m) in
@@ -156,10 +166,10 @@ fileprivate class WalletTableCell: UITableViewCell {
             m.right.equalToSuperview().offset(-20)
         }
 
-        add(border: .bottom,
-            color: Config.Colors.bottomLine,
-            width: 1,
-            padding: UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20))
+//        add(border: .bottom,
+//            color: Config.Colors.bottomLine,
+//            width: 1,
+//            padding: UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20))
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -265,7 +275,7 @@ extension WalletsController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 90
+        return 110
     }
 }
 

@@ -19,20 +19,26 @@ class PasscodeScreen: UIViewController {
     
     @IBOutlet weak var passwordTitle: UILabel!
     
+    public var didVerifyHandler: ((_ controller:PasscodeScreen)->Void)?
+    
     public var settingsMode = false {
         didSet{
             passCodeConfirmationStage = 0
         }
     }
     
-    var passwordContainerView: PasswordContainerView!
-    let kPasswordDigit = PasscodeStrore.shared.passcodeLength
+    public static var isUnlocked:Bool = false
+    public static var isPresenting = false
+
+    private var passwordContainerView: PasswordContainerView!
+    public let kPasswordDigit = PasscodeStrore.shared.passcodeLength
+    
     
     private var firstView:UIView?
     override func viewDidLoad() {
-        
-        firstView = UIApplication.shared.keyWindow?.subviews.first
-        firstView?.alpha = 0
+
+        //firstView = UIApplication.shared.keyWindow?.subviews.first
+        //firstView?.alpha = 0
         
         super.viewDidLoad()
         
@@ -48,9 +54,10 @@ class PasscodeScreen: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if settingsMode {
-            firstView?.alpha = 1
-        }
+        PasscodeScreen.isPresenting = true
+//        if settingsMode {
+//            firstView?.alpha = 1
+//        }
         super.viewWillAppear(animated)
         passwordTitle.text = NSLocalizedString("Enter Passcode", comment: "")
         passwordContainerView.touchAuthenticationEnabled = !settingsMode
@@ -59,11 +66,23 @@ class PasscodeScreen: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        firstView?.alpha = 1
+        //firstView?.alpha = 1
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        PasscodeScreen.isPresenting = false
     }
     
     fileprivate var passCodeConfirmationStage = 0
     fileprivate var newPasscode:String? = nil
+    fileprivate var _isUnlocked:Bool = false
+    
+    override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+        super.dismiss(animated: flag) {
+            completion?()
+        }
+    }
 }
 
 extension PasscodeScreen: PasswordInputCompleteProtocol {
@@ -80,6 +99,7 @@ extension PasscodeScreen: PasswordInputCompleteProtocol {
         if success {
             self.validationSuccess()
         } else {
+            PasscodeScreen.isUnlocked = false
             passwordContainerView.clearInput()
         }
     }
@@ -119,6 +139,8 @@ private extension PasscodeScreen {
     }
     
     func validationSuccess() {
+        PasscodeScreen.isUnlocked = true
+
         if settingsMode && passCodeConfirmationStage == 0 {
             passCodeConfirmationStage = 1
             UIView.animate(withDuration: Config.animationDuration,
@@ -134,9 +156,11 @@ private extension PasscodeScreen {
                 self.settingsMode = false
             }
         }
+        self.didVerifyHandler?(self)
     }
     
     func validationFail() {
+        PasscodeScreen.isUnlocked = false
         if settingsMode && passCodeConfirmationStage == 1 {
             passCodeConfirmationStage = 0
             UIView.animate(withDuration: Config.animationDuration,

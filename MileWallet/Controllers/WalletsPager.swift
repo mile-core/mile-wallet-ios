@@ -10,39 +10,13 @@ import UIKit
 import SnapKit
 import MileWalletKit
 
-class WalletCardsController: Controller {
+class WalletsPager: Controller {
 
     public var currentIndex:Int {
         return _currentIndex ?? NSNotFound
     }
-    
-    private var passcodeScreen = PasscodeScreen()
-
-    private func presentPasscodeScreen(){
         
-        if PasscodeStrore.shared.isRegistered {
-            guard passcodeScreen.presentingViewController == nil else { return }
-            self.passcodeScreen.settingsMode = false
-            present(passcodeScreen, animated: true)
-        }
-        else {
-            if passcodeScreen.presentingViewController != nil { passcodeScreen.dismiss(animated: false)}
-            UIAlertController(title: NSLocalizedString("Security Alert!", comment: ""),
-                              message: NSLocalizedString("To avoid insecure access MILE Wallet please configure access with passcode", comment: ""),
-                              preferredStyle: .actionSheet)
-                .addAction(title: NSLocalizedString("Cancel", comment: ""),
-                           style: UIAlertActionStyle.cancel)
-                .addAction(title: NSLocalizedString("Open passcode settings", comment: ""),
-                           style: .default, handler: { (action) in
-                        self.passcodeScreen.settingsMode = true
-                        self.present(self.passcodeScreen, animated: true)
-                })
-                .present(by: self)
-        }
-    }
-    
     static private let networkOn = UIBarButtonItem(customView: UIImageView(image: UIImage(named:"icon-network-on")))
-    
     static private let networkOff = UIBarButtonItem(customView: UIImageView(image: UIImage(named:"icon-network-off")))
     
     override func didNetworkChangeStatus(reachable: Bool) {
@@ -52,27 +26,25 @@ class WalletCardsController: Controller {
     private func networkState(reachable:Bool) {
         DispatchQueue.main.async {
             if reachable {
-                self.navigationItem.rightBarButtonItem = WalletCardsController.networkOn
+                self.navigationItem.rightBarButtonItem = WalletsPager.networkOn
             }
             else {
-                self.navigationItem.rightBarButtonItem = WalletCardsController.networkOff
+                self.navigationItem.rightBarButtonItem = WalletsPager.networkOff
             }
         }
     }
     
     override func viewDidLoad() {
 
-        presentPasscodeScreen()
-
         super.viewDidLoad()
         
-        navigationItem.rightBarButtonItem = WalletCardsController.networkOff
+        navigationItem.rightBarButtonItem = WalletsPager.networkOff
         
-        view.addSubview(newWalletButton)
-        view.addSubview(archiveButton)
-        view.addSubview(contactsButton)
-        view.addSubview(verticalLineLeft)
-        view.addSubview(verticalLineRight)
+        contentView.addSubview(newWalletButton)
+        contentView.addSubview(archiveButton)
+        contentView.addSubview(contactsButton)
+        contentView.addSubview(verticalLineLeft)
+        contentView.addSubview(verticalLineRight)
         
         var h:CGFloat = 88
             if UIScreen.main.bounds.size.height < 640 {
@@ -80,27 +52,27 @@ class WalletCardsController: Controller {
             }
         
         verticalLineLeft.snp.makeConstraints { (m) in
-            m.centerX.equalTo(view.snp.right).multipliedBy(1.0/3.0)
+            m.centerX.equalTo(contentView.snp.right).multipliedBy(1.0/3.0)
             m.height.equalTo(h)
             m.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
             m.width.equalTo(1)
         }
         
         verticalLineRight.snp.makeConstraints { (m) in
-            m.centerX.equalTo(view.snp.right).multipliedBy(2.0/3.0)
+            m.centerX.equalTo(contentView.snp.right).multipliedBy(2.0/3.0)
             m.height.equalTo(verticalLineLeft.snp.height)
             m.bottom.equalTo(verticalLineLeft.snp.bottom)
             m.width.equalTo(verticalLineLeft.snp.width)
         }
         
         newWalletButton.snp.makeConstraints { (m) in
-            m.centerX.equalTo(view.snp.right).multipliedBy(1.0/6.0)
+            m.centerX.equalTo(contentView.snp.right).multipliedBy(1.0/6.0)
             m.top.equalTo(verticalLineLeft.snp.top).offset(15)
             m.bottom.equalTo(verticalLineLeft.snp.bottom).offset(-15)
         }
         
         archiveButton.snp.makeConstraints { (m) in
-            m.centerX.equalTo(view.snp.right).multipliedBy(5.0/6.0)
+            m.centerX.equalTo(contentView.snp.right).multipliedBy(5.0/6.0)
             m.centerY.equalTo(newWalletButton.snp.centerY)
             m.bottom.equalTo(newWalletButton.snp.bottom)
         }
@@ -112,12 +84,12 @@ class WalletCardsController: Controller {
         }
         
         addChildViewController(pageViewController)
-        view.addSubview(pageViewController.view)
+        contentView.addSubview(pageViewController.view)
         
         pageViewController.view.snp.makeConstraints { (m) in
             m.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(Config.iPhoneX ? 20 : 0)
-            m.left.equalTo(view).offset(0)
-            m.right.equalTo(view).offset(0)
+            m.left.equalTo(contentView).offset(0)
+            m.right.equalTo(contentView).offset(0)
             pagerOffset = m.bottom
                 .equalTo(view.safeAreaLayoutGuide.snp.bottom)
                 .offset(Config.iPhoneX ? -160 : -140)
@@ -131,26 +103,11 @@ class WalletCardsController: Controller {
         tap.numberOfTouchesRequired = 1
         pageViewController.view.addGestureRecognizer(tap)
         
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(unifersalLinkUpdated(notification:)), name: WalletUniversalLink.kDidUpdateNotification, object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(enterForeground(_:)), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
-
-        NotificationCenter.default.addObserver(self, selector: #selector(enterBackground(_:)), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
-   
-        NotificationCenter.default.addObserver(self, selector: #selector(enterBackground(_:)), name: NSNotification.Name.UIApplicationWillTerminate, object: nil)
-
-    }
-
-    @objc private func enterBackground(_ notification:NSNotification) {
-        presentPasscodeScreen()
+        NotificationCenter.default.addObserver(self, selector: #selector(universalLinkUpdated(notification:)), name: WalletUniversalLink.kDidUpdateNotification, object: nil)
     }
     
-    @objc private func enterForeground(_ notification:NSNotification) {
-        presentPasscodeScreen()
-    }
-    
-    @objc private func unifersalLinkUpdated(notification:Notification) {
+    private func universalLinkOpen() {
+
         if WalletUniversalLink.shared.invoice?.amount != nil {
             let wallet_name = WalletUniversalLink.shared.invoice?.name ?? WalletUniversalLink.shared.invoice?.publicKey ?? ""
             UIAlertController(title: NSLocalizedString("Invoice", comment: ""),
@@ -161,13 +118,17 @@ class WalletCardsController: Controller {
                 }
                 .addAction(title: NSLocalizedString("Send", comment: ""), style: .default) { (action) in
                     
-            }
-            .present(by: self)
+                }
+                .present(by: self)
         }
         else if  WalletUniversalLink.shared.invoice?.publicKey != nil {
             _walletContacts.walletKey = WalletStore.shared.acitveWallets[currentIndex].wallet?.publicKey
             presentInNavigationController(_walletContacts, animated: true)
         }
+    }
+    
+    @objc private func universalLinkUpdated(notification:Notification) {
+        universalLinkOpen()
     }
     
     private var pagerOffset:Constraint?
@@ -210,22 +171,29 @@ class WalletCardsController: Controller {
         return v
     }()
     
-    private lazy var newWalletButton:UIButton = UIButton.toolBarButton(image: UIImage(named: "button-new-wallet"),
-                                                                       title: NSLocalizedString("Add Wallet", comment: ""),
-                                                                       target: self, action: #selector(newWallet(sender:)))
+    private lazy var newWalletButton:UIButton = UIButton
+        .toolBarButton(image: UIImage(named: "button-new-wallet"),
+                       title: NSLocalizedString("Add Wallet", comment: ""),
+                       target: self, action: #selector(newWallet(sender:)))
     
-    private lazy var contactsButton:UIButton = UIButton.toolBarButton(image: UIImage(named: "button-contact-book"),
-                                                                      title: NSLocalizedString("Contacts", comment: ""),
-                                                                      target: self, action:  #selector(openContact(sender:)))
-   
-    private lazy var archiveButton:UIButton = UIButton.toolBarButton(image: UIImage(named: "button-archive-wallets"),
-                                                                     title: NSLocalizedString("Archive", comment: ""),
-                                                                     target: self, action: #selector(archiveWallet(sender:)))
-       
+    private lazy var contactsButton:UIButton = UIButton
+        .toolBarButton(image: UIImage(named: "button-contact-book"),
+                       title: NSLocalizedString("Contacts", comment: ""),
+                       target: self, action:  #selector(openContact(sender:)))
+    
+    private lazy var archiveButton:UIButton = UIButton
+        .toolBarButton(image: UIImage(named: "button-archive-wallets"),
+                       title: NSLocalizedString("Archive", comment: ""),
+                       target: self, action: #selector(archiveWallet(sender:)))
+    
     fileprivate var lastIndex = 0
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         lastIndex = _currentIndex ?? 0
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
     }
     
     ///
@@ -233,10 +201,12 @@ class WalletCardsController: Controller {
     /// so, TODO: rewrite the part of the code with custom controller.
     ///
     override func viewWillAppear(_ animated: Bool) {
+        
         super.viewWillAppear(animated)
         
         view.backgroundColor = Config.Colors.background
         contentView.backgroundColor = Config.Colors.background
+        
         navigationController?.navigationBar.prefersLargeTitles = false
 
         var newIndex = lastIndex
@@ -291,7 +261,16 @@ class WalletCardsController: Controller {
     }
     
     @objc private func newWallet(sender:UIButton) {
-        presentInNavigationController(_newWalletController, animated: true)
+        if WalletStore.shared.acitveWallets.count > Config.activeWalletsLimit {
+                UIAlertController(title: NSLocalizedString("Limit exeeded", comment: ""),
+                                  message: NSLocalizedString("Please archive your inactive wallets", comment: ""),
+                                  preferredStyle: .alert)
+            .addAction(title: NSLocalizedString("Close", comment: ""))
+            .present(by: self)
+        }
+        else {
+            presentInNavigationController(_newWalletController, animated: true)
+        }
     }
     
     @objc private func openContact(sender:UIButton) {
@@ -362,7 +341,7 @@ class WalletCardsController: Controller {
 }
 
 
-extension WalletCardsController: WalletCellDelegate {
+extension WalletsPager: WalletCellDelegate {
     func walletCell(_ item: WalletCell, didPress wallet: WalletContainer?)
     {
         _walletDetailsController.qrFrame =  pageViewController.view.frame
@@ -377,7 +356,7 @@ extension WalletCardsController: WalletCellDelegate {
 }
 
 // MARK: - UIPageViewController DataSource
-extension WalletCardsController: UIPageViewControllerDataSource {
+extension WalletsPager: UIPageViewControllerDataSource {
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         var index = indexOfViewController(viewController)
@@ -417,7 +396,7 @@ extension WalletCardsController: UIPageViewControllerDataSource {
     }
 }
 
-extension WalletCardsController: UIPageViewControllerDelegate {
+extension WalletsPager: UIPageViewControllerDelegate {
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
         guard pendingViewControllers.count > 0 else { return }
         _pendingIndex = indexOfViewController(pendingViewControllers[0])
@@ -431,7 +410,7 @@ extension WalletCardsController: UIPageViewControllerDelegate {
 }
 
 // MARK: - Helpers
-extension WalletCardsController {
+extension WalletsPager {
     fileprivate func viewControllerAtIndex(_ index: Int) -> UIViewController? {
         if viewControllers.count == 0 || index >= viewControllers.count {
             return nil

@@ -24,8 +24,8 @@ extension UIViewController {
         }
         else {
             present(nc,
-                          animated: flag,
-                          completion: completion)
+                    animated: flag,
+                    completion: completion)
         }
     }
 }
@@ -41,6 +41,7 @@ class Controller: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //
         
         NotificationCenter.default
             .addObserver(self,
@@ -82,7 +83,7 @@ class Controller: UIViewController {
     private var lastNetworkStatus = false
     
     private func __didNetworkChangeStatus(reachable:Bool){
-         DispatchQueue.main.async {            
+         DispatchQueue.main.async {
             guard self.lastNetworkStatus != reachable else { return  }
             self.lastNetworkStatus = reachable
             self.didNetworkChangeStatus(reachable: reachable)
@@ -143,6 +144,11 @@ class Controller: UIViewController {
         }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        loaderStop()
+    }
+    
     public func mileInfoUpdate(error: ((_ error: Error?)-> Void)?=nil,
                                complete:@escaping ((_ chain:Chain)->Void))  {
         
@@ -166,6 +172,34 @@ class Controller: UIViewController {
     
     private let activiti = UIActivityIndicatorView(activityIndicatorStyle: .gray)
     private lazy var dimView = UIView(frame: self.view.bounds)
+    
+    private var passcodeScreen = PasscodeScreen()
+    
+    public func presentPasscodeScreen(){
+        
+        if PasscodeScreen.isUnlocked || PasscodeScreen.isPresenting { return }
+        
+        if !PasscodeStrore.shared.isRegistered {
+
+            if self.passcodeScreen.presentingViewController != nil {
+                self.passcodeScreen.dismiss(animated: false)
+            }
+            
+            UIAlertController(title: NSLocalizedString("Security Alert!", comment: ""),
+                              message: NSLocalizedString("To avoid insecure access MILE Wallet please configure access with passcode", comment: ""),
+                              preferredStyle: .actionSheet)
+                .addAction(title: NSLocalizedString("Cancel", comment: ""),
+                           style: UIAlertActionStyle.cancel) { (action) in
+                            PasscodeScreen.isUnlocked = true
+                }
+                .addAction(title: NSLocalizedString("Open passcode settings", comment: ""),
+                           style: .default, handler: { (action) in
+                            self.passcodeScreen.settingsMode = true
+                            self.present(self.passcodeScreen, animated: false) 
+                })
+                .present(by: self)
+        }
+    }
 }
 
 public class NavigationController: UINavigationController {
