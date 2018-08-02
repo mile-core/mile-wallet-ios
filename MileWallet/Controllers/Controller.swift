@@ -41,6 +41,19 @@ class Controller: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        NotificationCenter.default
+            .addObserver(self,
+                         selector: #selector(__didNetworkChangeStatus(notification:)),
+                         name: NSNotification.Name("NetworkIsReachable"),
+                         object: nil)
+
+        NotificationCenter.default
+            .addObserver(self,
+                         selector: #selector(__didNetworkChangeStatus(notification:)),
+                         name: NSNotification.Name("NetworkIsUnreachable"),
+                         object: nil)
+
         view.backgroundColor = UIColor.clear
         contentView.backgroundColor = UIColor.clear
         view.addSubview(contentView)
@@ -56,7 +69,36 @@ class Controller: UIViewController {
             m.bottom.equalToSuperview()
         }
     }
+    
+    public func notifyNetworkStatus(reachable:Bool) {
+        DispatchQueue.main.async {
+            let status = reachable ?  NSNotification.Name("NetworkIsReachable") : NSNotification.Name("NetworkIsUnreachable")
+            NotificationCenter.default.post(name: status, object: nil)
+        }
+    }
+    
+    public func didNetworkChangeStatus(reachable:Bool){}
 
+    private var lastNetworkStatus = false
+    
+    private func __didNetworkChangeStatus(reachable:Bool){
+         DispatchQueue.main.async {            
+            guard self.lastNetworkStatus != reachable else { return  }
+            self.lastNetworkStatus = reachable
+            self.didNetworkChangeStatus(reachable: reachable)
+        }
+        
+    }
+
+    @objc private func __didNetworkChangeStatus(notification:Notification) {
+        if notification.name == NSNotification.Name("NetworkIsReachable") {
+            __didNetworkChangeStatus(reachable: true)
+        }
+        else {
+            __didNetworkChangeStatus(reachable: false)
+        }
+    }
+    
     override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         if presentingViewController is UINavigationController {
             super.dismiss(animated: true, completion: nil)
@@ -91,12 +133,14 @@ class Controller: UIViewController {
     }
     
     func loaderStop() {
-        activiti.stopAnimating()
-        UIView.animate(withDuration: 0.2, animations: { 
-            self.dimView.alpha=0
-        }, completion: { (flag) in
-            self.dimView.removeFromSuperview()
-        })
+        DispatchQueue.main.async {
+            self.activiti.stopAnimating()
+            UIView.animate(withDuration: 0.2, animations: {
+                self.dimView.alpha=0
+            }, completion: { (flag) in
+                self.dimView.removeFromSuperview()
+            })
+        }
     }
     
     public func mileInfoUpdate(error: ((_ error: Error?)-> Void)?=nil,

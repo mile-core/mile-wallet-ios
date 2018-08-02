@@ -7,8 +7,8 @@ platform :ios, '11.1'
 
 target 'MileWallet' do
     #pod 'Socket.IO-Client-Swift', '~> 13.2.0'
-    pod 'SnapKit
-    pod 'SmileLock'
+    pod 'SnapKit'
+    pod 'SmileLock', :path => '../Smile-Lock'
     pod 'MileCsaLight', :path => '../mile-cpp-api'
     pod 'MileWalletKit', :path => '../mile-wallet-ios-kit'
 end

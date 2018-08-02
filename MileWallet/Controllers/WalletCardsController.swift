@@ -41,11 +41,32 @@ class WalletCardsController: Controller {
         }
     }
     
+    static private let networkOn = UIBarButtonItem(customView: UIImageView(image: UIImage(named:"icon-network-on")))
+    
+    static private let networkOff = UIBarButtonItem(customView: UIImageView(image: UIImage(named:"icon-network-off")))
+    
+    override func didNetworkChangeStatus(reachable: Bool) {
+        networkState(reachable: reachable)
+    }
+    
+    private func networkState(reachable:Bool) {
+        DispatchQueue.main.async {
+            if reachable {
+                self.navigationItem.rightBarButtonItem = WalletCardsController.networkOn
+            }
+            else {
+                self.navigationItem.rightBarButtonItem = WalletCardsController.networkOff
+            }
+        }
+    }
+    
     override func viewDidLoad() {
 
         presentPasscodeScreen()
 
         super.viewDidLoad()
+        
+        navigationItem.rightBarButtonItem = WalletCardsController.networkOff
         
         view.addSubview(newWalletButton)
         view.addSubview(archiveButton)

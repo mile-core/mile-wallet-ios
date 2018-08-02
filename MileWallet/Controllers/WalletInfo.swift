@@ -17,6 +17,7 @@ class WalletInfo: Controller {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         view.addSubview(line)
         view.addSubview(xdrLabel)
         view.addSubview(xdrAmountLabel)
@@ -57,34 +58,46 @@ class WalletInfo: Controller {
             m.centerY.equalToSuperview().multipliedBy(1.5)
         }
     }
+
     
     private var firstTime = true
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-                
+        super.viewWillAppear(animated)        
+        DispatchQueue.global().async {
+            self.apearanceUpdate()
+        }
+    }
+    
+    override func didNetworkChangeStatus(reachable: Bool) {
+        if reachable {
+            self.firstTime = true
+            self.apearanceUpdate()
+        }
+    }
+    
+    private func apearanceUpdate() {
         if let k = wallet?.wallet?.publicKey, let b = WalletInfo.balancesCache[k] {
-            update(balance: b)
+            DispatchQueue.main.async {
+                self.update(balance: b)
+            }
         }
         
         if firstTime {
             startActivities()
             
             self.mileInfoUpdate(error: { (error) in
-                
                 self.stopActivities()
-                
-                UIAlertController(title: NSLocalizedString("MILE blockchain error", comment: ""),
-                                  message:  error?.description,
-                                  preferredStyle: .alert)
-                    .addAction(title: "Close", style: .cancel)
-                    .present(by: self)
+                self.notifyNetworkStatus(reachable: false)
                 
             }){ (chain) in
+                
+                self.notifyNetworkStatus(reachable: true)
                 self.chainInfo = chain
                 self.update(timer: nil)
                 self.firstTime = false
             }
         }
+        
         DispatchQueue.main.async {
             self.timerSetup()
         }
@@ -160,11 +173,15 @@ class WalletInfo: Controller {
     }
     
     private func startActivities()  {
-        for a in activities { a.startAnimating() }
+        DispatchQueue.main.async {
+            for a in self.activities { a.startAnimating() }
+        }
     }
     
     private func stopActivities()  {
-        for a in activities { a.stopAnimating() }
+        DispatchQueue.main.async {
+            for a in self.activities { a.stopAnimating() }
+        }
     }
     
     private lazy var activities:[UIActivityIndicatorView] = [self.activityLoader(place: self.xdrAmountLabel),
@@ -173,42 +190,45 @@ class WalletInfo: Controller {
     public var reloadTimer:Timer?
     
     public func update(balance: Balance) {
-        
-        guard let chain = chainInfo else {return}
-
-        self.xdrAmountLabel.text = Asset.xdr.stringValue(0)
-        self.mileAmountLabel.text = Asset.mile.stringValue(0)
-        
-        self.stopActivities()
-        
-        for k in balance.balance.keys {
-            let b = Float(balance.balance[k] ?? "0") ?? 0
-            if chain.assets[k] == Asset.xdr.name {
-                self.xdrAmountLabel.text = Asset.xdr.stringValue(b)
-            }
-            else if chain.assets[k] == Asset.mile.name {
-                self.mileAmountLabel.text = Asset.mile.stringValue(b)
+        DispatchQueue.main.async {
+            
+            guard let chain = self.chainInfo else {return}
+            
+            self.xdrAmountLabel.text = Asset.xdr.stringValue(0)
+            self.mileAmountLabel.text = Asset.mile.stringValue(0)
+            
+            self.stopActivities()
+            
+            for k in balance.balance.keys {
+                let b = Float(balance.balance[k] ?? "0") ?? 0
+                if chain.assets[k] == Asset.xdr.name {
+                    self.xdrAmountLabel.text = Asset.xdr.stringValue(b)
+                }
+                else if chain.assets[k] == Asset.mile.name {
+                    self.mileAmountLabel.text = Asset.mile.stringValue(b)
+                }
             }
         }
     }
     
     @objc private func update(timer:Timer?)  {
         
-        guard let w = wallet?.wallet else {return}
+        DispatchQueue.main.async {
+            
+            guard let w = self.wallet?.wallet else {return}
+            
+            Balance.update(wallet: w, error: { (error) in
                 
-        Balance.update(wallet: w, error: { (error) in
-            
-            UIAlertController(title: NSLocalizedString("Balance error", comment: ""),
-                              message:  error?.description,
-                              preferredStyle: .alert)
-                .addAction(title: "Close", style: .cancel)
-                .present(by: self)
-            
-            self.stopActivities()
-            
-        }, complete: { (balance) in
-            self.update(balance: balance)
-            WalletInfo.balancesCache[w.publicKey!] = balance
-        })
+                self.stopActivities()
+                self.notifyNetworkStatus(reachable: false)
+
+            }, complete: { (balance) in
+                
+                self.notifyNetworkStatus(reachable: true)
+                
+                self.update(balance: balance)
+                WalletInfo.balancesCache[w.publicKey!] = balance
+            })
+        }
     }
 }

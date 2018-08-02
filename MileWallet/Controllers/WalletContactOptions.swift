@@ -59,8 +59,9 @@ class WalletContactOptions: Controller, UITextFieldDelegate {
         if let contact = self.contact {
             title = NSLocalizedString("Send coins to", comment: "") + ": " + contact.name!
             if let photo = contact.photo {
-            let image = UIImage(data: photo)
-                _tableController.loadButton.setImage(image, for: .normal)
+                if let image = UIImage(data: photo) {
+                    _tableController.loadButton.setImage(image, for: .normal)
+                }
             }
         }
         else {
@@ -71,22 +72,24 @@ class WalletContactOptions: Controller, UITextFieldDelegate {
             (navigationController as? NavigationController)?.titleColor = UIColor(hex: a.color)
         }
         
+        print("invoice \(WalletUniversalLink.shared.invoice)")
+        
         _tableController.publicKey.text = WalletUniversalLink.shared.invoice?.publicKey
         if WalletUniversalLink.shared.invoice?.publicKey != nil {
             _tableController.publicKey.isUserInteractionEnabled = false
         }
-        WalletUniversalLink.shared.invoice = nil
     }
     
     @objc private func closePayments(sender:Any){
+        WalletUniversalLink.shared.invoice = nil
         dismiss(animated: true)
     }
     
     @objc private func doneHandler(_ sender: UIButton) {
+        WalletUniversalLink.shared.invoice = nil
         if let contact = self.contact {
         }
         else {
-            WalletUniversalLink.shared.invoice = nil
             addContact()
         }
     }
