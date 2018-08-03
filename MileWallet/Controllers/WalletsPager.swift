@@ -37,7 +37,7 @@ class WalletsPager: Controller {
     override func viewDidLoad() {
 
         super.viewDidLoad()
-        
+            
         navigationItem.rightBarButtonItem = WalletsPager.networkOff
         
         contentView.addSubview(newWalletButton)

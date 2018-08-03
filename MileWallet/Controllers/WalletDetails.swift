@@ -156,6 +156,7 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
     }
     
     @objc private func settings(sender:Any) {
+        _settingsWalletController.isEdited = true
         _settingsWalletController.wallet = wallet
         presentInNavigationController(_settingsWalletController, animated: true)
     }

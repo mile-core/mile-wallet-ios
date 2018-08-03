@@ -106,7 +106,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
         UIButton.appearance().adjustsImageWhenHighlighted = true
         UIButton.appearance().showsTouchWhenHighlighted = true
         
-
         UIPageControl.appearance().pageIndicatorTintColor = UIColor.lightGray
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor.black
         UIPageControl.appearance().hidesForSinglePage = true

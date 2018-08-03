@@ -56,6 +56,8 @@ class CoinsOperation: Controller {
         }
     }
 
+    private lazy var successScreen = SuccessController()
+    
     private var currentAsset:Asset = .mile
     private var currentAssetIndex = 0
     
@@ -187,7 +189,6 @@ class CoinsOperation: Controller {
             title = NSLocalizedString("Done", comment: "")
             
         case .print, .invoiceLink:
-            
             contactView.alpha = 0
             qrCodeHeader.alpha = 1
             qrCodeUpdate()
@@ -242,7 +243,11 @@ class CoinsOperation: Controller {
                 
         }) { (transfer) in
             self.loaderStop()
-            self.dismiss(animated: true)
+            self.successScreen.view.backgroundColor =
+                UIColor(hex: self.wallet?.attributes?.color ?? Config.Colors.defaultColor.hex)
+            self.successScreen.amount = asset.stringValue(amount)
+            self.successScreen.message = asset.name + " " + NSLocalizedString("sent!", comment: "")
+            self.present(self.successScreen, animated: true) 
         }
     }
     
