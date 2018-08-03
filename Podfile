@@ -1,5 +1,5 @@
 use_frameworks!
-platform :ios, '11.1'
+platform :ios, '11.0'
 
 # 
 # https://samwize.com/2017/10/05/adding-playground-to-an-existing-project/

@@ -23,7 +23,7 @@ extension Config {
     public static let buttonRadius:CGFloat = 10
 
     public struct Colors {
-        public static let defaultColor = UIColor(hex: 0x6679FD)
+        public static let defaultColor = UIColor(hex: 0x68AFDE)
         public static let background = UIColor(patternImage:
             UIImage.gradient(colors: [
                 UIColor(hex: 0xEAF1FF),
@@ -31,6 +31,7 @@ extension Config {
                 UIColor.white
                 ],
                              with: UIScreen.main.bounds)!)
+        public static let passCodeDigit = UIColor(hex: 0x73B5E0)
         public static let buttonBackground = UIColor.white
         public static let navigationBarTitle =  UIColor(hex: 0x283444)
         public static let navigationBarLargeTitle =  UIColor.white
@@ -71,6 +72,9 @@ extension Config {
     public struct Fonts {
         public static let name = UIFont(name: "SFProText-Regular", size: 15)!
         public static let button = name
+        
+        public static let passCodeDigit = UIFont(name: "SFProDisplay-Regular", size: 48)!
+
         public static let amount = UIFont(name: "SFProDisplay-Bold", size: 30)!
         public static let title =  UIFont(name: "SFProText-Semibold", size: 17)!
         public static let navigationBarTitle =  UIFont(name: "SFProText-Regular", size: 21)!

@@ -105,9 +105,12 @@ class WalletContacts: Controller {
     }
     
     fileprivate func update(contact:Contact?) {
+        _contactOptionsController.isEdited = true
         _contactOptionsController.contact = contact
         _contactOptionsController.wallet = self.wallet
-        presentInNavigationController(_contactOptionsController, animated: true)
+        presentInNavigationController(_contactOptionsController, animated: true) {
+            self._contactOptionsController.isEdited = false
+        }
     }
     
     fileprivate let _tableController = ContactsController()
@@ -224,9 +227,19 @@ extension ContactsController {
         
         edit.backgroundColor = Config.Colors.defaultColor
         
+        
+        let send = UITableViewRowAction(style: UITableViewRowActionStyle.default,
+                                        title: NSLocalizedString("Send Coins", comment: ""))
+        { (action, indexPath) in
+            self.tableView(tableView, didSelectRowAt: indexPath)
+        }
+        
+        send.backgroundColor = UIColor(hex: wallet?.attributes?.color ?? Config.Colors.defaultColor.hex)
+        
+        
         UIButton.appearance().setTitleColor(UIColor.white, for: .normal)
         
-        return [delete, edit]
+        return [delete, edit, send]
     }
     
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {

@@ -13,6 +13,8 @@ import QRCodeReader
 
 class WalletContactOptions: Controller, UITextFieldDelegate {
     
+    public var isEdited:Bool = false
+
     public var wallet:WalletContainer?
     public var contact:Contact? {
         didSet{
@@ -65,7 +67,12 @@ class WalletContactOptions: Controller, UITextFieldDelegate {
         super.viewWillAppear(animated)
         
         if let contact = self.contact {
-            title = NSLocalizedString("Send coins to", comment: "") + ": " + contact.name!
+            if isEdited {
+                title = NSLocalizedString("Edit Contact", comment: "")
+            }
+            else {
+                title = NSLocalizedString("Send coins to", comment: "") + ": " + contact.name!
+            }
             if let photo = contact.photo {
                 if let image = UIImage(data: photo) {
                     _tableController.loadButton.setImage(image, for: .normal)
@@ -79,9 +86,7 @@ class WalletContactOptions: Controller, UITextFieldDelegate {
         if let a = wallet?.attributes{
             (navigationController as? NavigationController)?.titleColor = UIColor(hex: a.color)
         }
-        
-        print("invoice \(WalletUniversalLink.shared.invoice)")
-        
+                
         if WalletUniversalLink.shared.invoice?.publicKey != nil {
             _tableController.publicKey.text = WalletUniversalLink.shared.invoice?.publicKey
             _tableController.publicKey.isUserInteractionEnabled = false

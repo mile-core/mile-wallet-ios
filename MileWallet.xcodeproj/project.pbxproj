@@ -24,6 +24,7 @@
 		3144B6652106727800ED27BF /* SF-Pro-Display-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3144B6622106727800ED27BF /* SF-Pro-Display-Bold.otf */; };
 		3144B6662106727800ED27BF /* SF-Pro-Text-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3144B6632106727800ED27BF /* SF-Pro-Text-Regular.otf */; };
 		3144B6672106727800ED27BF /* SF-Pro-Text-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3144B6642106727800ED27BF /* SF-Pro-Text-Semibold.otf */; };
+		3147A2D7211494E90074DF50 /* SF-Pro-Display-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3147A2D6211494E90074DF50 /* SF-Pro-Display-Regular.otf */; };
 		3164197F2111F69100E6650E /* PasscodeScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3164197D2111F69100E6650E /* PasscodeScreen.xib */; };
 		316419812112054D00E6650E /* PasswordScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316419802112054D00E6650E /* PasswordScreen.swift */; };
 		316419832112077A00E6650E /* PasscodeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316419822112077A00E6650E /* PasscodeStore.swift */; };
@@ -79,6 +80,7 @@
 		3144B6622106727800ED27BF /* SF-Pro-Display-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro-Display-Bold.otf"; sourceTree = "<group>"; };
 		3144B6632106727800ED27BF /* SF-Pro-Text-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro-Text-Regular.otf"; sourceTree = "<group>"; };
 		3144B6642106727800ED27BF /* SF-Pro-Text-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro-Text-Semibold.otf"; sourceTree = "<group>"; };
+		3147A2D6211494E90074DF50 /* SF-Pro-Display-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro-Display-Regular.otf"; sourceTree = "<group>"; };
 		3164197D2111F69100E6650E /* PasscodeScreen.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PasscodeScreen.xib; sourceTree = "<group>"; };
 		316419802112054D00E6650E /* PasswordScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordScreen.swift; sourceTree = "<group>"; };
 		316419822112077A00E6650E /* PasscodeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasscodeStore.swift; sourceTree = "<group>"; };
@@ -179,6 +181,7 @@
 		3144B6612106727800ED27BF /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				3147A2D6211494E90074DF50 /* SF-Pro-Display-Regular.otf */,
 				3144B6622106727800ED27BF /* SF-Pro-Display-Bold.otf */,
 				3144B6632106727800ED27BF /* SF-Pro-Text-Regular.otf */,
 				3144B6642106727800ED27BF /* SF-Pro-Text-Semibold.otf */,
@@ -409,6 +412,7 @@
 				3144B6662106727800ED27BF /* SF-Pro-Text-Regular.otf in Resources */,
 				3144B6652106727800ED27BF /* SF-Pro-Display-Bold.otf in Resources */,
 				3100A2732112F46600FEC5E1 /* icon-launch-screen@2x.png in Resources */,
+				3147A2D7211494E90074DF50 /* SF-Pro-Display-Regular.otf in Resources */,
 				3198353D210F6B4B00E7718F /* PrintContactTemplate.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -683,6 +687,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GHD7Y8FG8V;
 				INFOPLIST_FILE = MileWallet/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -703,6 +708,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GHD7Y8FG8V;
 				INFOPLIST_FILE = MileWallet/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
