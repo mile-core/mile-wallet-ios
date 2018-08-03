@@ -9,6 +9,7 @@
 import UIKit
 import MileWalletKit
 
+
 extension UIButton {
     @objc public var substituteFont : UIFont? {
         get {
@@ -138,9 +139,24 @@ class Separator: UIButton {
 
 extension UIButton {
     
-    static func toolBarButton(padding: CGFloat = 16) -> UIButton {
+    static func toolBarButton(padding: CGFloat = 12) -> UIButton {
         let app = TollBarButton(padding: padding)
         app.titleLabel?.font =  Config.Fonts.button
+        app.imageView?.contentMode = .scaleAspectFit
+        app.titleLabel?.adjustsFontSizeToFitWidth = true
+        return app
+    }
+    
+    static func toolBarButton(padding: CGFloat = 12, image: UIImage?, title:String?, target:Any?, action:Selector) -> UIButton {
+        let app = TollBarButton(padding: padding)
+        app.titleLabel?.font =  Config.Fonts.button
+        app.imageView?.contentMode = .scaleAspectFit
+        app.titleLabel?.adjustsFontSizeToFitWidth = true
+        
+        app.setImage(image, for: UIControlState.normal)
+        app.setTitle(title, for: .normal)
+        app.addTarget(target, action:action, for: UIControlEvents.touchUpInside)
+
         return app
     }
 }

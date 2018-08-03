@@ -38,13 +38,13 @@ extension UITextField {
         return text
     }     
 
-    public static func nameField(placeholder:String = "") -> UITextField {
+    public static func nameField(placeholder:String? = nil) -> UITextField {
         let text = UITextField()
         text.isUserInteractionEnabled = true
         text.contentMode = .center
         text.textAlignment = .left
         text.layer.borderWidth = 0
-        text.clearButtonMode = .always
+        text.clearButtonMode = .whileEditing
         text.placeholder = placeholder
         text.borderStyle = .none
         text.font = Config.Fonts.edit

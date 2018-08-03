@@ -53,14 +53,14 @@ class SendCoinsChooser: Controller {
         guard let a = wallet?.attributes else {
             return
         }
-        navigationController?.navigationBar.prefersLargeTitles = true
+        //navigationController?.navigationBar.prefersLargeTitles = true
         title = NSLocalizedString("Send coins", comment: "")
         bg.backgroundColor = UIColor(hex: a.color)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        navigationController?.navigationBar.prefersLargeTitles = false
+        //navigationController?.navigationBar.prefersLargeTitles = false
     }
     
     fileprivate lazy var _tableController = SendConisChooserController()

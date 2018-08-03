@@ -17,17 +17,22 @@ public class WalletUniversalLink {
     
     public static let kDidUpdateNotification = Notification.Name("CameraQRDidUpdate")
     
-    public var invoice:Invoice? {
-        didSet{
-        
-            if invoice != nil {
-                NotificationCenter.default.post(Notification(name: WalletUniversalLink.kDidUpdateNotification))
-            }
-        }
-    }
+    public var invoice:Invoice?
     public static var shared = WalletUniversalLink()
     private init (){}
 }
+
+extension UINavigationBar {
+    @objc public var substituteTitleColor : [NSAttributedStringKey : Any]? {
+        get {
+            return largeTitleTextAttributes
+        }
+        set {
+            largeTitleTextAttributes = newValue
+        }
+    }
+}
+
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
@@ -35,7 +40,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
     
     var window: UIWindow?
     var navigationController:RootController?
-    var viewController:WalletCardsController?
+    var viewController:WalletsPager?
+    
+    var passcodeScreen = PasscodeScreen()
+
     
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -60,30 +68,43 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
         }
 
         
-        UINavigationBar.appearance().titleTextAttributes = [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarTitle,
-                                                            NSAttributedStringKey.font: Config.Fonts.navigationBarTitle]
+        UINavigationBar.appearance()
+            .titleTextAttributes = [NSAttributedStringKey.font: Config.Fonts.navigationBarTitle]
+      
+        UINavigationBar.appearance(whenContainedInInstancesOf: [Controller.self])
+            .titleTextAttributes = [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarTitle]
+
+        UINavigationBar.appearance(whenContainedInInstancesOf: [NavigationController.self])
+            .titleTextAttributes = [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarTitle]
+
         
-        UINavigationBar.appearance().largeTitleTextAttributes =
+        UINavigationBar.appearance().substituteTitleColor =
             [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarLargeTitle,
              NSAttributedStringKey.font: Config.Fonts.navigationBarLargeTitle]
         
         UIBarButtonItem.appearance()
-            .setTitleTextAttributes([NSAttributedStringKey.foregroundColor: Config.Colors.title,
-                                     NSAttributedStringKey.font: Config.Fonts.title], for: .normal)
+            .setTitleTextAttributes([NSAttributedStringKey.font: Config.Fonts.title], for: .normal)
+
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [Controller.self])
+            .setTitleTextAttributes([NSAttributedStringKey.foregroundColor: Config.Colors.title], for: .normal)
+
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [NavigationController.self])
+            .setTitleTextAttributes([NSAttributedStringKey.foregroundColor: Config.Colors.title], for: .normal)
+
         
         UINavigationBar.appearance().prefersLargeTitles = true
-        UINavigationBar.appearance().barStyle = .default
+        UINavigationBar.appearance().barStyle = .blackTranslucent
         UINavigationBar.appearance().tintColor = UIColor.white
         UINavigationBar.appearance().isTranslucent = true
         UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
         UINavigationBar.appearance().shadowImage = UIImage()
 
+        UIButton.appearance(whenContainedInInstancesOf: [UITableViewCell.self]).setTitleColor(UIColor.white, for: .normal)
+        UIButton.appearance(whenContainedInInstancesOf: [UITableViewCell.self]).substituteFont = Config.Fonts.caption
+
         UIButton.appearance().setTitleColor(Config.Colors.button, for: .normal)
         UIButton.appearance().adjustsImageWhenHighlighted = true
         UIButton.appearance().showsTouchWhenHighlighted = true
-        
-        UIButton.appearance(whenContainedInInstancesOf: [UITableViewCell.self]).setTitleColor(UIColor.white, for: .normal)
-        UIButton.appearance(whenContainedInInstancesOf: [UITableViewCell.self]).substituteFont = Config.Fonts.caption
         
         UIPageControl.appearance().pageIndicatorTintColor = UIColor.lightGray
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor.black
@@ -95,14 +116,84 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
         
         window?.backgroundColor = Config.Colors.background
         
-        viewController = WalletCardsController()
-        
-        navigationController = RootController(rootViewController: viewController!)
-        window?.rootViewController = navigationController;
+        viewController = WalletsPager()
+
+        navigationController = RootController()
+        navigationController?.setViewControllers([viewController!], animated: true)
+
+        if PasscodeStrore.shared.isRegistered {
+            window?.rootViewController = passcodeScreen
+        }
+        else {
+            window?.rootViewController = navigationController
+        }
         window?.makeKeyAndVisible()
+
+        passcodeScreen.didVerifyHandler = { controller in
+            
+            guard PasscodeStrore.shared.isRegistered else { return }
+            
+            self.navigationController?.view.alpha = 0
+
+            UIView.animate(withDuration: Config.animationDuration, animations: {
+                
+                self.passcodeScreen.view.alpha = 0
+                
+            }, completion: { (flag) in
+                
+                self.passcodeScreen.removeFromParentViewController()
+                
+                self.window?.rootViewController = self.navigationController
+            
+                UIView.animate(withDuration: Config.animationDuration, animations: {
+                    
+                    self.navigationController?.view.alpha = 1
+                    
+                }, completion: { (flag) in
+                    if WalletUniversalLink.shared.invoice != nil {
+                        NotificationCenter.default.post(Notification(name: WalletUniversalLink.kDidUpdateNotification))
+                    }
+                })
+            })
+        }
+        
         return true
     }
     
+    func applicationWillResignActive(_ application: UIApplication) {
+        
+        guard PasscodeStrore.shared.isRegistered else { return }
+
+        UIView.animate(withDuration: Config.animationDuration, animations: {
+            
+            self.navigationController?.view.alpha = 0
+            
+        }) { (flag) in
+            self.passcodeScreen.view.alpha = 1
+            self.window?.rootViewController = self.passcodeScreen
+        }
+    }
+    
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        if WalletUniversalLink.shared.invoice != nil {
+            
+            viewController?.removeFromParentViewController()
+            navigationController?.removeFromParentViewController()
+            navigationController = RootController()
+            navigationController?.setViewControllers([viewController!], animated: true)
+            
+            if PasscodeStrore.shared.isRegistered {
+                window?.rootViewController = passcodeScreen
+            }
+            else {
+                window?.rootViewController = navigationController
+            }
+        }
+        else {
+            PasscodeScreen.isUnlocked = false
+            viewController?.presentPasscodeScreen()
+        }
+    }
     
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.

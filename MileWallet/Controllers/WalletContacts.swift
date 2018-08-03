@@ -46,6 +46,8 @@ class WalletContacts: Controller {
             m.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
             m.left.right.equalTo(contentView)
         }
+        
+        _tableController._walletContacts = self
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -75,13 +77,18 @@ class WalletContacts: Controller {
             bg.backgroundColor = UIColor(hex: w.attributes?.color ?? 0)
         }
         
-        _tableController.tableView.reloadData()
-        
         if WalletUniversalLink.shared.invoice != nil {
             add(sender: self)
         }
+        
+        _tableController.tableView.reloadData()
     }
-       
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        UIButton.appearance().setTitleColor(Config.Colors.button, for: .normal)
+    }
+    
     private var wallet:WalletContainer? {
         didSet{
             _tableController.wallet = wallet
@@ -94,16 +101,22 @@ class WalletContacts: Controller {
     }
     
     @objc private func add(sender:Any) {
-        _contactOptionsController.contact = nil
+        update(contact: nil)
+    }
+    
+    fileprivate func update(contact:Contact?) {
+        _contactOptionsController.contact = contact
         _contactOptionsController.wallet = self.wallet
         presentInNavigationController(_contactOptionsController, animated: true)
     }
     
     fileprivate let _tableController = ContactsController()
-    private let _contactOptionsController = WalletContactOptions()
+    fileprivate let _contactOptionsController = WalletContactOptions()
 }
 
 fileprivate class ContactsController: UITableViewController {
+    
+    fileprivate weak var _walletContacts:WalletContacts?
     
     fileprivate var style:CoinsOperation.Style  {
         set{
@@ -162,7 +175,7 @@ extension ContactsController {
         cell.publicKey = contact.publicKey
         cell.avatar = contact.photo
         
-        cell.contentView.remove(border: .bottom)
+        cell.setNeedsDisplay()
         
         return cell
     }
@@ -195,6 +208,27 @@ extension ContactsController {
 
     }
     
+    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        let delete = UITableViewRowAction(style: .destructive,
+                                          title: NSLocalizedString("Delete", comment: ""))
+        { (action, indexPath) in
+            self.tableView(tableView,
+                           commit: UITableViewCellEditingStyle.delete, forRowAt: indexPath)
+        }
+        
+        let edit = UITableViewRowAction(style: UITableViewRowActionStyle.default,
+                                          title: NSLocalizedString("Edit", comment: ""))
+        { (action, indexPath) in
+            self._walletContacts?.update(contact: self.list[indexPath.row])
+        }
+        
+        edit.backgroundColor = Config.Colors.defaultColor
+        
+        UIButton.appearance().setTitleColor(UIColor.white, for: .normal)
+        
+        return [delete, edit]
+    }
+    
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return !isBook
     }
@@ -202,22 +236,39 @@ extension ContactsController {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         
         if editingStyle == .delete {
+
+            var list = self.list
+            let contact = list[indexPath.row]
             
-            let l = list
-            let contact = l[indexPath.row]
-                        
-            Model.shared.context.delete(contact)
-            
-            do{
-                try Model.shared.context.save()
-                
-                if l.count >= 1 {
-                    tableView.deleteRows(at: [indexPath], with: .automatic)
-                }
+            let cell = tableView.dequeueReusableCell(withIdentifier: cellReuseIdendifier, for: indexPath) as! ConactCell
+
+            UIAlertController(title: NSLocalizedString("Delete: ", comment: "") + (contact.name ?? " - "),
+                              message: NSLocalizedString("Are you sure you want to permanently delete the contact?", comment: ""),
+                              preferredStyle: .actionSheet)
+                .addAction(title: NSLocalizedString("Cancel", comment: ""),
+                           style: .cancel)
+                .addAction(title: NSLocalizedString("Delete", comment: ""), style: .destructive) { (action) in
+                    
+                    contact.name = nil
+                    contact.photo = nil
+                    
+                    Model.shared.context.delete(contact)
+                    
+                    do{
+                        try Model.shared.context.save()
+                       
+                        if list.count >= 1 {
+                            self.tableView.beginUpdates()
+                            self.tableView.deleteRows(at: [indexPath], with: .automatic)
+                            self.tableView.endUpdates()
+                            cell.avatar = nil
+                        }
+                    }
+                    catch let error {
+                        print("Model error: \(error)")
+                    }
             }
-            catch let error {
-                print("Model error: \(error)")
-            }
+            .present(by: self)
         }
     }
 }

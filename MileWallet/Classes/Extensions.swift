@@ -20,3 +20,14 @@ public extension UIAlertController {
         viewController.present(self, animated: true)
     }
 }
+
+
+public struct Semaphore {
+    private let s = DispatchSemaphore(value: 1)
+    public init() {}
+    @discardableResult public func sync<R>(execute: () throws -> R) rethrows -> R {
+        _ = s.wait(timeout: DispatchTime.distantFuture)
+        defer { s.signal() }
+        return try execute()
+    }
+}

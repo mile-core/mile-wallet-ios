@@ -60,11 +60,18 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
         presentInNavigationController(_invoiceController, animated: true)
     }
     
+    private var linkActivity:UIActivityViewController?
     @objc func sendLink(_ sender:Any) {
+        
         guard var url = wallet?.wallet?.publicKeyLink() else { return }
+        
         url = url.replacingOccurrences(of: "https:", with: Config.appSchema)
-        let activity = UIActivityViewController(activityItems: ["This is my MILE wallet address link", url], applicationActivities:nil)
-        present(activity, animated: true)
+        
+        linkActivity = UIActivityViewController(
+            activityItems: ["This is my MILE wallet address link", url],
+            applicationActivities:nil)
+        
+        navigationController?.present(linkActivity!, animated: true)
     }
     
     @objc func sendInvoice(_ sender:Any) {
@@ -82,6 +89,11 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
                                   shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        linkActivity?.dismiss(animated: true)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -144,6 +156,7 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
     }
     
     @objc private func settings(sender:Any) {
+        _settingsWalletController.isEdited = true
         _settingsWalletController.wallet = wallet
         presentInNavigationController(_settingsWalletController, animated: true)
     }
@@ -187,7 +200,7 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
         _walletInfo.didMove(toParentViewController: self)
         
         qrContent.snp.remakeConstraints { (m) in
-            m.top.equalTo(contentView.snp.top).offset(0)
+            m.top.equalTo(contentView.snp.top).offset(Config.iPhoneX ? 20 : 0)
             m.left.right.equalTo(contentView).inset(0)
             m.height.equalTo(qrContent.snp.width)
         }
@@ -208,10 +221,10 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
             m.edges.equalTo(qrCodeBorder.snp.edges)
         }
         
-        var h:CGFloat = 20
-        if UIScreen.main.bounds.size.height < 640 {
-            h = 10
-        }
+        var h:CGFloat = 10
+        //if UIScreen.main.bounds.size.height < 640 {
+        //    h = 10
+        //}
         
         qrCode.snp.makeConstraints { (m) in
             m.edges.equalTo(UIEdgeInsets(top: h, left: h, bottom: h, right: h))
@@ -274,7 +287,7 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
         }
         
         copyAddressButton.snp.remakeConstraints { (m) in
-            m.top.lessThanOrEqualTo(balance.snp.bottom).offset(30)//.priority(.low)
+            m.top.lessThanOrEqualTo(balance.snp.bottom).offset(30)
             m.bottom.lessThanOrEqualTo(toolBar.snp.top).offset(-20).priority(.low)
             m.left.right.equalTo(contentView).inset(60)
             m.height.equalTo(60)
@@ -345,6 +358,59 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
         if a.isActive {
             if let publicKey = w.publicKey {
                 UIPasteboard.general.string = publicKey
+                
+                let ok = UIView()
+                
+                let label = UILabel()
+                label.text = NSLocalizedString("Copied!", comment: "")
+                label.textAlignment = .center
+                
+                ok.frame = CGRect(x: 0, y: 0, width: 80, height: 80)
+                
+                self.qrCode.superview?.addSubview(ok)
+                self.qrCode.superview?.addSubview(label)
+                
+                ok.snp.makeConstraints { (m) in
+                    m.centerX.equalToSuperview()
+                    m.centerY.equalToSuperview().offset(-20)
+                    m.width.equalTo(80)
+                    m.height.equalTo(ok.snp.width)
+                }
+                
+                label.snp.makeConstraints { (m) in
+                    m.centerX.equalToSuperview()
+                    m.top.equalTo(ok.snp.bottom).offset(10)
+                    m.width.equalToSuperview().offset(-40)
+                    m.height.equalTo(44)
+                }
+                
+                ok.layer.contents = Config.Images.colorPickerOn.cgImage
+                ok.layer.contentsScale = 3.5
+                ok.layer.contentsGravity = kCAGravityCenter
+                ok.layer.isGeometryFlipped = true
+                ok.backgroundColor = Config.Colors.defaultColor
+                ok.layer.cornerRadius = ok.bounds.size.width/2
+                ok.clipsToBounds = true
+                ok.layer.masksToBounds = true
+                ok.alpha = 1
+                self.qrCode.alpha = 0.1
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5 ) {
+                    UIView.animate(withDuration: 0.5,
+                                   animations: {
+                                    self.qrCode.alpha = 1
+                                    ok.alpha = 0
+                    }) { (flag) in
+                        ok.removeFromSuperview()
+                        label.removeFromSuperview()
+                    }
+                }
+//                UIView.animate(withDuration: 0.1,
+//                               animations: {
+//                                //self.qrCode.alpha = 0.2
+//                                //ok.alpha = 1
+//                }) { (flag) in
+//                }
+                
             }
         }
         else {

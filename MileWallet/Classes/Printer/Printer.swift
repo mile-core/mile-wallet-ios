@@ -14,7 +14,7 @@ public class Printer {
     public static let shared:Printer = Printer()
     
     public lazy var printController:UIPrintInteractionController = {
-        let p = UIPrintInteractionController.shared                
+        let p = UIPrintInteractionController.shared
         p.printInfo = printInfo        
         return p
     }()
@@ -51,5 +51,5 @@ public class Printer {
     }()
     
     
-    private init() {}
+    public init() {}
 }

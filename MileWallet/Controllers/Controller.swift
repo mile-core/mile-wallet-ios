@@ -24,8 +24,8 @@ extension UIViewController {
         }
         else {
             present(nc,
-                          animated: flag,
-                          completion: completion)
+                    animated: flag,
+                    completion: completion)
         }
     }
 }
@@ -40,6 +40,21 @@ class Controller: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //
+        
+        NotificationCenter.default
+            .addObserver(self,
+                         selector: #selector(__didNetworkChangeStatus(notification:)),
+                         name: NSNotification.Name("NetworkIsReachable"),
+                         object: nil)
+
+        NotificationCenter.default
+            .addObserver(self,
+                         selector: #selector(__didNetworkChangeStatus(notification:)),
+                         name: NSNotification.Name("NetworkIsUnreachable"),
+                         object: nil)
+
         view.backgroundColor = UIColor.clear
         contentView.backgroundColor = UIColor.clear
         view.addSubview(contentView)
@@ -55,7 +70,36 @@ class Controller: UIViewController {
             m.bottom.equalToSuperview()
         }
     }
+    
+    public func notifyNetworkStatus(reachable:Bool) {
+        DispatchQueue.main.async {
+            let status = reachable ?  NSNotification.Name("NetworkIsReachable") : NSNotification.Name("NetworkIsUnreachable")
+            NotificationCenter.default.post(name: status, object: nil)
+        }
+    }
+    
+    public func didNetworkChangeStatus(reachable:Bool){}
 
+    private var lastNetworkStatus = false
+    
+    private func __didNetworkChangeStatus(reachable:Bool){
+         DispatchQueue.main.async {
+            guard self.lastNetworkStatus != reachable else { return  }
+            self.lastNetworkStatus = reachable
+            self.didNetworkChangeStatus(reachable: reachable)
+        }
+        
+    }
+
+    @objc private func __didNetworkChangeStatus(notification:Notification) {
+        if notification.name == NSNotification.Name("NetworkIsReachable") {
+            __didNetworkChangeStatus(reachable: true)
+        }
+        else {
+            __didNetworkChangeStatus(reachable: false)
+        }
+    }
+    
     override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         if presentingViewController is UINavigationController {
             super.dismiss(animated: true, completion: nil)
@@ -90,12 +134,19 @@ class Controller: UIViewController {
     }
     
     func loaderStop() {
-        activiti.stopAnimating()
-        UIView.animate(withDuration: 0.2, animations: { 
-            self.dimView.alpha=0
-        }, completion: { (flag) in
-            self.dimView.removeFromSuperview()
-        })
+        DispatchQueue.main.async {
+            self.activiti.stopAnimating()
+            UIView.animate(withDuration: 0.2, animations: {
+                self.dimView.alpha=0
+            }, completion: { (flag) in
+                self.dimView.removeFromSuperview()
+            })
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        loaderStop()
     }
     
     public func mileInfoUpdate(error: ((_ error: Error?)-> Void)?=nil,
@@ -121,6 +172,34 @@ class Controller: UIViewController {
     
     private let activiti = UIActivityIndicatorView(activityIndicatorStyle: .gray)
     private lazy var dimView = UIView(frame: self.view.bounds)
+    
+    private var passcodeScreen = PasscodeScreen()
+    
+    public func presentPasscodeScreen(){
+        
+        if PasscodeScreen.isUnlocked || PasscodeScreen.isPresenting { return }
+        
+        if !PasscodeStrore.shared.isRegistered {
+
+            if self.passcodeScreen.presentingViewController != nil {
+                self.passcodeScreen.dismiss(animated: false)
+            }
+            
+            UIAlertController(title: NSLocalizedString("Security Alert!", comment: ""),
+                              message: NSLocalizedString("To avoid insecure access MILE Wallet please configure access with passcode", comment: ""),
+                              preferredStyle: .actionSheet)
+                .addAction(title: NSLocalizedString("Cancel", comment: ""),
+                           style: UIAlertActionStyle.cancel) { (action) in
+                            PasscodeScreen.isUnlocked = true
+                }
+                .addAction(title: NSLocalizedString("Open passcode settings", comment: ""),
+                           style: .default, handler: { (action) in
+                            self.passcodeScreen.settingsMode = true
+                            self.present(self.passcodeScreen, animated: false) 
+                })
+                .present(by: self)
+        }
+    }
 }
 
 public class NavigationController: UINavigationController {
@@ -148,7 +227,23 @@ public class NavigationController: UINavigationController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.navigationBar.prefersLargeTitles = true
+        navigationBar
+            .titleTextAttributes =
+            [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarTitle,
+             NSAttributedStringKey.font: Config.Fonts.navigationBarTitle]
+        
+        navigationBar
+            .largeTitleTextAttributes =
+            [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarLargeTitle,
+             NSAttributedStringKey.font: Config.Fonts.navigationBarLargeTitle]
+        
+        navigationBar.barStyle = .default
+        navigationBar.tintColor = UIColor.white
+        navigationBar.isTranslucent = true
+        navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationBar.shadowImage = UIImage()
+        
+        navigationBar.prefersLargeTitles = true
         
         view.insertSubview(bg, at: 0)
         bg.backgroundColor = titleColor

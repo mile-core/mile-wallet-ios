@@ -9,6 +9,7 @@
 import UIKit
 import MileCsaLight
 import MileWalletKit
+import QRCodeReader
 
 class WalletContactOptions: Controller, UITextFieldDelegate {
     
@@ -19,13 +20,21 @@ class WalletContactOptions: Controller, UITextFieldDelegate {
                 _tableController.avatarImage = nil
                 _tableController.name.text = nil
                 _tableController.publicKey.text = nil
+                _tableController.publicKey.isUserInteractionEnabled = true
                 _tableController.loadButton.setImage(_tableController.loadImage, for: .normal)
+            }
+            else {
+                var image = _tableController.loadImage
+                if let data = contact?.photo {
+                    image = UIImage(data: data)
+                }
+                _tableController.loadButton.setImage(image, for: UIControlState.normal)
+                _tableController.publicKey.isUserInteractionEnabled = false
             }
         }
     }
     
     private let _tableController = ContactController()
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,7 +59,6 @@ class WalletContactOptions: Controller, UITextFieldDelegate {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         _tableController.publicKey.isUserInteractionEnabled = true
-        WalletUniversalLink.shared.invoice = nil
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -59,8 +67,9 @@ class WalletContactOptions: Controller, UITextFieldDelegate {
         if let contact = self.contact {
             title = NSLocalizedString("Send coins to", comment: "") + ": " + contact.name!
             if let photo = contact.photo {
-            let image = UIImage(data: photo)
-                _tableController.loadButton.setImage(image, for: .normal)
+                if let image = UIImage(data: photo) {
+                    _tableController.loadButton.setImage(image, for: .normal)
+                }
             }
         }
         else {
@@ -71,22 +80,52 @@ class WalletContactOptions: Controller, UITextFieldDelegate {
             (navigationController as? NavigationController)?.titleColor = UIColor(hex: a.color)
         }
         
-        _tableController.publicKey.text = WalletUniversalLink.shared.invoice?.publicKey
+        print("invoice \(WalletUniversalLink.shared.invoice)")
+        
         if WalletUniversalLink.shared.invoice?.publicKey != nil {
+            _tableController.publicKey.text = WalletUniversalLink.shared.invoice?.publicKey
             _tableController.publicKey.isUserInteractionEnabled = false
         }
-        WalletUniversalLink.shared.invoice = nil
+        else if let contact = self.contact {
+            _tableController.name.text = contact.name
+            _tableController.publicKey.text = contact.publicKey
+        }       
     }
     
     @objc private func closePayments(sender:Any){
+        WalletUniversalLink.shared.invoice = nil
         dismiss(animated: true)
     }
     
     @objc private func doneHandler(_ sender: UIButton) {
+        WalletUniversalLink.shared.invoice = nil
         if let contact = self.contact {
+            
+            guard let name = self._tableController.name.text,
+                let publicKey = self._tableController.publicKey.text,
+                !name.isEmpty, !publicKey.isEmpty
+                else {
+                    return
+            }
+            
+            contact.name = name
+            contact.publicKey = publicKey
+            
+            if let avatar = _tableController.avatarImage {
+                let data = UIImageJPEGRepresentation(avatar, 0.85)
+                 contact.photo = data
+            }
+            
+            do {
+                try Model.shared.context.save()
+            }
+            catch let error {
+                print("Add new contact error: \(error)")
+            }
+            
+            dismiss(animated: true)
         }
         else {
-            WalletUniversalLink.shared.invoice = nil
             addContact()
         }
     }
@@ -159,6 +198,11 @@ fileprivate class ContactController: UITableViewController {
         tableView.keyboardDismissMode = .onDrag
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+         publicKeyConstraint()
+    }
+    
     var didLayout = false
     override func viewDidLayoutSubviews() {
         if !self.didLayout {
@@ -186,12 +230,60 @@ fileprivate class ContactController: UITableViewController {
     lazy var name:UITextField = UITextField.nameField(placeholder: NSLocalizedString("Contact name", comment: ""))
     lazy var publicKey:UITextField = UITextField.nameField(placeholder: NSLocalizedString("Public key", comment: ""))
 
+    private lazy var qrCodeReader:QRReader = {return QRReader(controller: self)}()
+
+    private lazy var qrReaderButton: UIButton = {
+        let b = Button(image: UIImage(named: "button-read"), action: { (sender) in
+            
+            self.qrCodeReader.open { (reader, result) in
+                self.reader(reader, didScanResult: result)
+            }
+        })
+        return b
+    }()
+    
+    private lazy var publicKeyContainer: UIView = UIView()
+    
+    private func publicKeyConstraint() {
+        
+        self.publicKeyContainer.addSubview(self.publicKey)
+        self.publicKeyContainer.addSubview(self.qrReaderButton)
+        
+        self.publicKey.snp.remakeConstraints { (m) in
+            m.left.equalTo(self.publicKeyContainer)
+            if self.publicKey.isUserInteractionEnabled {
+                m.right.equalTo(self.qrReaderButton.snp.left).offset(-10)
+            }
+            else {
+                m.right.equalTo(self.publicKeyContainer.snp.right).offset(-20)
+            }
+            m.top.equalTo(self.publicKeyContainer)
+            m.bottom.equalTo(self.publicKeyContainer)
+        }
+        
+        if self.publicKey.isUserInteractionEnabled {
+            self.qrReaderButton.snp.remakeConstraints { (m) in
+                m.centerY.equalTo(self.publicKeyContainer.snp.centerY)
+                m.centerX.equalTo(self.publicKeyContainer.snp.right).offset(-10)
+                m.height.equalTo(publicKey.snp.height)
+                m.width.equalTo(qrReaderButton.snp.height)
+            }
+            self.qrReaderButton.isUserInteractionEnabled = true
+            self.qrReaderButton.alpha = 1
+        }
+        else {
+            self.qrReaderButton.isUserInteractionEnabled = false
+            self.qrReaderButton.alpha = 0
+        }
+    }
+    
     fileprivate lazy var list:[UIView] = [
         {
             return self.name
         }(),
         {
-            return self.publicKey
+            self.publicKeyConstraint()
+            return self.publicKeyContainer
         }(),
         {
             let v = UIView()
@@ -219,6 +311,26 @@ fileprivate class ContactController: UITableViewController {
         }()
     ]
     
+}
+
+
+extension ContactController {
+    func reader(_ reader: QRCodeReaderViewController, didScanResult result: QRCodeReaderResult) {
+        
+        reader.stopScanning()
+        reader.dismiss(animated: true)
+
+        if let pk = result.value.qrCodePayment {
+            publicKey.text = pk.publicKey
+        }
+        else {
+            UIAlertController(title: nil,
+                              message: NSLocalizedString("MILE QR Code is not valid", comment: ""),
+                              preferredStyle: .actionSheet)
+                .addAction(title: NSLocalizedString("Close", comment: ""), style: .cancel)
+                .present(by: self)
+        }
+    }
 }
 
 class PickerController: UIImagePickerController {

@@ -56,6 +56,8 @@ class CoinsOperation: Controller {
         }
     }
 
+    private lazy var successScreen = SuccessController()
+    
     private var currentAsset:Asset = .mile
     private var currentAssetIndex = 0
     
@@ -104,7 +106,8 @@ class CoinsOperation: Controller {
                                                            target: self,
                                                            action: #selector(self.closeHandler(sender:)))
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Next", comment: ""), style: .plain,
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Next", comment: ""),
+                                                            style: .plain,
                                                             target: self,
                                                             action: #selector(doneHandler(_:)))
 
@@ -186,7 +189,6 @@ class CoinsOperation: Controller {
             title = NSLocalizedString("Done", comment: "")
             
         case .print, .invoiceLink:
-            
             contactView.alpha = 0
             qrCodeHeader.alpha = 1
             qrCodeUpdate()
@@ -241,7 +243,11 @@ class CoinsOperation: Controller {
                 
         }) { (transfer) in
             self.loaderStop()
-            self.dismiss(animated: true)
+            self.successScreen.view.backgroundColor =
+                UIColor(hex: self.wallet?.attributes?.color ?? Config.Colors.defaultColor.hex)
+            self.successScreen.amount = asset.stringValue(amount)
+            self.successScreen.message = asset.name + " " + NSLocalizedString("sent!", comment: "")
+            self.present(self.successScreen, animated: true) 
         }
     }
     
@@ -304,7 +310,6 @@ class CoinsOperation: Controller {
         guard let w = wallet?.wallet else {
             return
         }
-        
         
         loaderStart()
         
@@ -375,7 +380,11 @@ class CoinsOperation: Controller {
             guard var url = wallet?.wallet?.paymentLink(assets: asset.name, amount: asset.stringValue(asked)) else { return }
             
             url = url.replacingOccurrences(of: "https:", with: Config.appSchema)
-            let activity = UIActivityViewController(activityItems: ["Please send your coins to the address", url], applicationActivities:nil)
+           
+            let activity = UIActivityViewController(
+                activityItems: ["Please send your coins to the address", url],
+                applicationActivities:nil)
+            
             present(activity, animated: true)
         }
     }
@@ -405,38 +414,17 @@ class CoinsOperation: Controller {
         return a
     }()
     
-    fileprivate lazy var coinsPicker:UIPickerView = UIPickerView()
-    
-    fileprivate lazy var printControllerBg:UIImageView = {
-        let v = UIImageView(image: Config.Images.basePattern)
-        v.alpha = 0
-        return v
-    }()
+    fileprivate lazy var coinsPicker:UIPickerView = UIPickerView()       
 }
 
 extension CoinsOperation: UIPrintInteractionControllerDelegate {
     
     func printInteractionControllerParentViewController(_ printInteractionController: UIPrintInteractionController) -> UIViewController? {
-        return self.navigationController?.topViewController
+        return self.navigationController
     }
     
     func printInteractionControllerWillPresentPrinterOptions(_ printInteractionController: UIPrintInteractionController) {
-        UIApplication.shared.keyWindow?.addSubview(printControllerBg)
-        printControllerBg.snp.makeConstraints { (m) in
-            m.edges.equalToSuperview().inset(UIEdgeInsets(top: -200, left: 0, bottom: 0, right: 0))
-        }
-        printControllerBg.backgroundColor = UIColor(hex: wallet?.attributes?.color ?? 255)
-        UIView.animate(withDuration: Config.animationDuration) {
-            self.printControllerBg.alpha = 1
-        }
-    }
-    
-    func printInteractionControllerDidDismissPrinterOptions(_ printInteractionController: UIPrintInteractionController) {
-        UIView.animate(withDuration: Config.animationDuration, animations: {
-            self.printControllerBg.alpha = 0
-        }) { (flag) in
-            self.printControllerBg.removeFromSuperview()
-        }
+        self.navigationController?.navigationBar.backgroundColor =  UIColor.clear
     }
 }
 
@@ -444,7 +432,6 @@ extension CoinsOperation: UITextFieldDelegate {
 
     @objc fileprivate func amountChainging(_ sender:UITextField) {
         qrCodeUpdate()
-
     }
     
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
