@@ -13,6 +13,21 @@ import SmileLock
 import MileWalletKit
 import KeychainAccess
 
+//class PasswordView: PasswordContainerView {
+//    open override var tintColor: UIColor! {
+//        didSet {
+//            guard !isVibrancyEffect else { return }
+//            deleteButton.setTitleColor(tintColor, for: UIControlState())
+//            passwordDotView.strokeColor = tintColor
+//            touchAuthenticationButton.tintColor = tintColor
+//            passwordInputViews.forEach {
+//                $0.textColor = tintColor
+//                $0.borderColor = tintColor
+//            }
+//        }
+//    }
+//}
+
 class PasscodeScreen: UIViewController {
     
     @IBOutlet weak var passwordStackView: UIStackView!
@@ -36,37 +51,40 @@ class PasscodeScreen: UIViewController {
     
     private var firstView:UIView?
     override func viewDidLoad() {
-
-        //firstView = UIApplication.shared.keyWindow?.subviews.first
-        //firstView?.alpha = 0
         
         super.viewDidLoad()
         
-        view.backgroundColor = Config.Colors.background
+        view.backgroundColor = Config.Colors.defaultColor
         
         passwordContainerView = PasswordContainerView.create(in: passwordStackView, digit: kPasswordDigit)
         passwordContainerView.delegate = self
-        passwordContainerView.passwordDotView.tintColor = Config.Colors.defaultColor
+        passwordContainerView.passwordDotView.tintColor = UIColor.white
+        passwordContainerView.touchAuthenticationButton.tintColor = Config.Colors.defaultColor
         passwordContainerView.deleteButtonLocalizedTitle = NSLocalizedString("Delete", comment: "")
         
-        passwordContainerView.tintColor = Config.Colors.caption
-        passwordContainerView.highlightedColor = Config.Colors.defaultColor
+        passwordContainerView.tintColor = UIColor.white
+        passwordContainerView.highlightedColor = UIColor.white
+        
+        passwordContainerView.passwordInputViews.forEach {
+            $0.textColor = Config.Colors.defaultColor
+            $0.labelFont = Config.Fonts.passCodeDigit
+            $0.borderColor = Config.Colors.passCodeDigit
+            $0.highlightBackgroundColor = Config.Colors.passCodeDigit
+        }
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
         PasscodeScreen.isPresenting = true
-//        if settingsMode {
-//            firstView?.alpha = 1
-//        }
         super.viewWillAppear(animated)
         passwordTitle.text = NSLocalizedString("Enter Passcode", comment: "")
         passwordContainerView.touchAuthenticationEnabled = !settingsMode
         passwordContainerView.clearInput()
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        //firstView?.alpha = 1
     }
     
     override func viewDidDisappear(_ animated: Bool) {

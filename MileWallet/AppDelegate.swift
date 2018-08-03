@@ -47,7 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
     
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        
+               
         Config.url = "https://wallet.testnet.mile.global"
         
         WalletUniversalLink.shared.invoice = nil

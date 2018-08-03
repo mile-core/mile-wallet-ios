@@ -283,13 +283,15 @@ extension WalletsController {
 // MARK: - Delegate
 extension WalletsController {
     override func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath)!
-        cell.backgroundColor = UIColor.black.withAlphaComponent(0.03)
+        if let cell = tableView.cellForRow(at: indexPath) {
+            cell.backgroundColor = UIColor.black.withAlphaComponent(0.03)
+        }
     }
     
     override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath)!
-        cell.backgroundColor = UIColor.clear
+        if let cell = tableView.cellForRow(at: indexPath) {
+            cell.backgroundColor = UIColor.clear
+        }
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
