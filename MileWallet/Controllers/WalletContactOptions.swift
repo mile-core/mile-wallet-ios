@@ -61,6 +61,7 @@ class WalletContactOptions: Controller, UITextFieldDelegate {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         _tableController.publicKey.isUserInteractionEnabled = true
+        view.endEditing(true)
     }
     
     override func viewWillAppear(_ animated: Bool) {

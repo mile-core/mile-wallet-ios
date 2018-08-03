@@ -147,6 +147,7 @@ class Controller: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         loaderStop()
+        view.endEditing(true)
     }
     
     public func mileInfoUpdate(error: ((_ error: Error?)-> Void)?=nil,
