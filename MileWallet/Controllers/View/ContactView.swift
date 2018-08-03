@@ -24,8 +24,11 @@ class ContactView: UIView {
     public var avatar:Data? {
         didSet{
             guard let d = avatar else {
+                iconView.image = nil
+                litera.alpha = 1
                 return
             }
+            litera.alpha = 0
             iconView.image = UIImage(data: d)
         }
     }
@@ -79,8 +82,6 @@ class ContactView: UIView {
         
         iconView.snp.makeConstraints { (m) in
             m.left.equalToSuperview().offset(20)
-            //m.top.equalTo(self).offset(16)
-            //m.bottom.equalTo(self).offset(-16)
             m.centerY.equalToSuperview()
             m.height.equalTo(60)
             m.width.equalTo(iconView.snp.height)
@@ -190,6 +191,9 @@ class ConactCell: UITableViewCell {
         super.init(coder: aDecoder)
     }
     
+    override func setNeedsDisplay() {
+        contactView.setNeedsDisplay()
+    }
     
     override func setHighlighted(_ highlighted: Bool, animated: Bool) {
         let c = contactView.iconView.backgroundColor

@@ -19,13 +19,21 @@ class WalletContactOptions: Controller, UITextFieldDelegate {
                 _tableController.avatarImage = nil
                 _tableController.name.text = nil
                 _tableController.publicKey.text = nil
+                _tableController.publicKey.isUserInteractionEnabled = true
                 _tableController.loadButton.setImage(_tableController.loadImage, for: .normal)
+            }
+            else {
+                var image = _tableController.loadImage
+                if let data = contact?.photo {
+                    image = UIImage(data: data)
+                }
+                _tableController.loadButton.setImage(image, for: UIControlState.normal)
+                _tableController.publicKey.isUserInteractionEnabled = false
             }
         }
     }
     
     private let _tableController = ContactController()
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,7 +58,6 @@ class WalletContactOptions: Controller, UITextFieldDelegate {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         _tableController.publicKey.isUserInteractionEnabled = true
-        //WalletUniversalLink.shared.invoice = nil
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -74,21 +81,48 @@ class WalletContactOptions: Controller, UITextFieldDelegate {
         
         print("invoice \(WalletUniversalLink.shared.invoice)")
         
-        _tableController.publicKey.text = WalletUniversalLink.shared.invoice?.publicKey
         if WalletUniversalLink.shared.invoice?.publicKey != nil {
+            _tableController.publicKey.text = WalletUniversalLink.shared.invoice?.publicKey
             _tableController.publicKey.isUserInteractionEnabled = false
         }
+        else if let contact = self.contact {
+            _tableController.name.text = contact.name
+            _tableController.publicKey.text = contact.publicKey
+        }       
     }
     
     @objc private func closePayments(sender:Any){
         WalletUniversalLink.shared.invoice = nil
-        dismiss(animated: true){
-        }
+        dismiss(animated: true)
     }
     
     @objc private func doneHandler(_ sender: UIButton) {
         WalletUniversalLink.shared.invoice = nil
         if let contact = self.contact {
+            
+            guard let name = self._tableController.name.text,
+                let publicKey = self._tableController.publicKey.text,
+                !name.isEmpty, !publicKey.isEmpty
+                else {
+                    return
+            }
+            
+            contact.name = name
+            contact.publicKey = publicKey
+            
+            if let avatar = _tableController.avatarImage {
+                let data = UIImageJPEGRepresentation(avatar, 0.85)
+                 contact.photo = data
+            }
+            
+            do {
+                try Model.shared.context.save()
+            }
+            catch let error {
+                print("Add new contact error: \(error)")
+            }
+            
+            dismiss(animated: true)
         }
         else {
             addContact()
