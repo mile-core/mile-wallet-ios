@@ -80,6 +80,7 @@ class PasscodeScreen: UIViewController {
         passwordTitle.text = NSLocalizedString("Enter Passcode", comment: "")
         passwordContainerView.touchAuthenticationEnabled = !settingsMode
         passwordContainerView.clearInput()
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil)
     }
     
     override func viewDidAppear(_ animated: Bool) {
