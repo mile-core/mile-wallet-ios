@@ -33,6 +33,10 @@ extension Contact {
     
     public static var list:[Contact] {
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: ContactEntityName)
+
+        let sortDescriptor = NSSortDescriptor(key: "name", ascending: true)
+        request.sortDescriptors = [sortDescriptor]
+
         request.returnsObjectsAsFaults = false
         do {
             let result = try Model.shared.context.fetch(request)
