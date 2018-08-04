@@ -27,13 +27,13 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="0Qh-Tu-v34">
-                    <rect key="frame" x="75" y="315" width="226" height="37"/>
+                    <rect key="frame" x="20" y="315" width="335" height="37"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="26" translatesAutoresizingMaskIntoConstraints="NO" id="gAH-b6-saf">
-                            <rect key="frame" x="0.0" y="0.0" width="226" height="37"/>
+                            <rect key="frame" x="0.0" y="0.0" width="335" height="37"/>
                             <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enter Password" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="rb4-uw-4EU">
-                                    <rect key="frame" x="0.0" y="0.0" width="226" height="37"/>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enter Password" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="rb4-uw-4EU">
+                                    <rect key="frame" x="54.5" y="0.0" width="226" height="37"/>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <fontDescription key="fontDescription" name="SFProText-Regular" family="SF Pro Text" pointSize="31"/>
                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -44,9 +44,11 @@
                     </subviews>
                 </stackView>
             </subviews>
-            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color key="backgroundColor" red="0.27450980390000002" green="0.43921568630000002" blue="0.66274509800000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
+                <constraint firstItem="0Qh-Tu-v34" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="20" id="Jqw-9h-gGl"/>
                 <constraint firstItem="0Qh-Tu-v34" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="Khq-hj-1hu"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="0Qh-Tu-v34" secondAttribute="trailing" constant="20" id="edG-HT-tp5"/>
                 <constraint firstItem="0Qh-Tu-v34" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="t1S-4S-si9"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>

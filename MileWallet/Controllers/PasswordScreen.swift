@@ -40,7 +40,7 @@ class PasscodeScreen: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = Config.Colors.defaultColor
-        
+      
         passwordContainerView = PasswordContainerView.create(in: passwordStackView, digit: kPasswordDigit)
         passwordContainerView.delegate = self
         passwordContainerView.passwordDotView.tintColor = UIColor.white
@@ -58,15 +58,37 @@ class PasscodeScreen: UIViewController {
             $0.highlightBackgroundColor = UIColor.white
         }
 
+        passwordTitle.adjustsFontSizeToFitWidth = true
+        passwordTitle.minimumScaleFactor = 0.5
     }
     
     override func viewWillAppear(_ animated: Bool) {
         PasscodeScreen.isPresenting = true
         super.viewWillAppear(animated)
+        
+        passwordContainerView.alpha = 1
+        passwordContainerView.isUserInteractionEnabled = true
         passwordTitle.text = NSLocalizedString("Enter Passcode", comment: "")
         passwordContainerView.touchAuthenticationEnabled = !settingsMode
         passwordContainerView.clearInput()
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil)
+
+        if let lastDate = UserDefaults.standard.object(forKey: lockedKey) as? Date {
+            let left = (Date().timeIntervalSince1970 - lastDate.timeIntervalSince1970)
+            if left < Config.passcodeAttemptsTimer {
+                lockScreen()
+                
+                lockTimer?.invalidate()
+                lockTimer = Timer.scheduledTimer(timeInterval: left,
+                                                 target: self,
+                                                 selector: #selector(unlockTimerHandler(timer:)),
+                                                 userInfo: nil,
+                                                 repeats: false)
+            }
+            else {
+                failsCounter = 0
+            }
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -89,15 +111,65 @@ class PasscodeScreen: UIViewController {
     }
     
     fileprivate var failsCounter = 0
+    fileprivate var lockTimer:Timer?
+    fileprivate let lockedKey = "wallet-is-locked"
 }
 
 extension PasscodeScreen: PasswordInputCompleteProtocol {
+    
+    @objc func unlockTimerHandler(timer:Timer) {
+        timer.invalidate()
+        
+        UIView.animate(withDuration: Config.animationDuration, animations: {
+            self.passwordTitle.alpha = 0
+        }) { (flag) in
+            self.failsCounter = 0
+            self.passwordContainerView.isUserInteractionEnabled = true
+            self.passwordTitle.text = NSLocalizedString("Enter Passcode", comment: "")
+            UIView.animate(withDuration: Config.animationDuration) {
+                self.passwordTitle.alpha = 1
+                self.passwordContainerView.alpha = 1
+                self.passwordContainerView.wrongPassword()
+            }
+        }
+    }
+    
+    
+    fileprivate func lockScreen(){
+        
+        lockTimer?.invalidate()
+        lockTimer = Timer.scheduledTimer(timeInterval: Config.passcodeAttemptsTimer,
+                                         target: self,
+                                         selector: #selector(unlockTimerHandler(timer:)),
+                                         userInfo: nil,
+                                         repeats: false)
+        
+        passwordContainerView.isUserInteractionEnabled = false
+        
+        UIView.animate(withDuration: Config.animationDuration, animations: {
+            self.passwordTitle.alpha = 0
+        }) { (flag) in
+            self.passwordTitle.text = NSLocalizedString("Wallet is disabled try again in ", comment: "") + "\(Int(Config.passcodeAttemptsTimer)) " + NSLocalizedString("seconds", comment: "")
+            UIView.animate(withDuration: Config.animationDuration) {
+                self.passwordTitle.alpha = 1
+                self.passwordContainerView.alpha = 0.7
+            }
+        }
+    }
     
     func passwordInputComplete(_ passwordContainerView: PasswordContainerView, input: String) {
         if validation(input) {
             failsCounter = 0
             validationSuccess()
         } else {
+            
+            if Config.passcodeAttemptsLimit <= failsCounter {
+                UserDefaults.standard.set(Date(), forKey: self.lockedKey)
+                UserDefaults.standard.synchronize()
+                self.lockScreen()
+                return
+            }
+            
             failsCounter += 1
             
             validationFail()

@@ -17,6 +17,9 @@ extension Config {
     public static var isWalletKeychainSynchronizable = true
     
     public static let activeWalletsLimit = 16
+    public static let passcodeAttemptsLimit = 3
+    public static let passcodeAttemptsTimer:TimeInterval = 60
+
     public static let reloadTimerInterval:TimeInterval = 5
     public static let pageControlsNumbers = 5
     public static let animationDuration:TimeInterval = 0.2
