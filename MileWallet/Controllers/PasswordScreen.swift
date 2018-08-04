@@ -13,21 +13,6 @@ import SmileLock
 import MileWalletKit
 import KeychainAccess
 
-//class PasswordView: PasswordContainerView {
-//    open override var tintColor: UIColor! {
-//        didSet {
-//            guard !isVibrancyEffect else { return }
-//            deleteButton.setTitleColor(tintColor, for: UIControlState())
-//            passwordDotView.strokeColor = tintColor
-//            touchAuthenticationButton.tintColor = tintColor
-//            passwordInputViews.forEach {
-//                $0.textColor = tintColor
-//                $0.borderColor = tintColor
-//            }
-//        }
-//    }
-//}
-
 class PasscodeScreen: UIViewController {
     
     @IBOutlet weak var passwordStackView: UIStackView!
@@ -59,17 +44,18 @@ class PasscodeScreen: UIViewController {
         passwordContainerView = PasswordContainerView.create(in: passwordStackView, digit: kPasswordDigit)
         passwordContainerView.delegate = self
         passwordContainerView.passwordDotView.tintColor = UIColor.white
-        passwordContainerView.touchAuthenticationButton.tintColor = Config.Colors.defaultColor
         passwordContainerView.deleteButtonLocalizedTitle = NSLocalizedString("Delete", comment: "")
         
         passwordContainerView.tintColor = UIColor.white
         passwordContainerView.highlightedColor = UIColor.white
         
         passwordContainerView.passwordInputViews.forEach {
-            $0.textColor = Config.Colors.defaultColor
+            $0.textColor = UIColor.white
+            $0.highlightTextColor = Config.Colors.passCodeDigit
             $0.labelFont = Config.Fonts.passCodeDigit
             $0.borderColor = Config.Colors.passCodeDigit
-            $0.highlightBackgroundColor = Config.Colors.passCodeDigit
+            $0.circleBackgroundColor = Config.Colors.passCodeDigit
+            $0.highlightBackgroundColor = UIColor.white
         }
 
     }
@@ -101,14 +87,19 @@ class PasscodeScreen: UIViewController {
             completion?()
         }
     }
+    
+    fileprivate var failsCounter = 0
 }
 
 extension PasscodeScreen: PasswordInputCompleteProtocol {
     
     func passwordInputComplete(_ passwordContainerView: PasswordContainerView, input: String) {
         if validation(input) {
+            failsCounter = 0
             validationSuccess()
         } else {
+            failsCounter += 1
+            
             validationFail()
         }
     }

@@ -11,9 +11,14 @@ import MileWalletKit
 
 class SuccessController: UIViewController {
 
+    public var publicKey:String?
     public var amount:String?
-    public var message:String?
-    
+    public var asset:Asset?
+    //public var message:String?
+
+    @IBOutlet weak var defaultImageView: UIImageView!
+    @IBOutlet weak var avatarImageView: UIImageView!
+
     @IBOutlet fileprivate weak var closeButton: UIButton!
     @IBOutlet fileprivate weak var amountLabel: UILabel!
     @IBOutlet fileprivate weak var messageLabel: UILabel!
@@ -23,13 +28,43 @@ class SuccessController: UIViewController {
         closeButton.layer.cornerRadius = Config.buttonRadius
         closeButton.layer.masksToBounds = true
         closeButton.clipsToBounds = true
+        avatarImageView.layer.cornerRadius = avatarImageView.frame.size.width/2
+        avatarImageView.layer.masksToBounds = true
+        avatarImageView.clipsToBounds = true
+        avatarImageView.layer.borderColor = UIColor.white.cgColor
+        avatarImageView.layer.borderWidth = 2
     }
 
+    private var defaultAvatar:UIImage?
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         closeButton.setTitleColor(UIColor.black, for: .normal)
         amountLabel.text = amount
-        messageLabel.text = message
+
+        guard let pk = publicKey else {
+            
+            messageLabel.text = (asset?.name ?? "") + " " + NSLocalizedString("sent!", comment: "")
+            defaultImageView.alpha = 1
+            avatarImageView.alpha = 0
+            return
+        }
+
+        if let contact = Contact.find(pk, for: "publicKey").first,
+            let photo = contact.photo,
+            let name = contact.name {
+            
+            messageLabel.text = (asset?.name ?? "") + " " + NSLocalizedString("sent for ", comment: "") + name + "!"
+            
+            defaultImageView.alpha = 0
+            avatarImageView.alpha = 1
+            avatarImageView.image = UIImage(data: photo)
+        }
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        publicKey = nil
     }
     
     override func didReceiveMemoryWarning() {

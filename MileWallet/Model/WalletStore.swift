@@ -158,6 +158,11 @@ public class WalletStore {
         try WalletStore.shared.keychain.setWalletAttr(attr, key: key)
     }
     
+    public func remove(key:String) throws {
+        try keychain.remove(key)
+        try keychain.removeWalletAttr(key)
+    }
+    
     private init() {}
 }
 

@@ -22,13 +22,13 @@ class ArchivedWallets: Controller {
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.closeHandler(sender:)))
         
         addChildViewController(_tableController)
-        contentView.addSubview(_tableController.view)
+        view.addSubview(_tableController.view)
         _tableController.didMove(toParentViewController: self)
         
         _tableController.view.snp.makeConstraints { (m) in
             m.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             m.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
-            m.left.right.equalTo(contentView)
+            m.left.right.equalTo(view)
         }
     }
     
@@ -189,10 +189,11 @@ fileprivate class WalletsController: UITableViewController {
         tableView.backgroundView = UIView()
         tableView.backgroundView?.backgroundColor = UIColor.white
         tableView.separatorColor = UIColor.clear
+        tableView.allowsSelectionDuringEditing = true
         tableView.register(WalletTableCell.self, forCellReuseIdentifier: cellReuseIdendifier)
     }
     
-    var didLayout = false
+    private var didLayout = false
     override func viewDidLayoutSubviews() {
         if !self.didLayout {
             self.didLayout = true // only need to do this once
@@ -202,7 +203,18 @@ fileprivate class WalletsController: UITableViewController {
     
     fileprivate var list:[WalletContainer] {
         return WalletStore.shared.archivedWallets
-    }    
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        UIButton.appearance().setTitleColor(UIColor.white, for: .normal)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        UIButton.appearance().setTitleColor(Config.Colors.button, for: .normal)
+        tableView.setEditing(false, animated: true)
+    }
 }
 
 // MARK: - Datasource
@@ -282,6 +294,7 @@ extension WalletsController {
 
 // MARK: - Delegate
 extension WalletsController {
+    
     override func tableView(_ tableView: UITableView, didHighlightRowAt indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath) {
             cell.backgroundColor = UIColor.black.withAlphaComponent(0.03)
@@ -294,30 +307,106 @@ extension WalletsController {
         }
     }
     
+    
+    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        
+        let list = self.list
+        let wallet = list[indexPath.row]
+        
+        let delete = UITableViewRowAction(style: .destructive,
+                                          title: NSLocalizedString("Delete", comment: ""))
+        { (action, indexPath) in
+            self.tableView(tableView,
+                           commit: UITableViewCellEditingStyle.delete, forRowAt: indexPath)
+        }
+        
+        let restore = UITableViewRowAction(style: UITableViewRowActionStyle.default,
+                                        title: NSLocalizedString("Restore", comment: ""))
+        { (action, indexPath) in
+            
+            UIAlertController(title: nil,
+                              message: NSLocalizedString("Restore wallet", comment: ""),
+                              preferredStyle: .actionSheet)
+                .addAction(title: NSLocalizedString("Cancel", comment: ""),
+                           style: UIAlertActionStyle.cancel)
+                .addAction(title: NSLocalizedString("Restore!", comment: ""),
+                           style: UIAlertActionStyle.default, handler: { (action) in
+                            
+                            if self.restore(wallet: wallet) {
+                                self.tableView.beginUpdates()
+                                self.tableView.deleteRows(at: [indexPath], with: .automatic)
+                                self.tableView.endUpdates()
+                            }
+                            
+                })
+                .present(by: self)
+        }
+        
+        restore.backgroundColor = UIColor(hex: wallet.attributes?.color ?? Config.Colors.defaultColor.hex)
+        
+        return [delete, restore]
+    }
+    
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! WalletTableCell
         cell.backgroundColor = UIColor.clear
-        
-        UIAlertController(title: nil,
-                          message: NSLocalizedString("Restore wallet", comment: ""),
-                          preferredStyle: .actionSheet)
-            .addAction(title: NSLocalizedString("Cancel", comment: ""),
-                       style: UIAlertActionStyle.cancel)
-            .addAction(title: NSLocalizedString("Restore!", comment: ""),
-                       style: UIAlertActionStyle.default, handler: { (action) in
-                        self.restore(wallet: cell.wallet)
-                        
-                        
-            })
-            .present(by: self)
+        tableView.setEditing(!tableView.isEditing, animated: true)
     }
     
-    private func restore(wallet:WalletContainer?)  {
-        guard var wallet = wallet else { return }
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        
+        if editingStyle == .delete {
+
+            let list = self.list
+            let wallet = list[indexPath.row]
+
+            UIAlertController(title: NSLocalizedString("Delete: ", comment: "") + (wallet.wallet?.name ?? " - "),
+                              message: NSLocalizedString("Are you sure you want to permanently delete the wallet?", comment: ""),
+                              preferredStyle: .actionSheet)
+                .addAction(title: NSLocalizedString("Cancel", comment: ""),
+                           style: .cancel)
+                .addAction(title: NSLocalizedString("Delete", comment: ""), style: .destructive) { (action) in
+                    do{
+                        if let pk = wallet.wallet?.publicKey {
+                            try WalletStore.shared.remove(key: pk)
+                            
+                            //tableView.setEditing(false, animated: true)
+
+                            if list.count >= 1 {
+                                self.tableView.beginUpdates()
+                                self.tableView.deleteRows(at: [indexPath], with: .automatic)
+                                self.tableView.endUpdates()
+                            }
+                        }
+                    }
+                    catch let error {
+                        print("Model error: \(error)")
+                    }
+                }
+                .present(by: self)
+        }
+    }
+    
+    private func restore(wallet:WalletContainer?) -> Bool {
+        guard var wallet = wallet else { return false }
+        
+        if WalletStore.shared.acitveWallets.count >= Config.activeWalletsLimit {
+            UIAlertController(title: NSLocalizedString("Limit exeeded", comment: ""),
+                              message: NSLocalizedString("Please archive your inactive wallets", comment: ""),
+                              preferredStyle: .alert)
+                .addAction(title: NSLocalizedString("Close", comment: ""))
+                .present(by: self)
+            return false
+        }
+        
         wallet.attributes?.isActive = true
         do {
             try WalletStore.shared.save(wallet: wallet)
-            tableView.reloadData()
+            return true
         }
         catch let error {
             UIAlertController(title: NSLocalizedString("Wallet error", comment: ""),
@@ -325,7 +414,7 @@ extension WalletsController {
                               preferredStyle: .alert)
                 .addAction(title: "Close", style: .cancel)
                 .present(by: self)
-            self.tableView.reloadData()
+            return false
         }
     }
 }

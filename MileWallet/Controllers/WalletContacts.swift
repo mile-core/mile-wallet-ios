@@ -80,13 +80,8 @@ class WalletContacts: Controller {
         if WalletUniversalLink.shared.invoice != nil {
             add(sender: self)
         }
-        
+
         _tableController.tableView.reloadData()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        UIButton.appearance().setTitleColor(Config.Colors.button, for: .normal)
     }
     
     private var wallet:WalletContainer? {
@@ -145,7 +140,17 @@ fileprivate class ContactsController: UITableViewController {
         tableView.register(ConactCell.self, forCellReuseIdentifier: cellReuseIdendifier)
     }
     
-    var didLayout = false
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        UIButton.appearance().setTitleColor(UIColor.white, for: .normal)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        UIButton.appearance().setTitleColor(Config.Colors.button, for: .normal)
+    }
+    
+    private var didLayout = false
     override func viewDidLayoutSubviews() {
         if !self.didLayout {
             self.didLayout = true // only need to do this once
@@ -236,9 +241,7 @@ extension ContactsController {
         
         send.backgroundColor = UIColor(hex: wallet?.attributes?.color ?? Config.Colors.defaultColor.hex)
         
-        
-        UIButton.appearance().setTitleColor(UIColor.white, for: .normal)
-        
+                
         return [delete, edit, send]
     }
     

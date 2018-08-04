@@ -262,11 +262,11 @@ class WalletsPager: Controller {
     
     @objc private func newWallet(sender:UIButton) {
         if WalletStore.shared.acitveWallets.count > Config.activeWalletsLimit {
-                UIAlertController(title: NSLocalizedString("Limit exeeded", comment: ""),
-                                  message: NSLocalizedString("Please archive your inactive wallets", comment: ""),
-                                  preferredStyle: .alert)
-            .addAction(title: NSLocalizedString("Close", comment: ""))
-            .present(by: self)
+            UIAlertController(title: NSLocalizedString("Limit exeeded", comment: ""),
+                              message: NSLocalizedString("Please archive your inactive wallets", comment: ""),
+                              preferredStyle: .alert)
+                .addAction(title: NSLocalizedString("Close", comment: ""))
+                .present(by: self)
         }
         else {
             presentInNavigationController(_newWalletController, animated: true)

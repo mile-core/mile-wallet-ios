@@ -47,7 +47,7 @@ extension Contact {
         return Contact.find(value, for: key, predicate: NSPredicate(format: key+" LIKE[c] %@", value))
     }
     
-    public static func find(_ value: String, for key:String = "name") -> [Contact] {
+    public static func find(_ value: String, for key:String) -> [Contact] {
         return Contact.find(value,for: key, predicate: NSPredicate(format: key+" ==[c] %@", value))
     }
     
