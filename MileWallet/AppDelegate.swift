@@ -150,6 +150,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
                     self.navigationController?.view.alpha = 1
                     
                 }, completion: { (flag) in
+                    
+                    self.passcodeScreen.view.alpha = 1
+                    
                     if WalletUniversalLink.shared.invoice != nil {
                         NotificationCenter.default.post(Notification(name: WalletUniversalLink.kDidUpdateNotification))
                     }
@@ -160,21 +163,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
         return true
     }
     
-    func applicationWillResignActive(_ application: UIApplication) {
-        
-        guard PasscodeStrore.shared.isRegistered else { return }
-
-        UIView.animate(withDuration: Config.animationDuration, animations: {
-            
-            self.navigationController?.view.alpha = 0
-            
-        }) { (flag) in
-            self.passcodeScreen.view.alpha = 1
-            self.window?.rootViewController = self.passcodeScreen
-        }
+    
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        passcodeScreenTimer?.invalidate()
+        passcodeScreenTimer = nil
+        becomePasscodeScreen()
     }
     
-    func applicationDidBecomeActive(_ application: UIApplication) {
+    
+    func becomePasscodeScreen() {
+        guard PasscodeStrore.shared.isRegistered else { return }
+        self.window?.rootViewController = self.passcodeScreen
+    }
+    
+    func becomeActive()  {
         if WalletUniversalLink.shared.invoice != nil {
             
             viewController?.removeFromParentViewController()
@@ -193,6 +195,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
             PasscodeScreen.isUnlocked = false
             viewController?.presentPasscodeScreen()
         }
+    }
+    
+    var passcodeScreenTimer:Timer?
+    
+    @objc func passcodeScreenTimerHandler(timer:Timer?) {
+        timer?.invalidate()
+        becomePasscodeScreen()
+    }
+    
+    func applicationWillResignActive(_ application: UIApplication) {
+        passcodeScreenTimer?.invalidate()
+        if window?.rootViewController === passcodeScreen {
+            return
+        }
+        passcodeScreenTimer = Timer.scheduledTimer(timeInterval: 10,
+                                                   target: self,
+                                                   selector: #selector(passcodeScreenTimerHandler(timer:)),
+                                                   userInfo: nil,
+                                                   repeats: false)
+    }
+    
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        passcodeScreenTimer?.invalidate()
+        if window?.rootViewController === navigationController {
+            return
+        }
+        becomeActive()
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
