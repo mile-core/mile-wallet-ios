@@ -243,11 +243,12 @@ class CoinsOperation: Controller {
                 
         }) { (transfer) in
             self.loaderStop()
+            self.successScreen.publicKey = self.wallet?.wallet?.publicKey
             self.successScreen.view.backgroundColor =
                 UIColor(hex: self.wallet?.attributes?.color ?? Config.Colors.defaultColor.hex)
             self.successScreen.amount = asset.stringValue(amount)
-            self.successScreen.message = asset.name + " " + NSLocalizedString("sent!", comment: "")
-            self.present(self.successScreen, animated: true) 
+            self.successScreen.asset = asset
+            self.present(self.successScreen, animated: true)
         }
     }
     
@@ -317,6 +318,7 @@ class CoinsOperation: Controller {
             UIAlertController(title: nil,
                               message: error?.description,
                               preferredStyle: .actionSheet)
+                .addAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel)
                 .present(by: self)
         }) { (balance) in
             let asset = Asset.list[self.coinsPicker.selectedRow(inComponent: 0)]
