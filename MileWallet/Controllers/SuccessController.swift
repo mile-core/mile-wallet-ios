@@ -14,7 +14,6 @@ class SuccessController: UIViewController {
     public var publicKey:String?
     public var amount:String?
     public var asset:Asset?
-    //public var message:String?
 
     @IBOutlet weak var defaultImageView: UIImageView!
     @IBOutlet weak var avatarImageView: UIImageView!
@@ -26,6 +25,7 @@ class SuccessController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         closeButton.layer.cornerRadius = Config.buttonRadius
+        
         closeButton.layer.masksToBounds = true
         closeButton.clipsToBounds = true
         avatarImageView.layer.cornerRadius = avatarImageView.frame.size.width/2
@@ -33,6 +33,7 @@ class SuccessController: UIViewController {
         avatarImageView.clipsToBounds = true
         avatarImageView.layer.borderColor = UIColor.white.cgColor
         avatarImageView.layer.borderWidth = 2
+        avatarImageView.contentMode = .scaleAspectFill
     }
 
     private var defaultAvatar:UIImage?

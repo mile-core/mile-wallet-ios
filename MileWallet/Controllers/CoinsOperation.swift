@@ -243,7 +243,7 @@ class CoinsOperation: Controller {
                 
         }) { (transfer) in
             self.loaderStop()
-            self.successScreen.publicKey = self.wallet?.wallet?.publicKey
+            self.successScreen.publicKey = toWallet.publicKey
             self.successScreen.view.backgroundColor =
                 UIColor(hex: self.wallet?.attributes?.color ?? Config.Colors.defaultColor.hex)
             self.successScreen.amount = asset.stringValue(amount)
