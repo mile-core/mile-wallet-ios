@@ -27,10 +27,17 @@ class WalletContacts: Controller {
     }
     
     private let bg = UIImageView(image: Config.Images.basePattern)
+    
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        
+    
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(storageDidLoadError(notification:)),
+                                               name: Model.kDidLoadErrorNotification,
+                                               object: nil)
+
         contentView.addSubview(bg)
         bg.contentMode = .scaleAspectFill
         bg.snp.makeConstraints { (m) in
@@ -48,6 +55,16 @@ class WalletContacts: Controller {
         }
         
         _tableController._walletContacts = self
+    }
+    
+    @objc func storageDidLoadError(notification:Notification) {
+        if let error = notification.object as? Error {
+            UIAlertController(title: "Device storage error",
+                              message: error.localizedDescription,
+                              preferredStyle: .alert)
+            .addAction(title: "Close", style: .cancel)
+            .present(by: self)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -108,8 +125,8 @@ class WalletContacts: Controller {
         }
     }
     
-    fileprivate let _tableController = ContactsController()
-    fileprivate let _contactOptionsController = WalletContactOptions()
+    fileprivate lazy var _tableController = ContactsController()
+    fileprivate lazy var _contactOptionsController = WalletContactOptions()
 }
 
 fileprivate class ContactsController: UITableViewController {
