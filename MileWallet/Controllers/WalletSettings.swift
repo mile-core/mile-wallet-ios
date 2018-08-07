@@ -331,7 +331,7 @@ class WalletSettings: Controller, UITextFieldDelegate {
 
         line.snp.makeConstraints({ (m) in
             m.centerX.equalToSuperview()
-            m.bottom.equalToSuperview().offset(-59)
+            m.bottom.equalToSuperview().offset(-60)
             m.width.equalToSuperview()
             m.height.equalTo(1)
         })
