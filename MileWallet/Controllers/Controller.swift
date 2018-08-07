@@ -186,7 +186,7 @@ class Controller: UIViewController {
                 self.passcodeScreen.dismiss(animated: false)
             }
             
-            UIAlertController(title: NSLocalizedString("Security Alert!", comment: ""),
+            UIAlertController(title: NSLocalizedString("Security Alert", comment: ""),
                               message: NSLocalizedString("To avoid insecure access MILE Wallet please configure access with passcode", comment: ""),
                               preferredStyle: .actionSheet)
                 .addAction(title: NSLocalizedString("Cancel", comment: ""),

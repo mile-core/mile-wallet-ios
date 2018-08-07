@@ -103,13 +103,7 @@ class PasscodeScreen: UIViewController {
     fileprivate var passCodeConfirmationStage = 0
     fileprivate var newPasscode:String? = nil
     fileprivate var _isUnlocked:Bool = false
-    
-    override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
-        super.dismiss(animated: flag) {
-            completion?()
-        }
-    }
-    
+
     fileprivate var failsCounter = 0
     fileprivate var lockTimer:Timer?
     fileprivate let lockedKey = "wallet-is-locked"
@@ -205,7 +199,9 @@ private extension PasscodeScreen {
                 
                 UIAlertController(title: nil,
                                   message: NSLocalizedString("Are you sure you remember the passcode?", comment: ""), preferredStyle: .actionSheet)
-                    .addAction(title: NSLocalizedString("No", comment: ""), style: .cancel)
+                    .addAction(title: NSLocalizedString("No", comment: ""), style: .cancel) { (action) in
+                        self.dismiss(animated: true)
+                    }
                     .addAction(title: NSLocalizedString("Yes", comment: ""), style: .default) { (action) in
                         PasscodeStrore.shared.reset(old: passcode, new: input)
                         self.dismiss(animated: true)

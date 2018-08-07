@@ -127,6 +127,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
         else {
             window?.rootViewController = navigationController
         }
+        
         window?.makeKeyAndVisible()
 
         passcodeScreen.didVerifyHandler = { controller in
@@ -218,7 +219,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
     
     func applicationDidBecomeActive(_ application: UIApplication) {
         passcodeScreenTimer?.invalidate()
-        if window?.rootViewController === navigationController {
+        if window?.rootViewController === navigationController && PasscodeStrore.shared.isRegistered {
             return
         }
         becomeActive()
@@ -233,7 +234,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
     // MARK: - Core Data Saving support
     
     func saveContext () {
-        let context = Model.shared.context //persistentContainer.viewContext
+        let context = Model.shared.context
         if context.hasChanges {
             do {
                 try context.save()
