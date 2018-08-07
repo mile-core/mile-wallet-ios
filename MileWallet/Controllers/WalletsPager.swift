@@ -286,6 +286,15 @@ class WalletsPager: Controller {
     }
     
     @objc private func archiveWallet(sender:UIButton) {
+        guard WalletStore.shared.archivedWallets.count > 0 else {
+            UIAlertController(title: NSLocalizedString("You don't have any archive wallets", comment: ""),
+                              message: "Arhived wallets appear when you decide to remove your active wallets...",
+                              preferredStyle: UIAlertControllerStyle.alert)
+            .addAction(title: NSLocalizedString("OK", comment: ""),
+                       style: UIAlertActionStyle.cancel)
+            .present(by: self)
+            return
+        }
         if currentIndex < WalletStore.shared.acitveWallets.count {
             _archivedWallets.wallet = WalletStore.shared.acitveWallets[currentIndex]
         }
