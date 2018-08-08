@@ -326,7 +326,7 @@ class WalletSettings: Controller, UITextFieldDelegate {
         })
 
         let line = UIView()
-        line.backgroundColor = Config.Colors.bottomLine
+        line.backgroundColor = Config.Colors.line
         textContainer.addSubview(line)
 
         line.snp.makeConstraints({ (m) in

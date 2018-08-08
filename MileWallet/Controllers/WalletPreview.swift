@@ -23,6 +23,7 @@ class WalletCardPreview: WalletCell {
     }
     
     fileprivate func updateWallet(){
+        
         let wallets = WalletStore.shared.acitveWallets
         
         let container = wallets[walletIndex]
@@ -32,6 +33,8 @@ class WalletCardPreview: WalletCell {
         wallet = container.wallet
         walletAttributes = container.attributes
     
+        titleLable.text = container.wallet?.name
+
         infoContainer.backgroundColor = UIColor(hex: 0x6679FD<<walletIndex*16)
         if let color = walletAttributes?.color {
             infoContainer.backgroundColor = UIColor(hex: color)
@@ -41,6 +44,7 @@ class WalletCardPreview: WalletCell {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        content.addSubview(titleLable)
         content.addSubview(qrCode)
         content.addSubview(infoContainer)
 
@@ -49,13 +53,21 @@ class WalletCardPreview: WalletCell {
             h = 10
         }
         
+//        titleLable.snp.makeConstraints { (m) in
+//            m.top.equalToSuperview().offset(20)
+//            m.left.equalToSuperview().offset(h)
+//            m.right.equalToSuperview().offset(-h)
+//            m.width.equalTo(navigationController?.navigationBar.frame.size.height ?? 44)
+//        }
+
         qrCode.snp.makeConstraints { (m) in
+           // m.top.equalTo(titleLable.snp.bottom).offset(h)
             m.top.equalToSuperview().offset(h)
             m.left.equalToSuperview().offset(h)
             m.right.equalToSuperview().offset(-h)
             m.width.equalTo(qrCode.snp.height).multipliedBy(1/1)
         }
-        
+
         infoContainer.snp.makeConstraints { (m) in
             m.top.equalTo(qrCode.snp.bottom).offset(h)
             m.left.equalToSuperview()
@@ -85,6 +97,12 @@ class WalletCardPreview: WalletCell {
         return v
     }()
 
+    private let titleLable: UILabel = {
+        let v = UILabel()
+        v.font = Config.Fonts.navigationBarTitle
+        return v
+    }()
+    
     private let qrCode: UIImageView = {
         let v = UIImageView()
         v.contentMode = .scaleAspectFit

@@ -88,6 +88,7 @@ class WalletsPager: Controller {
         
         pageViewController.view.snp.makeConstraints { (m) in
             m.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(Config.iPhoneX ? 20 : 0)
+            //m.top.equalTo(view).offset(UIApplication.shared.statusBarFrame.size.height)
             m.left.equalTo(contentView).offset(0)
             m.right.equalTo(contentView).offset(0)
             pagerOffset = m.bottom

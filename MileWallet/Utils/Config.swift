@@ -53,7 +53,7 @@ extension Config {
         public static let header =  UIColor.white
         public static let infoLine = UIColor(hex: 0x283444, alpha: 0.1)
         public static let attentionText = UIColor(hex: 0x2371B3)
-        public static let bottomLine = UIColor.white.withAlphaComponent(0.15)
+        public static let bottomLine = separator
         
         public static let palette = [
             Config.Colors.defaultColor,

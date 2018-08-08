@@ -51,8 +51,7 @@ class Button: UIButton {
     }
 }
 
-class RoundButton: Button {
-    
+class RoundButton: Button {    
     override func setImage(_ image: UIImage?, for state: UIControlState) {
         super.setImage(image, for: state)
         imageView?.contentMode = .scaleAspectFill
