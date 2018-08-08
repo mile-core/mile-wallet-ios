@@ -33,18 +33,18 @@ class WalletCardPreview: WalletCell {
         wallet = container.wallet
         walletAttributes = container.attributes
     
-        titleLable.text = container.wallet?.name
-
         infoContainer.backgroundColor = UIColor(hex: 0x6679FD<<walletIndex*16)
         if let color = walletAttributes?.color {
             infoContainer.backgroundColor = UIColor(hex: color)
         }
     }
     
+    private let firstWalletKey = "TheFirtsOpenOfTheWallet"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        content.addSubview(titleLable)
+        content.addSubview(openTheWalletOnce)
         content.addSubview(qrCode)
         content.addSubview(infoContainer)
 
@@ -53,15 +53,18 @@ class WalletCardPreview: WalletCell {
             h = 10
         }
         
-//        titleLable.snp.makeConstraints { (m) in
-//            m.top.equalToSuperview().offset(20)
-//            m.left.equalToSuperview().offset(h)
-//            m.right.equalToSuperview().offset(-h)
-//            m.width.equalTo(navigationController?.navigationBar.frame.size.height ?? 44)
-//        }
-
+        openTheWalletOnce.snp.makeConstraints { (m) in
+            m.center.equalTo(qrCode)
+            m.right.equalToSuperview().offset(-20)
+            m.left.equalToSuperview().offset(20)
+            m.height.equalTo(100)
+        }
+        
+        if !UserDefaults.standard.bool(forKey: firstWalletKey) {
+            qrCode.alpha = 0.08
+        }
+        
         qrCode.snp.makeConstraints { (m) in
-           // m.top.equalTo(titleLable.snp.bottom).offset(h)
             m.top.equalToSuperview().offset(h)
             m.left.equalToSuperview().offset(h)
             m.right.equalToSuperview().offset(-h)
@@ -89,6 +92,23 @@ class WalletCardPreview: WalletCell {
         updateWallet()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if !UserDefaults.standard.bool(forKey: firstWalletKey) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                UIView.animate(withDuration: 0.5, animations: {
+                    self.qrCode.alpha = 1
+                    self.openTheWalletOnce.alpha = 0
+                }) { flag in
+                    
+                    UserDefaults.standard.set(true, forKey: self.firstWalletKey)
+                    UserDefaults.standard.synchronize()
+                    
+                }
+            }
+        }
+    }
+    
     fileprivate var walletInfo:WalletInfo = WalletInfo()
 
     fileprivate let infoContainer:UIImageView = {
@@ -96,10 +116,16 @@ class WalletCardPreview: WalletCell {
         v.contentMode = .scaleAspectFill
         return v
     }()
-
-    private let titleLable: UILabel = {
+   
+    private let openTheWalletOnce: UILabel = {
         let v = UILabel()
-        v.font = Config.Fonts.navigationBarTitle
+        v.textColor = Config.Colors.placeHolder
+        v.font = Config.Fonts.caption
+        v.text = NSLocalizedString("To open the wallet: tap the area!", comment: "")
+        v.numberOfLines = 2
+        v.adjustsFontSizeToFitWidth = true
+        v.alpha = 0.8
+        v.textAlignment = .center
         return v
     }()
     
