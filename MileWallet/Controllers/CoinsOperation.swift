@@ -379,10 +379,8 @@ class CoinsOperation: Controller {
                 return
             }
             
-            guard var url = wallet?.wallet?.paymentLink(assets: asset.name, amount: asset.stringValue(asked)) else { return }
+            guard let url = wallet?.wallet?.paymentLink(assets: asset.name, amount: asset.stringValue(asked)) else { return }
             
-            url = url.replacingOccurrences(of: "https:", with: Config.appSchema)
-           
             let activity = UIActivityViewController(
                 activityItems: ["Please send your coins to the address", url],
                 applicationActivities:nil)

@@ -45,7 +45,9 @@ public class PasscodeStrore {
     public func validate(code: String) -> Bool {
         do {
             
-            //try PasscodeStrore.shared.appPasscodeStore.remove(PasscodeStrore.key)
+            //
+            // try PasscodeStrore.shared.appPasscodeStore.remove(PasscodeStrore.key)
+            //
             
             guard isRegistered else {
                 return false

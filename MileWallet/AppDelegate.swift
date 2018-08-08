@@ -219,9 +219,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
     
     func applicationDidBecomeActive(_ application: UIApplication) {
         passcodeScreenTimer?.invalidate()
-        if window?.rootViewController === navigationController && PasscodeStrore.shared.isRegistered {
-            return
-        }
         becomeActive()
     }
     
@@ -231,19 +228,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
         self.saveContext()
     }
     
-    // MARK: - Core Data Saving support
-    
+    // MARK: - Core Data Saving support    
     func saveContext () {
         let context = Model.shared.context
         if context.hasChanges {
             do {
                 try context.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nserror = error as NSError
-                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
-            }
+            } catch {}
         }
     }
     
