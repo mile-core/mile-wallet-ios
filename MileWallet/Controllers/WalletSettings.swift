@@ -442,7 +442,7 @@ extension WalletSettings {
         loaderStart()
         Printer.shared.printController.delegate = self
         Printer.shared.printPDF(wallet: currentWallet,
-                                formater: { return HTMLTemplate.pairAndName(wallet:$0) },
+                                formater: { return HTMLTemplate.secret(wallet:$0) },
                                 complete: { _,complete,_ in
                                     self.loaderStop()
         })

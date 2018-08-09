@@ -10,6 +10,7 @@ import UIKit
 import EFQRCode
 import MileWalletKit
 
+
 class HTMLTemplate {
     
     /**
@@ -20,18 +21,29 @@ class HTMLTemplate {
      
      - returns: The transformed HTML code.
      */
-    class func pairAndName(wallet: Wallet) -> String {
+    
+    static let logo = (UIImage(named: "MileLogo")?.imageSrc)!
+    static let pattern = (UIImage(named: "PagePattern")?.imageSrc)!
+
+    class func secret(wallet: Wallet) -> String {
         
-        guard let htmlFile = Bundle.main.url(forResource: "PrintSecretTemplate", withExtension: "html")
+        guard let htmlFile = Bundle.main.url(forResource: "SecretTemplate", withExtension: "html")
             else { fatalError("Error locating HTML file.") }
         
         guard var htmlContent = try? String(contentsOf: htmlFile)
             else { fatalError("Error getting HTML file content.") }
         
         
-        let items = ["address":     (wallet.publicKey,  wallet.publicKeyQr?.imageSrc), 
-                     "private-key": (wallet.privateKey, wallet.privateKeyQr?.imageSrc), 
-                     "notes":       (wallet.name,       wallet.nameQr?.imageSrc)]
+        let pk = wallet.privateKey ?? "000000000000000000000000000000000000000000000000000000000000"
+        let fk = pk[0..<48]
+        let ek = pk[48..<pk.count]
+        
+        let items = [
+            "private-key-string":     (fk + " " + ek, wallet.privateKeyQr?.imageSrc),
+            "private-key": (wallet.privateKey, wallet.privateKeyQr?.imageSrc),
+            "logo": (logo, ""),
+            "pattern": (pattern, "")
+        ]
         
         for k in items.keys {
             if let (what, src) = items[k] { 
@@ -69,7 +81,7 @@ class HTMLTemplate {
     
     class func invoice(wallet: Wallet, assets:String, amount: String) -> String {
         
-        guard let htmlFile = Bundle.main.url(forResource: "PrintInvoiceTemplate", withExtension: "html")
+        guard let htmlFile = Bundle.main.url(forResource: "InvoiceTemplate", withExtension: "html")
             else { fatalError("Error locating HTML file.") }
         
         guard var htmlContent = try? String(contentsOf: htmlFile)
@@ -77,10 +89,18 @@ class HTMLTemplate {
         
         let data = wallet.paymentQr(assets: assets, amount: amount)
         
-        let items = ["address": (wallet.publicKey ?? "",  ""), 
-                     "amount":  (amount,                  ""), 
-                     "notes":   (wallet.name ?? "",       ""),
-                     "payment": (amount, data?.imageSrc ?? "")]
+        let pk = wallet.publicKey ?? "000000000000000000000000000000000000000000000"
+        let fk = pk[0..<32]
+        let ek = pk[32..<pk.count]
+        
+        let items = [
+            "address": (fk + " " + ek,  ""),
+            "amount":  (amount,                  ""),
+            "assets":  (assets,       ""),
+            "payment": (amount, data?.imageSrc ?? ""),
+            "logo": (logo, ""),
+            "pattern": (pattern, "")
+        ]
         
         for k in items.keys {
             if let (what, src) = items[k] { 
