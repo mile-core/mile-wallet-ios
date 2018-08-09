@@ -357,7 +357,7 @@ extension WalletsPager: WalletCellDelegate {
         _walletDetailsController.qrFrame =  pageViewController.view.frame
         _walletDetailsController.walletKey = wallet?.wallet?.publicKey
         navigationController?.pushViewController(_walletDetailsController, animated: true)
-    }
+   }
     
     func walletCell(_ item: WalletCell, didPresent wallet: WalletContainer?) {
         navigationItem.title = wallet?.wallet?.name ?? "-"

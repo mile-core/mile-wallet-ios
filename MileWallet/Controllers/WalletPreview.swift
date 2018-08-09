@@ -33,35 +33,23 @@ class WalletCardPreview: WalletCell {
         wallet = container.wallet
         walletAttributes = container.attributes
     
-        infoContainer.backgroundColor = UIColor(hex: 0x6679FD<<walletIndex*16)
-        if let color = walletAttributes?.color {
-            infoContainer.backgroundColor = UIColor(hex: color)
+        var color = UIColor(hex: 0x6679FD<<walletIndex*16)
+        if let _c = walletAttributes?.color {
+            color = UIColor(hex: _c)
         }
+        infoContainer.backgroundColor = color
+        setShadows(color: color.mix(infusion: UIColor.black, alpha: 0.3))
     }
-    
-    private let firstWalletKey = "TheFirtsOpenOfTheWallet"
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        content.addSubview(openTheWalletOnce)
         content.addSubview(qrCode)
         content.addSubview(infoContainer)
 
         var h = 20
         if UIScreen.main.bounds.size.height < 640 {
             h = 10
-        }
-        
-        openTheWalletOnce.snp.makeConstraints { (m) in
-            m.center.equalTo(qrCode)
-            m.right.equalToSuperview().offset(-20)
-            m.left.equalToSuperview().offset(20)
-            m.height.equalTo(100)
-        }
-        
-        if !UserDefaults.standard.bool(forKey: firstWalletKey) {
-            qrCode.alpha = 0.08
         }
         
         qrCode.snp.makeConstraints { (m) in
@@ -92,40 +80,11 @@ class WalletCardPreview: WalletCell {
         updateWallet()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        if !UserDefaults.standard.bool(forKey: firstWalletKey) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                UIView.animate(withDuration: 0.5, animations: {
-                    self.qrCode.alpha = 1
-                    self.openTheWalletOnce.alpha = 0
-                }) { flag in
-                    
-                    UserDefaults.standard.set(true, forKey: self.firstWalletKey)
-                    UserDefaults.standard.synchronize()
-                    
-                }
-            }
-        }
-    }
-    
     fileprivate var walletInfo:WalletInfo = WalletInfo()
 
     fileprivate let infoContainer:UIImageView = {
         let v = UIImageView(image: Config.Images.basePattern)
         v.contentMode = .scaleAspectFill
-        return v
-    }()
-   
-    private let openTheWalletOnce: UILabel = {
-        let v = UILabel()
-        v.textColor = Config.Colors.placeHolder
-        v.font = Config.Fonts.caption
-        v.text = NSLocalizedString("To open the wallet: tap the area!", comment: "")
-        v.numberOfLines = 2
-        v.adjustsFontSizeToFitWidth = true
-        v.alpha = 0.8
-        v.textAlignment = .center
         return v
     }()
     
