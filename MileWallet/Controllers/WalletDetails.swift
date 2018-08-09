@@ -116,6 +116,10 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
             WalletUniversalLink.shared.invoice = nil
             presentInNavigationController(_invoiceController, animated: true)
         }
+        
+        let counts = UserDefaults.standard.integer(forKey: WalletCell.shadowsPulseKey)
+        UserDefaults.standard.set(counts+1, forKey: WalletCell.shadowsPulseKey)
+        UserDefaults.standard.synchronize()
     }
     
     private func updateState() {

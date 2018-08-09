@@ -33,18 +33,17 @@ class WalletCardPreview: WalletCell {
         wallet = container.wallet
         walletAttributes = container.attributes
     
-        titleLable.text = container.wallet?.name
-
-        infoContainer.backgroundColor = UIColor(hex: 0x6679FD<<walletIndex*16)
-        if let color = walletAttributes?.color {
-            infoContainer.backgroundColor = UIColor(hex: color)
+        var color = UIColor(hex: 0x6679FD<<walletIndex*16)
+        if let _c = walletAttributes?.color {
+            color = UIColor(hex: _c)
         }
+        infoContainer.backgroundColor = color
+        setShadows(color: color.mix(infusion: UIColor.black, alpha: 0.3))
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        content.addSubview(titleLable)
         content.addSubview(qrCode)
         content.addSubview(infoContainer)
 
@@ -53,15 +52,7 @@ class WalletCardPreview: WalletCell {
             h = 10
         }
         
-//        titleLable.snp.makeConstraints { (m) in
-//            m.top.equalToSuperview().offset(20)
-//            m.left.equalToSuperview().offset(h)
-//            m.right.equalToSuperview().offset(-h)
-//            m.width.equalTo(navigationController?.navigationBar.frame.size.height ?? 44)
-//        }
-
         qrCode.snp.makeConstraints { (m) in
-           // m.top.equalTo(titleLable.snp.bottom).offset(h)
             m.top.equalToSuperview().offset(h)
             m.left.equalToSuperview().offset(h)
             m.right.equalToSuperview().offset(-h)
@@ -94,12 +85,6 @@ class WalletCardPreview: WalletCell {
     fileprivate let infoContainer:UIImageView = {
         let v = UIImageView(image: Config.Images.basePattern)
         v.contentMode = .scaleAspectFill
-        return v
-    }()
-
-    private let titleLable: UILabel = {
-        let v = UILabel()
-        v.font = Config.Fonts.navigationBarTitle
         return v
     }()
     
