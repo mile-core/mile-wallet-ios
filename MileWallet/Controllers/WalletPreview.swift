@@ -23,6 +23,7 @@ class WalletCardPreview: WalletCell {
     }
     
     fileprivate func updateWallet(){
+        
         let wallets = WalletStore.shared.acitveWallets
         
         let container = wallets[walletIndex]
@@ -32,10 +33,12 @@ class WalletCardPreview: WalletCell {
         wallet = container.wallet
         walletAttributes = container.attributes
     
-        infoContainer.backgroundColor = UIColor(hex: 0x6679FD<<walletIndex*16)
-        if let color = walletAttributes?.color {
-            infoContainer.backgroundColor = UIColor(hex: color)
+        var color = UIColor(hex: 0x6679FD<<walletIndex*16)
+        if let _c = walletAttributes?.color {
+            color = UIColor(hex: _c)
         }
+        infoContainer.backgroundColor = color
+        setShadows(color: color.mix(infusion: UIColor.black, alpha: 0.3))
     }
     
     override func viewDidLoad() {
@@ -55,7 +58,7 @@ class WalletCardPreview: WalletCell {
             m.right.equalToSuperview().offset(-h)
             m.width.equalTo(qrCode.snp.height).multipliedBy(1/1)
         }
-        
+
         infoContainer.snp.makeConstraints { (m) in
             m.top.equalTo(qrCode.snp.bottom).offset(h)
             m.left.equalToSuperview()
@@ -84,7 +87,7 @@ class WalletCardPreview: WalletCell {
         v.contentMode = .scaleAspectFill
         return v
     }()
-
+    
     private let qrCode: UIImageView = {
         let v = UIImageView()
         v.contentMode = .scaleAspectFit

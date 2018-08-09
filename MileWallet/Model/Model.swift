@@ -13,14 +13,43 @@ public let ContactEntityName = "Contact"
 
 public class Model {
     
-    public static let shared = Model()
-    public let context:NSManagedObjectContext
+    public typealias Token = (NSCoding & NSCopying & NSObjectProtocol)
     
+    public static let kDidLoadErrorNotification = Notification.Name("WalletStoreDidLoadError")
+
+    public static let shared = Model()
+    
+    public var context:NSManagedObjectContext {
+        return persistentContainer.viewContext
+    }
+   
     private init() {
-        context = Model.appDelegate.persistentContainer.viewContext
+                
+        persistentContainer = {
+          
+            let container = NSPersistentContainer(name: "Model")
+            container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+                if let error = error as NSError? {
+                    
+                    /*
+                     Typical reasons for an error here include:
+                     * The parent directory does not exist, cannot be created, or disallows writing.
+                     * The persistent store is not accessible, due to permissions or data protection when the device is locked.
+                     * The device is out of space.
+                     * The store could not be migrated to the current model version.
+                     Check the error message to determine what the actual problem was.
+                     */
+               
+                    NotificationCenter.default.post(name: Model.kDidLoadErrorNotification,
+                                                    object: error, userInfo: nil)
+                }
+            })
+            return container
+        }()
     }
     
-    private static let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    // MARK: - Core Data stack
+    private var persistentContainer: NSPersistentContainer
 }
 
 extension Contact {

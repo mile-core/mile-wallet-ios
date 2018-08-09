@@ -196,7 +196,6 @@ fileprivate class SendConisChooserController: UITableViewController {
         
         Action(action: { (cell) in
             
-            //cell.placeHolder = UIPasteboard.general.string
             self._sendCoinsController.style = .publicKey
             self._sendCoinsController.contact = nil
             self._sendCoinsController.wallet = self.wallet

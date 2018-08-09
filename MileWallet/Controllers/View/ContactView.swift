@@ -30,6 +30,7 @@ class ContactView: UIView {
             }
             litera.alpha = 0
             iconView.image = UIImage(data: d)
+            iconView.setNeedsDisplay()
         }
     }
     
@@ -69,12 +70,6 @@ class ContactView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
-        iconView.backgroundColor = UIColor(hex: 0xD5E9F5)
-        iconView.frame = CGRect(x: 0, y: 0, width: 60, height: 60)
-        iconView.layer.cornerRadius = iconView.frame.size.width  / 2
-        iconView.clipsToBounds = true
-        iconView.contentMode = .scaleAspectFill
         
         addSubview(nameLabel)
         addSubview(publicKeyLabel)
@@ -117,6 +112,13 @@ class ContactView: UIView {
             m.width.equalTo(iconView)
             m.height.equalTo(litera.snp.width)
         }
+        
+        iconView.backgroundColor = UIColor(hex: 0xD5E9F5)
+        //iconView.frame = CGRect(x: 0, y: 0, width: 60, height: 60)
+        iconView.layer.cornerRadius = iconView.frame.size.width  / 2
+        iconView.layer.masksToBounds = true
+        iconView.clipsToBounds = true
+        iconView.contentMode = .scaleAspectFill
     }
     
     private func pablicKeyLabelConstraint() {
@@ -142,6 +144,7 @@ class ContactView: UIView {
         iconView.layer.cornerRadius = iconView.frame.size.width  / 2
         iconView.layer.masksToBounds = true
         iconView.clipsToBounds = true
+        iconView.contentMode = .scaleAspectFill
         if avatar == nil {
             litera.alpha = 1
         }

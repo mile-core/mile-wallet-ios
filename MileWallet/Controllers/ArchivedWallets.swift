@@ -35,7 +35,7 @@ class ArchivedWallets: Controller {
     override func viewWillAppear(_ animated: Bool) {
         
         super.viewWillAppear(animated)
-        (navigationController as? NavigationController)?.titleColor = UIColor(hex: wallet?.attributes?.color ?? 255)
+        (navigationController as? NavigationController)?.titleColor = Config.Colors.defaultColor //UIColor(hex: wallet?.attributes?.color ?? 255)
         _tableController.tableView.reloadData()
     }
     

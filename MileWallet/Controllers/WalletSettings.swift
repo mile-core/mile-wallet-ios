@@ -326,12 +326,12 @@ class WalletSettings: Controller, UITextFieldDelegate {
         })
 
         let line = UIView()
-        line.backgroundColor = Config.Colors.bottomLine
+        line.backgroundColor = Config.Colors.line
         textContainer.addSubview(line)
 
         line.snp.makeConstraints({ (m) in
             m.centerX.equalToSuperview()
-            m.bottom.equalToSuperview().offset(-59)
+            m.bottom.equalToSuperview().offset(-60)
             m.width.equalToSuperview()
             m.height.equalTo(1)
         })
@@ -442,7 +442,7 @@ extension WalletSettings {
         loaderStart()
         Printer.shared.printController.delegate = self
         Printer.shared.printPDF(wallet: currentWallet,
-                                formater: { return HTMLTemplate.pairAndName(wallet:$0) },
+                                formater: { return HTMLTemplate.secret(wallet:$0) },
                                 complete: { _,complete,_ in
                                     self.loaderStop()
         })

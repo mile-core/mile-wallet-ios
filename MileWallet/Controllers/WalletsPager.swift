@@ -88,6 +88,7 @@ class WalletsPager: Controller {
         
         pageViewController.view.snp.makeConstraints { (m) in
             m.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(Config.iPhoneX ? 20 : 0)
+            //m.top.equalTo(view).offset(UIApplication.shared.statusBarFrame.size.height)
             m.left.equalTo(contentView).offset(0)
             m.right.equalTo(contentView).offset(0)
             pagerOffset = m.bottom
@@ -286,6 +287,15 @@ class WalletsPager: Controller {
     }
     
     @objc private func archiveWallet(sender:UIButton) {
+        guard WalletStore.shared.archivedWallets.count > 0 else {
+            UIAlertController(title: NSLocalizedString("You don't have any archive wallets", comment: ""),
+                              message: "Arhived wallets appear when you decide to remove your active wallets...",
+                              preferredStyle: UIAlertControllerStyle.alert)
+            .addAction(title: NSLocalizedString("OK", comment: ""),
+                       style: UIAlertActionStyle.cancel)
+            .present(by: self)
+            return
+        }
         if currentIndex < WalletStore.shared.acitveWallets.count {
             _archivedWallets.wallet = WalletStore.shared.acitveWallets[currentIndex]
         }
@@ -347,7 +357,7 @@ extension WalletsPager: WalletCellDelegate {
         _walletDetailsController.qrFrame =  pageViewController.view.frame
         _walletDetailsController.walletKey = wallet?.wallet?.publicKey
         navigationController?.pushViewController(_walletDetailsController, animated: true)
-    }
+   }
     
     func walletCell(_ item: WalletCell, didPresent wallet: WalletContainer?) {
         navigationItem.title = wallet?.wallet?.name ?? "-"

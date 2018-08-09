@@ -343,17 +343,27 @@ class PickerController: UIImagePickerController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
     
-        navigationBar.isTranslucent = false
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationBar.isTranslucent = true
         navigationBar.barTintColor = Config.Colors.defaultColor
         navigationBar.tintColor = UIColor.white
         navigationBar.backgroundColor = Config.Colors.defaultColor
-        navigationBar.setBackgroundImage(Config.Images.basePattern, for: UIBarMetrics.default)
-        
+
         navigationBar.titleTextAttributes=[
             NSAttributedStringKey.font : Config.Fonts.toolBar,
             NSAttributedStringKey.foregroundColor : Config.Colors.button,
         ]
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .default
     }
 }
 
@@ -398,13 +408,16 @@ extension ContactController: UIImagePickerControllerDelegate, UINavigationContro
         let cell = UITableViewCell()
         cell.selectionStyle = .none
         let v = list[indexPath.row]
+        v.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         cell.addSubview(v)
+
         v.snp.makeConstraints { (m) in
             m.left.equalTo(cell).offset(30)
             m.right.equalTo(cell).offset(-30)
             m.bottom.equalTo(cell).offset(-20)
             m.top.equalTo(cell).offset(20)
         }
+
         if indexPath.row < list.count - 1 {
             cell.contentView.add(border: .bottom,
                                  color: Config.Colors.bottomLine,

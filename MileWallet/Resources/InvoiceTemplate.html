@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+            <title></title>
+            
+            <style>
+                @page { size: A4;}
+            </style>
+            
+            <style>
+                
+            html,
+            body {
+                box-sizing: border-box;
+                color: #000000;
+                font-family: Helvetica;
+                margin: 0;
+                padding: 0;
+            }
+            
+            body.A4               .sheet { width: 210mm; height: 296mm }
+            body.A4.landscape     .sheet { width: 297mm; height: 209mm }
+
+            *,
+            *::before,
+            *::after {
+                box-sizing: inherit;
+                font-family: inherit;
+            }
+            
+            article {
+                background-color: #9ed1ee;
+                background-image: url("{{pattern}}");
+                background-position: top left;
+                background-repeat: no-repeat;
+                background-size: cover;
+                border-radius: 14pt;
+                display: flex;
+                height: 170pt;
+                margin: 10pt;
+                padding: 10pt;
+                position: relative;
+                width: 566pt;
+            }
+            
+            .container {
+                border-bottom: 1pt dashed #888888;
+            }
+            
+            #logo {
+                background-image: url("{{logo}}");
+                background-position: left center;
+                background-repeat: no-repeat;
+                background-size: 34pt;
+                padding-left: 44pt;
+                position: absolute;
+                top: 22pt;
+                left: 22pt;
+                height: 34pt;
+            }
+            
+            #logo > span {
+                font-size: 10pt;
+                font-weight: 600;
+                line-height: 34pt;
+            }
+            
+            .invoice {
+                align-self: flex-end;
+                display: flex;
+                flex: 1;
+                margin-right: 22pt;
+                margin-left: 12pt;
+                margin-bottom: 20pt;
+            }
+            
+            .invoice-entry + .invoice-entry {
+                margin-left: 22pt;
+            }
+            
+            .invoice-entry:first-child {
+                min-width: 120pt;
+            }
+            
+            .invoice-entry > header {
+                font-size: 8pt;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+            
+            .invoice-entry > p {
+                font-size: 10pt;
+                line-height: 16pt;
+                margin: 4pt 0 0;
+                padding: 0;
+            }
+            
+            .qr-container {
+                position: relative;
+                background-color: #ffffff;
+                border-top-right-radius: 12pt;
+                border-bottom-right-radius: 12pt;
+                padding: 8pt;
+                height: 150pt;
+                width: 150pt;
+            }
+            
+            #qr {
+                background-color: #ffffff;
+                background-position: center center;
+                background-size: 100%;
+                height: 134pt;
+                width: 134pt;
+            }
+            
+        </style>
+        </meta>
+    </head>
+    <body class="A4">
+        <div class="container">
+            <article>
+                <div id="logo">
+                    <span>Mile Invoice Receipt</span>
+                </div>
+                
+                <div class="invoice">
+                    <div class="invoice-entry">
+                        <header>
+                            Amount
+                        </header>
+                        <p>
+                        {{amount}} {{assets}}
+                        </p>
+                    </div>
+                    <div class="invoice-entry">
+                        <header>
+                            Payment Address / Public Key
+                        </header>
+                        <p>
+                            {{address}}
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="qr-container">
+                    <div id="qr" data-url="{{payment-qr}}">
+                    </div>
+                </div>
+            </article>
+        </div>
+        <script>
+            document.querySelectorAll("[data-url]").forEach(function(element) {
+                element.style.backgroundImage = "url(" + element.dataset.url + ")"
+            })
+        </script>
+    </body>
+</html>

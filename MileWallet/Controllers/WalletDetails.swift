@@ -63,9 +63,7 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
     private var linkActivity:UIActivityViewController?
     @objc func sendLink(_ sender:Any) {
         
-        guard var url = wallet?.wallet?.publicKeyLink() else { return }
-        
-        url = url.replacingOccurrences(of: "https:", with: Config.appSchema)
+        guard let url = wallet?.wallet?.publicKeyLink() else { return }
         
         linkActivity = UIActivityViewController(
             activityItems: ["This is my MILE wallet address link", url],
@@ -118,6 +116,10 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
             WalletUniversalLink.shared.invoice = nil
             presentInNavigationController(_invoiceController, animated: true)
         }
+        
+        let counts = UserDefaults.standard.integer(forKey: WalletCell.shadowsPulseKey)
+        UserDefaults.standard.set(counts+1, forKey: WalletCell.shadowsPulseKey)
+        UserDefaults.standard.synchronize()
     }
     
     private func updateState() {
