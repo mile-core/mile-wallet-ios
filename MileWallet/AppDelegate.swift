@@ -13,7 +13,11 @@ import CoreData
 
 public class WalletUniversalLink {
  
-    public typealias Invoice = (publicKey: String, assets: String?, amount: String?, name: String?)
+    public typealias Invoice = (
+        publicKey: String,
+        assets: String?,
+        amount: String?,
+        name: String?)
     
     public static let kDidUpdateNotification = Notification.Name("WalletIniversalLinkDidUpdate")
     
@@ -47,8 +51,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
     
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-               
-        Config.url = "https://wallet.testnet.mile.global"
+        
+        //
+        // Config.url = "https://wallet.testnet.mile.global"
+        //
         
         WalletUniversalLink.shared.invoice = nil
         
