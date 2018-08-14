@@ -15,9 +15,98 @@ class WalletsPager: Controller {
     public var currentIndex:Int {
         return _currentIndex ?? NSNotFound
     }
+
+    @objc private func keychainSynchronizableHandler(sender:UISwitch) {
+        UserDefaults.standard.set(sender.isOn, forKey: Config.keychainSynchronizable)
+        UserDefaults.standard.synchronize()
+    }
+    
+    private lazy var  keychainSynchronizableButton:UISwitch = {
+       let sw = UISwitch()
+        sw.addTarget(self, action: #selector(keychainSynchronizableHandler(sender:)), for: .valueChanged)
+        return sw
+    }()
+    
+    private lazy var keyChainSettingsView:UIView = {
+        let v = UIView()
         
-    static private let networkOn = UIBarButtonItem(customView: UIImageView(image: UIImage(named:"icon-network-on")))
-    static private let networkOff = UIBarButtonItem(customView: UIImageView(image: UIImage(named:"icon-network-off")))
+        v.addSubview(self.keychainSynchronizableButton)
+        
+        self.keychainSynchronizableButton.snp.makeConstraints { (m) in
+            m.left.equalToSuperview().offset(20)
+            m.centerY.equalToSuperview()
+            m.width.equalTo(50)
+        }
+        
+        self.keychainSynchronizableButton.isOn = UserDefaults.standard.bool(forKey: Config.keychainSynchronizable)
+
+        let label = UILabel()
+
+        label.numberOfLines = 2
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.5
+        
+        v.addSubview(label)
+        label.snp.makeConstraints { (m) in
+            m.centerY.equalTo(v.snp.centerY)
+            m.height.equalToSuperview()
+            m.right.equalToSuperview().offset(-20)
+            m.left.equalTo(self.keychainSynchronizableButton.snp.right).offset(20)
+        }
+        
+        label.text = NSLocalizedString("Keep private keys in iCloud", comment: "")
+        
+        return v
+    }()
+    
+    @objc private func settingsHandler(){
+        
+        keychainSynchronizableButton.isOn = UserDefaults.standard.bool(forKey: Config.keychainSynchronizable)
+
+        keyChainSettingsView.backgroundColor = .clear
+        
+        keyChainSettingsView.snp.makeConstraints { (m) in
+            m.height.equalTo(80)
+        }
+        
+        
+        var networkTitle = NSLocalizedString("MILE network is available", comment: "")
+        if self.navigationItem.rightBarButtonItem === self.networkOff {
+            networkTitle = NSLocalizedString("MILE network is unavailable", comment: "")
+        }
+        
+        // Create the alert and show it
+        UIAlertController(title: networkTitle,
+                          customView: keyChainSettingsView,
+                          fallbackMessage: nil,
+                          preferredStyle: .actionSheet)
+            .addAction(title: NSLocalizedString("Close", comment: ""), style: .cancel) { acction in
+                self.loaderStart()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
+                    Config.isWalletKeychainSynchronizable = self.keychainSynchronizableButton.isOn
+                    self.loaderStop()
+                })
+            }
+            .present(by: self)
+    }
+    
+    private lazy var networkOn:UIBarButtonItem = {
+        let i = Button(image: UIImage(named:"icon-network-on"),
+                       action: { (sneder) in
+                   self.settingsHandler()
+        })
+        let networkOn = UIBarButtonItem(customView: i)
+        return networkOn
+    }()
+    
+    private lazy var networkOff:UIBarButtonItem = {
+        let i = Button(image: UIImage(named:"icon-network-off"),
+                       action: { (sneder) in
+                        self.settingsHandler()
+        })
+        let networkOff = UIBarButtonItem(customView: i)
+        return networkOff
+    }()
     
     override func didNetworkChangeStatus(reachable: Bool) {
         networkState(reachable: reachable)
@@ -26,10 +115,10 @@ class WalletsPager: Controller {
     private func networkState(reachable:Bool) {
         DispatchQueue.main.async {
             if reachable {
-                self.navigationItem.rightBarButtonItem = WalletsPager.networkOn
+                self.navigationItem.rightBarButtonItem = self.networkOn
             }
             else {
-                self.navigationItem.rightBarButtonItem = WalletsPager.networkOff
+                self.navigationItem.rightBarButtonItem = self.networkOff
             }
         }
     }
@@ -38,7 +127,7 @@ class WalletsPager: Controller {
 
         super.viewDidLoad()
             
-        navigationItem.rightBarButtonItem = WalletsPager.networkOff
+        navigationItem.rightBarButtonItem = networkOff
         
         contentView.addSubview(newWalletButton)
         contentView.addSubview(archiveButton)
