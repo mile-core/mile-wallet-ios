@@ -129,6 +129,8 @@ class Controller: UIViewController {
             
             self.activiti.snp.makeConstraints { (make) in
                 make.center.equalToSuperview()
+                make.height.equalTo(60)
+                make.width.equalTo(self.activiti.snp.height)
             }                    
         }
     }

@@ -128,6 +128,12 @@ public class WalletStore {
         }
     }
     
+    public func save() throws {
+        for w in wallets {
+            try save(wallet: w)
+        }
+    }
+    
     public func save(wallet container:WalletContainer) throws {
         
         guard let wallet = container.wallet, let key = wallet.publicKey else {

@@ -97,6 +97,7 @@ class CoinsOperation: Controller {
         amountTextFeild.text = nil
     }
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -181,6 +182,8 @@ class CoinsOperation: Controller {
         switch style {
             
         case .contact, .publicKey:
+            title = NSLocalizedString("Send Coins", comment: "")
+
             contactView.alpha = 1
             qrCodeHeader.alpha = 0
             headerView.add(border: .bottom,
@@ -193,6 +196,10 @@ class CoinsOperation: Controller {
             qrCodeHeader.alpha = 1
             qrCodeUpdate()
             title = NSLocalizedString("Next", comment: "")
+            
+            self.title = style == .print ?
+                NSLocalizedString("Print Invoice", comment: "") :
+                NSLocalizedString("Link Invoice", comment: "")
         }
         
         navigationItem.rightBarButtonItem?.title = title
@@ -339,13 +346,13 @@ class CoinsOperation: Controller {
                 .present(by: self)
         }
         
+        guard let asked = amountTextFeild.text?.floatValue, asked > 0.0 else {
+            amounNotEnough()
+            return
+        }
+        
         switch style {
         case .contact, .publicKey:
-            
-            guard let asked = amountTextFeild.text?.floatValue, asked > 0.0 else {
-                amounNotEnough()
-                return
-            }
             
             send(amount: asked)
             
@@ -358,14 +365,17 @@ class CoinsOperation: Controller {
             
             Printer.shared.printPDF(wallet: wallet?.wallet,
                                     formater: {
-                                        if asked > 0.0 {
+                                        //if asked > 0.0 {
                                             return HTMLTemplate.invoice(wallet: $0,
                                                                         assets: asset.name,
                                                                         amount: asset.stringValue(asked))
-                                        }
-                                        else {
-                                            return HTMLTemplate.contact(wallet: $0)
-                                        }
+//
+//  TODO: PRINT address
+//
+//                                        }
+//                                        else {
+//                                            return HTMLTemplate.contact(wallet: $0)
+//                                        }
                                         
             },
                                     complete: { _,complete,_ in

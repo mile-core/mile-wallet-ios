@@ -52,6 +52,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
+        Config.isWalletKeychainSynchronizable = UserDefaults.standard.bool(forKey: Config.keychainSynchronizable)
+        
         //
         // Config.url = "https://wallet.testnet.mile.global"
         //

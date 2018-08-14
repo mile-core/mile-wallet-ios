@@ -14,7 +14,15 @@ extension Config {
     public static let iPhoneX = (UIDevice().userInterfaceIdiom == .phone && UIScreen.main.nativeBounds.height == 2436)
     
     public static let walletService = "GHD7Y8FG8V.global.mile.wallet"  //GHD7Y8FG8V
-    public static var isWalletKeychainSynchronizable = true
+    public static let keychainSynchronizable = "isWalletKeychainSynchronizable"
+
+    public static var isWalletKeychainSynchronizable = true {
+        didSet{
+            if isWalletKeychainSynchronizable != oldValue && isWalletKeychainSynchronizable {
+                try! WalletStore.shared.save()
+            }
+        }
+    }
     
     public static let activeWalletsLimit = 16
     public static let passcodeAttemptsLimit = 3
