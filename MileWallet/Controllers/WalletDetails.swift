@@ -69,6 +69,12 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
             activityItems: ["This is my MILE wallet address link", url],
             applicationActivities:nil)
         
+        if let popoverController = linkActivity?.popoverPresentationController {
+            popoverController.sourceView = self.view
+            popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+            popoverController.permittedArrowDirections = []
+        }
+        
         navigationController?.present(linkActivity!, animated: true)
     }
     
@@ -203,7 +209,12 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
         
         qrContent.snp.remakeConstraints { (m) in
             m.top.equalTo(contentView.snp.top).offset(Config.iPhoneX ? 20 : 0)
-            m.left.right.equalTo(contentView).inset(0)
+            if UIDevice().userInterfaceIdiom == .pad {
+                m.left.right.equalTo(contentView).inset(40)
+            }
+            else {
+                m.left.right.equalTo(contentView).inset(0)
+            }
             m.height.equalTo(qrContent.snp.width)
         }
         
@@ -235,8 +246,14 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
         balance.snp.remakeConstraints { (m) in
             //m.top.greaterThanOrEqualTo(view.safeAreaLayoutGuide.snp.top).offset(0).priority(.high)
             m.top.equalTo(qrCodeBorder.snp.bottom).offset(h)//.priority(.low)
-            m.left.equalTo(contentView).inset(40)
-            m.right.equalTo(contentView).inset(40)
+            if UIDevice().userInterfaceIdiom == .pad {
+                m.left.equalTo(contentView).inset(80)
+                m.right.equalTo(contentView).inset(80)
+            }
+            else {
+                m.left.equalTo(contentView).inset(40)
+                m.right.equalTo(contentView).inset(40)
+            }
             m.height.equalTo(120)
         }
         

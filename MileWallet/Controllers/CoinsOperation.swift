@@ -395,6 +395,12 @@ class CoinsOperation: Controller {
                 activityItems: ["Please send your coins to the address", url],
                 applicationActivities:nil)
             
+            if let popoverController = activity.popoverPresentationController {
+                popoverController.sourceView = self.view
+                popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+                popoverController.permittedArrowDirections = []
+            }
+            
             present(activity, animated: true)
         }
     }
