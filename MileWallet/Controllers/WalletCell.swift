@@ -61,7 +61,12 @@ class WalletCell: Controller {
         }
         
         content.snp.makeConstraints { (m) in
-            m.edges.equalTo(UIEdgeInsets(top: 10, left: 40, bottom: 30, right: 40))
+            if UIDevice().userInterfaceIdiom == .pad {
+                m.edges.equalTo(UIEdgeInsets(top: 10, left: 80, bottom: 30, right: 80))
+            }
+            else {
+                m.edges.equalTo(UIEdgeInsets(top: 10, left: 40, bottom: 30, right: 40))
+            }
         }
         
         let press = UILongPressGestureRecognizer(target: self, action: #selector(pressContentHandler(gesture:)))
@@ -108,6 +113,9 @@ class WalletCell: Controller {
         super.viewDidAppear(animated)
         delegate?.walletCell(self, didPresent:  WalletContainer(wallet: self.wallet,
                                                                 attributes: self.walletAttributes))
+        
+        
+        guard WalletStore.shared.acitveWallets.count > 0 else { return }
         
         if UserDefaults.standard.integer(forKey: WalletCell.shadowsPulseKey) < 5 {
             if UserDefaults.standard.integer(forKey: WalletCell.shadowsPulseKey) > currentPushingCount {

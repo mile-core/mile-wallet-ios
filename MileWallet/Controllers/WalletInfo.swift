@@ -24,17 +24,19 @@ class WalletInfo: Controller {
         view.addSubview(mileLabel)
         view.addSubview(mileAmountLabel)
         
+        let height = 44
+        
         xdrLabel.snp.makeConstraints { (m) in
             m.left.equalTo(line.snp.left)
             m.right.equalTo(xdrAmountLabel.snp.left)
-            m.height.equalTo(44)
+            m.height.equalTo(height)
             m.top.equalTo(xdrAmountLabel.snp.top)
         }
         
         mileLabel.snp.makeConstraints { (m) in
             m.left.equalTo(line.snp.left)
             m.right.equalTo(mileAmountLabel.snp.left)
-            m.height.equalTo(44)
+            m.height.equalTo(height)
             m.top.equalTo(mileAmountLabel.snp.top)
         }
         
@@ -47,14 +49,14 @@ class WalletInfo: Controller {
         xdrAmountLabel.snp.makeConstraints { (m) in
             m.left.equalTo(view.snp.centerX).dividedBy(2).offset(20)
             m.right.equalTo(line.snp.right)
-            m.height.equalTo(44)
+            m.height.equalTo(height)
             m.centerY.equalToSuperview().dividedBy(2)
         }
         
         mileAmountLabel.snp.makeConstraints { (m) in
             m.left.equalTo(xdrAmountLabel.snp.left)
             m.right.equalTo(line.snp.right)
-            m.height.equalTo(44)
+            m.height.equalTo(height)
             m.centerY.equalToSuperview().multipliedBy(1.5)
         }
     }
