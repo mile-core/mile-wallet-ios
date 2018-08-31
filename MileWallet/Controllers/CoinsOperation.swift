@@ -230,7 +230,7 @@ class CoinsOperation: Controller {
     private func acceptedSend(from:Wallet, to: String, asset: Asset, amount:Float) {
 
         let toWallet = Wallet(name: to, publicKey: to, privateKey: "", secretPhrase: nil)
-        
+                
         loaderStart()
 
         Transfer.send(
@@ -295,8 +295,9 @@ class CoinsOperation: Controller {
             }
             
             var mess = NSLocalizedString("Accept sending ", comment: "")
-            mess += " \(amount) "
+            mess += " \(amount) \(asset.name) "
             mess += NSLocalizedString("coins to: ", comment: "") + (self.contact?.name ?? to)
+            
             UIAlertController(title: NSLocalizedString("Sending coins...", comment: ""),
                               message: mess,
                               preferredStyle: .actionSheet)
