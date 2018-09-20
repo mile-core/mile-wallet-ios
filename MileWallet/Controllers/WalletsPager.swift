@@ -33,7 +33,7 @@ class WalletsPager: Controller {
         v.addSubview(self.keychainSynchronizableButton)
         
         self.keychainSynchronizableButton.snp.makeConstraints { (m) in
-            m.left.equalToSuperview().offset(20)
+            m.left.equalToSuperview().offset(40)
             m.centerY.equalToSuperview()
             m.width.equalTo(50)
         }
@@ -50,7 +50,7 @@ class WalletsPager: Controller {
         label.snp.makeConstraints { (m) in
             m.centerY.equalTo(v.snp.centerY)
             m.height.equalToSuperview()
-            m.right.equalToSuperview().offset(-20)
+            m.right.equalToSuperview().offset(-40)
             m.left.equalTo(self.keychainSynchronizableButton.snp.right).offset(20)
         }
         
@@ -71,7 +71,7 @@ class WalletsPager: Controller {
         
         
         var networkTitle = NSLocalizedString("MILE network is available", comment: "")
-        if self.navigationItem.rightBarButtonItem === self.networkOff {
+        if self.navigationItem.leftBarButtonItem === self.networkOff {
             networkTitle = NSLocalizedString("MILE network is unavailable", comment: "")
         }
         
@@ -87,23 +87,34 @@ class WalletsPager: Controller {
                     self.loaderStop()
                 })
             }
+            .addAction(title: NSLocalizedString("Sort wallets", comment: ""), style: .default, handler: { action in
+                self._walletsSorter.didDismiss = {
+                    self.reloadData()
+                }
+                self.presentInNavigationController(self._walletsSorter, animated: true)
+            })
             .present(by: self)
     }
     
+    private lazy var walletSettingsButton:UIBarButtonItem = {
+        let i = Button(image: UIImage(named:"button-wallet-settings"),
+                       action: { (sneder) in
+                        self.settingsHandler()
+        })
+        let networkOn = UIBarButtonItem(customView: i)
+        return networkOn
+    }()
+    
     private lazy var networkOn:UIBarButtonItem = {
         let i = Button(image: UIImage(named:"icon-network-on"),
-                       action: { (sneder) in
-                   self.settingsHandler()
-        })
+                       action: nil)
         let networkOn = UIBarButtonItem(customView: i)
         return networkOn
     }()
     
     private lazy var networkOff:UIBarButtonItem = {
         let i = Button(image: UIImage(named:"icon-network-off"),
-                       action: { (sneder) in
-                        self.settingsHandler()
-        })
+                       action:nil)
         let networkOff = UIBarButtonItem(customView: i)
         return networkOff
     }()
@@ -115,10 +126,10 @@ class WalletsPager: Controller {
     private func networkState(reachable:Bool) {
         DispatchQueue.main.async {
             if reachable {
-                self.navigationItem.rightBarButtonItem = self.networkOn
+                self.navigationItem.leftBarButtonItem = self.networkOn
             }
             else {
-                self.navigationItem.rightBarButtonItem = self.networkOff
+                self.navigationItem.leftBarButtonItem = self.networkOff
             }
         }
     }
@@ -127,7 +138,8 @@ class WalletsPager: Controller {
 
         super.viewDidLoad()
             
-        navigationItem.rightBarButtonItem = networkOff
+        navigationItem.rightBarButtonItem = walletSettingsButton
+        networkState(reachable: false)
         
         contentView.addSubview(newWalletButton)
         contentView.addSubview(archiveButton)
@@ -415,7 +427,7 @@ class WalletsPager: Controller {
     fileprivate func makeControllers() -> [WalletCell] {
         var u = [WalletCell]()
         for i in 0..<WalletStore.shared.acitveWallets.count {
-            let v = WalletCardPreview()
+            let v = WalletPreview()
             v.delegate = self
             v.walletIndex = i
             u.append(v)
@@ -437,6 +449,7 @@ class WalletsPager: Controller {
     fileprivate var _newWalletController = WalletSettings()
     fileprivate var _walletContacts = WalletContacts()
     fileprivate var _archivedWallets = ArchivedWallets()
+    fileprivate var _walletsSorter = WalletsSorter()
 }
 
 

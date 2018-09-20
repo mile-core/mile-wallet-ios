@@ -13,7 +13,7 @@ import MileWalletKit
 ///
 /// View wallet in page controller as preview
 ///
-class WalletCardPreview: WalletCell {
+class WalletPreview: WalletCell {
     
     public var walletIndex = 0 {
         didSet{
@@ -27,7 +27,7 @@ class WalletCardPreview: WalletCell {
         let wallets = WalletStore.shared.acitveWallets
         
         let container = wallets[walletIndex]
-
+        
         walletInfo.wallet = container
         
         wallet = container.wallet

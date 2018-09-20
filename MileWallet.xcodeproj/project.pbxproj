@@ -33,6 +33,8 @@
 		316419832112077A00E6650E /* PasscodeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316419822112077A00E6650E /* PasscodeStore.swift */; };
 		3164FD8120C950ED00294A9F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3164FD8020C950ED00294A9F /* AppDelegate.swift */; };
 		3164FD8D20C950ED00294A9F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3164FD8B20C950ED00294A9F /* LaunchScreen.storyboard */; };
+		316C0B7B2153F60500F8C148 /* WalletTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C0B7A2153F60500F8C148 /* WalletTableCell.swift */; };
+		318119D42153D1DF00BFC17F /* WalletsSorter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318119D32153D1DF00BFC17F /* WalletsSorter.swift */; };
 		3182CDC320D1C462000C3C68 /* HTMLTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3182CDC220D1C462000C3C68 /* HTMLTemplate.swift */; };
 		3182CDC520D1C481000C3C68 /* PDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3182CDC420D1C481000C3C68 /* PDF.swift */; };
 		31848E6D2110533D00C5A427 /* ContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31848E6C2110533D00C5A427 /* ContactView.swift */; };
@@ -93,6 +95,8 @@
 		3164FD8020C950ED00294A9F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3164FD8C20C950ED00294A9F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3164FD8E20C950ED00294A9F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		316C0B7A2153F60500F8C148 /* WalletTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletTableCell.swift; sourceTree = "<group>"; };
+		318119D32153D1DF00BFC17F /* WalletsSorter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletsSorter.swift; sourceTree = "<group>"; };
 		3182CDC220D1C462000C3C68 /* HTMLTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLTemplate.swift; sourceTree = "<group>"; };
 		3182CDC420D1C481000C3C68 /* PDF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDF.swift; sourceTree = "<group>"; };
 		31848E6C2110533D00C5A427 /* ContactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactView.swift; sourceTree = "<group>"; };
@@ -170,6 +174,7 @@
 				31E4E06321076B0900ACE8FD /* WalletDetails.swift */,
 				3116D391210C724800C5C85F /* WalletSettings.swift */,
 				31B13C11210CB87C00446E9D /* WalletContacts.swift */,
+				318119D32153D1DF00BFC17F /* WalletsSorter.swift */,
 				3105B71B210CD6FB0047C2C0 /* WalletContactOptions.swift */,
 				31848E6E2110671700C5A427 /* ArchivedWallets.swift */,
 				3185C50E210F175E004E8717 /* CoinsOperation.swift */,
@@ -257,6 +262,7 @@
 			isa = PBXGroup;
 			children = (
 				31848E6C2110533D00C5A427 /* ContactView.swift */,
+				316C0B7A2153F60500F8C148 /* WalletTableCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -520,6 +526,7 @@
 				316419812112054D00E6650E /* PasswordScreen.swift in Sources */,
 				31B6091C2109A2C500B66FD8 /* EmptyWallet.swift in Sources */,
 				31848E6D2110533D00C5A427 /* ContactView.swift in Sources */,
+				318119D42153D1DF00BFC17F /* WalletsSorter.swift in Sources */,
 				3185BBF621072918004CDBEF /* UIButton(App).swift in Sources */,
 				31B169142109A1BF0004DE8E /* WalletPreview.swift in Sources */,
 				316419832112077A00E6650E /* PasscodeStore.swift in Sources */,
@@ -536,6 +543,7 @@
 				3116D392210C724800C5C85F /* WalletSettings.swift in Sources */,
 				31B169102109A0570004DE8E /* WalletCell.swift in Sources */,
 				3105B71E210CE2C80047C2C0 /* UIView(Border).swift in Sources */,
+				316C0B7B2153F60500F8C148 /* WalletTableCell.swift in Sources */,
 				3144B6602106311E00ED27BF /* UImage(Gradient).swift in Sources */,
 				31F1C86B210C926600C1DF8E /* Model.swift in Sources */,
 				311A404A21088BAE0015952B /* UIColor(Hex).swift in Sources */,

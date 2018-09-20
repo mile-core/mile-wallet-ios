@@ -51,7 +51,8 @@ public class WalletStore {
                     let a = WalletAttributes(
                         publicKey: key,
                         color: Config.Colors.defaultColor.hex,
-                        isActive:true)
+                        isActive:true,
+                        sortOrder:time(nil))
                     return WalletContainer(wallet: w,
                                            attributes: a)
                 }
@@ -65,6 +66,11 @@ public class WalletStore {
         return wallets.compactMap({ (w) -> WalletContainer? in
             guard let a = w.attributes else { return nil}
             return a.isActive ? w : nil
+        }).sorted(by: { (w1, w2) -> Bool in
+            if (w1.attributes?.sortOrder ?? -1) < 0 {
+                return true
+            }
+            return (w1.attributes?.sortOrder ?? -1) < (w2.attributes?.sortOrder ?? -1)
         })
     }
     
@@ -87,7 +93,9 @@ public class WalletStore {
             }
             let a = WalletAttributes(
                 publicKey: public_key,
-                color: Config.Colors.defaultColor.hex, isActive:true)
+                color: Config.Colors.defaultColor.hex,
+                isActive:true,
+                sortOrder:time(nil))
             return WalletContainer(wallet: w,
                                    attributes: a)
         }
@@ -119,7 +127,9 @@ public class WalletStore {
             }
             let a = WalletAttributes(
                 publicKey: public_key,
-                color: Config.Colors.defaultColor.hex, isActive:true)
+                color: Config.Colors.defaultColor.hex,
+                isActive:true,
+                sortOrder:time(nil))
             return WalletContainer(wallet: w,
                                    attributes: a)
         }
@@ -189,6 +199,7 @@ public struct WalletAttributes {
     var publicKey:String = ""
     var color:UInt = Config.Colors.defaultColor.hex
     var isActive:Bool = true
+    var sortOrder:Int = -1
 }
 
 extension WalletAttributes: Mappable {
@@ -199,6 +210,7 @@ extension WalletAttributes: Mappable {
         publicKey     <- map["public_key"]
         color     <- map["wallet_color"]
         isActive  <- map["is_active"]
+        sortOrder  <- map["sort_order"]
     }
 }
 

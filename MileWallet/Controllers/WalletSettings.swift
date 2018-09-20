@@ -158,8 +158,8 @@ class WalletSettings: Controller, UITextFieldDelegate {
     }
     
     @objc private func doneHandler(_ sender: UIButton) {
-        if let wallet = self.wallet?.wallet {
-            self.updateWallet(wallet: wallet)
+        if let wallet = self.wallet?.wallet, let a = self.wallet?.attributes {
+            self.updateWallet(wallet: wallet, attributes: a)
         }
         else {
             addWallet()
@@ -230,13 +230,13 @@ class WalletSettings: Controller, UITextFieldDelegate {
                               message: nil,
                               preferredStyle: .actionSheet)
                 .addAction(title: NSLocalizedString("Archive", comment: ""), style: .default) { _ in
-                    self.updateWallet(wallet: w, isActive: !a.isActive)
+                    self.updateWallet(wallet: w, attributes: a, isActive: !a.isActive)
                 }
                 .addAction(title: NSLocalizedString("Close", comment: ""), style: .cancel)
                 .present(by: self)
         }
         else {
-             self.updateWallet(wallet: w, isActive: !a.isActive)
+             self.updateWallet(wallet: w, attributes: a, isActive: !a.isActive)
         }
     }
     
@@ -480,7 +480,7 @@ extension WalletSettings {
         }
     }
     
-    fileprivate func updateWallet(wallet:Wallet, isActive:Bool = true){
+    fileprivate func updateWallet(wallet:Wallet, attributes:WalletAttributes?, isActive:Bool = true){
         
         func close() {
             self.dismiss(animated: true, completion: nil)
@@ -516,7 +516,8 @@ extension WalletSettings {
             let walletAttr = WalletAttributes(
                 publicKey: key,
                 color: self.currentColor.hex,
-                isActive: isActive)
+                isActive: isActive,
+                sortOrder:attributes?.sortOrder ?? time(nil))
             
             try WalletStore.shared.save(wallet: WalletContainer(wallet: wallet, attributes: walletAttr))
             
@@ -614,7 +615,7 @@ extension WalletSettings {
                     close()
                 }
                 .addAction(title: NSLocalizedString("Accept", comment: ""), style: .default){ action in
-                    self.updateWallet(wallet: fromPk)
+                    self.updateWallet(wallet: fromPk, attributes: nil)
                 }
                 .present(by: self)
         }
@@ -632,7 +633,7 @@ extension WalletSettings {
                 
             }) { (wallet) in
                 
-                self.updateWallet(wallet: wallet)
+                self.updateWallet(wallet: wallet, attributes: nil)
                 
             }
         }
