@@ -47,7 +47,7 @@ class WalletsSorter: Controller {
 //        navigationController?.navigationBar.isTranslucent = false
 //        navigationController?.navigationBar.backgroundColor = Config.Colors.defaultColor
 //        navigationController?.navigationBar.prefersLargeTitles = false
-        title = NSLocalizedString("Sort wallet cards", comment: "")
+        title = NSLocalizedString("Sort wallets", comment: "")
     }
     
     @objc private func back(sender:Any) {

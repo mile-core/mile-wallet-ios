@@ -97,7 +97,7 @@ class WalletsPager: Controller {
     }
     
     private lazy var walletSettingsButton:UIBarButtonItem = {
-        let i = Button(image: UIImage(named:"button-wallet-settings"),
+        let i = Button(image: UIImage(named:"button-sort"),
                        action: { (sneder) in
                         self.settingsHandler()
         })

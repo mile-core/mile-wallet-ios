@@ -129,7 +129,12 @@ public class WalletTableCell: UITableViewCell {
         }
         
         containerView.snp.makeConstraints { (m) in
-            m.top.equalTo(name.snp.bottom).offset(6)
+            if reuseIdentifier == "sortCell" {
+                m.top.equalTo(name.snp.bottom).offset(0)
+            }
+            else {
+                m.top.equalTo(name.snp.bottom).offset(6)
+            }
             m.left.equalToSuperview().offset(20)
             m.right.equalToSuperview().offset(-20)
             m.height.equalTo(60)
@@ -162,14 +167,24 @@ public class WalletTableCell: UITableViewCell {
         }
         
         xdrAmountLabel.snp.makeConstraints { (m) in
-            m.left.equalTo(xdrLabel.snp.right).offset(10)
+            if reuseIdentifier == "sortCell" {
+                m.left.equalToSuperview().offset(18)
+            }
+            else {
+                m.left.equalTo(xdrLabel.snp.right).offset(10)
+            }
             m.top.equalTo(xdrLabel)
             m.bottom.equalTo(xdrLabel)
             m.right.equalTo(containerView.snp.centerX).offset(-20)
         }
         
         mileAmountLabel.snp.makeConstraints { (m) in
-            m.left.equalTo(mileLabel.snp.right).offset(10)
+            if reuseIdentifier == "sortCell" {
+                m.left.equalTo(containerView.snp.centerX)
+            }
+            else {
+                m.left.equalTo(mileLabel.snp.right).offset(10)
+            }
             m.top.equalTo(mileLabel)
             m.bottom.equalTo(mileLabel)
             m.right.equalToSuperview().offset(-20)
@@ -180,7 +195,7 @@ public class WalletTableCell: UITableViewCell {
             add(border: .bottom,
                 color: Config.Colors.bottomLine,
                 width: 1,
-                padding: UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20))
+                padding: UIEdgeInsets(top: 0, left: 0, bottom: 1, right: 0))
         }
         
     }
