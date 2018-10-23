@@ -55,7 +55,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
         Config.isWalletKeychainSynchronizable = UserDefaults.standard.bool(forKey: Config.keychainSynchronizable)
         
         //
-         Config.url = "https://wallet.testnet.mile.global"
+        // Config.url = "https://wallet.testnet.mile.global"
+        
+        Config.url = "http://node002.testnet.mile.global"
+        Config.useBalancing = false
+
+        //
         //
         
         WalletUniversalLink.shared.invoice = nil

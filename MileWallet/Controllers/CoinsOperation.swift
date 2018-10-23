@@ -97,7 +97,6 @@ class CoinsOperation: Controller {
         amountTextFeild.text = nil
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
