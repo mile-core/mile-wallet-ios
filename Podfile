@@ -9,7 +9,7 @@ target 'MileWallet' do
     pod 'SnapKit'
     pod 'QRCodeReader.swift', :path => '../QRCodeReader'
     pod 'SmileLock', :path => '../Smile-Lock'
-    pod 'MileCsaLight', :path => '../mile-cpp-api'
+    pod 'MileCsaLight', :path => '../legacy/mile-cpp-api'
     pod 'MileWalletKit', :path => '../mile-wallet-ios-kit'
 end
 
