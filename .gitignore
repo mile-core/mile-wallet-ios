@@ -12,3 +12,4 @@ Index
 DegradrFilterTest.xcscheme
 */**/Build
 */**/Checkouts
+*.o
