@@ -184,7 +184,7 @@ class WalletsPager: Controller {
             m.bottom.equalTo(newWalletButton.snp.bottom)
         }
         
-        addChildViewController(pageViewController)
+        addChild(pageViewController)
         contentView.addSubview(pageViewController.view)
         
         pageViewController.view.snp.makeConstraints { (m) in
@@ -198,7 +198,7 @@ class WalletsPager: Controller {
                 .constraint
         }
         
-        pageViewController.didMove(toParentViewController: self)
+        pageViewController.didMove(toParent: self)
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(pushDetails(gesture:)))
         tap.numberOfTapsRequired = 1
@@ -214,7 +214,7 @@ class WalletsPager: Controller {
             let wallet_name = WalletUniversalLink.shared.invoice?.name ?? WalletUniversalLink.shared.invoice?.publicKey ?? ""
             UIAlertController(title: NSLocalizedString("Invoice", comment: ""),
                               message: NSLocalizedString("Choose Wallet to send coins to: ", comment: "") + wallet_name,
-                              preferredStyle: UIAlertControllerStyle.actionSheet)
+                              preferredStyle: UIAlertController.Style.actionSheet)
                 .addAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel) { (action) in
                     WalletUniversalLink.shared.invoice = nil
                 }
@@ -391,9 +391,9 @@ class WalletsPager: Controller {
         guard WalletStore.shared.archivedWallets.count > 0 else {
             UIAlertController(title: NSLocalizedString("You don't have any archive wallets", comment: ""),
                               message: "Arhived wallets appear when you decide to remove your active wallets...",
-                              preferredStyle: UIAlertControllerStyle.alert)
+                              preferredStyle: UIAlertController.Style.alert)
             .addAction(title: NSLocalizedString("OK", comment: ""),
-                       style: UIAlertActionStyle.cancel)
+                       style: UIAlertAction.Style.cancel)
             .present(by: self)
             return
         }

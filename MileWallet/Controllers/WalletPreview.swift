@@ -66,9 +66,9 @@ class WalletPreview: WalletCell {
             m.bottom.equalToSuperview()
         }
         
-        addChildViewController(walletInfo)
+        addChild(walletInfo)
         infoContainer.addSubview(walletInfo.view)
-        walletInfo.didMove(toParentViewController: self)
+        walletInfo.didMove(toParent: self)
 
         walletInfo.view.snp.makeConstraints { (m) in
             m.edges.equalToSuperview()

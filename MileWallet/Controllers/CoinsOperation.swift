@@ -234,7 +234,7 @@ class CoinsOperation: Controller {
 
         Transfer.send(
             asset:  asset.name,
-            amount: "\(amount)",
+            amount: amount,
             from:   from,
             to:     toWallet,
             error: { error in
@@ -272,7 +272,7 @@ class CoinsOperation: Controller {
             
         }) { (chain) in
         
-            let code = chain.assetCode(of: asset.name)!
+            let code = Asset(name: asset.name)!.code 
             
             let b = balance.amount(code)
                         
@@ -426,11 +426,13 @@ class CoinsOperation: Controller {
     fileprivate lazy var amountTextFeild:UITextField = {
        let a = UITextField.decimalsField()
         a.delegate = self
-        a.addTarget(self, action: #selector(amountChainging(_:)), for: UIControlEvents.allEditingEvents)
+        a.addTarget(self, action: #selector(amountChainging(_:)), for: UIControl.Event.allEditingEvents)
         return a
     }()
     
-    fileprivate lazy var coinsPicker:UIPickerView = UIPickerView()       
+    fileprivate lazy var coinsPicker:UIPickerView = {
+        return UIPickerView()
+    }()
 }
 
 extension CoinsOperation: UIPrintInteractionControllerDelegate {
@@ -447,6 +449,19 @@ extension CoinsOperation: UIPrintInteractionControllerDelegate {
 extension CoinsOperation: UITextFieldDelegate {
 
     @objc fileprivate func amountChainging(_ sender:UITextField) {
+
+        let asset = Asset.list[self.coinsPicker.selectedRow(inComponent: 0)]
+        if let text = sender.text {
+            let t = text.split {"." == $0 || "," == $0}
+            if t.count == 2 {
+                let n = (String(t[0])).count
+                let d = (String(t[1])).count
+                if d > asset.precision {
+                    self.amountTextFeild.text = text[0..<asset.precision+n+1] //asset.stringValue(v)
+                }
+            }
+        }
+        
         qrCodeUpdate()
     }
     
@@ -455,7 +470,6 @@ extension CoinsOperation: UITextFieldDelegate {
     }
 
     func qrCodeUpdate()  {
-        //guard style == .print else { return }
         
         if let t = amountTextFeild.text?.floatValue, t > 0.0 {
             qrCodePreview.image = "\(t)".qrCodeImage
@@ -470,7 +484,7 @@ extension CoinsOperation: UITextFieldDelegate {
         }
     }
 
-    func textFieldDidEndEditing(_ textField: UITextField, reason: UITextFieldDidEndEditingReason) {
+    private func textFieldDidEndEditing(_ textField: UITextField, reason: UITextField.DidEndEditingReason) {
         if amountTextFeild.text != nil {
             amountTextFeild.placeholder = nil
         }
@@ -500,5 +514,9 @@ extension CoinsOperation: UIPickerViewDelegate{
         coin.textAlignment = .left
         coin.text = CoinsOperation.coins[row].name
         return coin
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        amountChainging(amountTextFeild)
     }
 }

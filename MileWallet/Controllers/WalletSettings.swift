@@ -8,6 +8,7 @@
 
 import UIKit
 import MileWalletKit
+import MileCsaLight
 import ObjectMapper
 import QRCodeReader
 
@@ -272,12 +273,12 @@ class WalletSettings: Controller, UITextFieldDelegate {
         })
 
         let back = UIButton(type: .custom)
-        back.setTitle(NSLocalizedString("Back to main screen", comment: ""), for: UIControlState.normal)
+        back.setTitle(NSLocalizedString("Back to main screen", comment: ""), for: UIControl.State.normal)
         back.setTitleColor(Config.Colors.back, for: .normal)
         back.titleLabel?.font = Config.Fonts.caption
         back.backgroundColor = UIColor.white
         back.layer.cornerRadius = Config.buttonRadius
-        back.addTarget(self, action: #selector(backMainHandler(sender:)), for: UIControlEvents.touchUpInside)
+        back.addTarget(self, action: #selector(backMainHandler(sender:)), for: UIControl.Event.touchUpInside)
         v.addSubview(back)
         back.snp.makeConstraints({ (m) in
             m.centerX.equalToSuperview()
@@ -337,11 +338,11 @@ class WalletSettings: Controller, UITextFieldDelegate {
         })
 
         let print = UIButton(type: .custom)
-        print.setTitle(NSLocalizedString("Print Wallet Secret Paper", comment: ""), for: UIControlState.normal)
+        print.setTitle(NSLocalizedString("Print Wallet Secret Paper", comment: ""), for: UIControl.State.normal)
         print.setTitleColor(UIColor.white, for: .normal)
         print.titleLabel?.font = Config.Fonts.caption
         print.backgroundColor = UIColor.clear
-        print.addTarget(self, action: #selector(printHandler(sender:)), for: UIControlEvents.touchUpInside)
+        print.addTarget(self, action: #selector(printHandler(sender:)), for: UIControl.Event.touchUpInside)
         textContainer.addSubview(print)
 
         print.snp.makeConstraints({ (m) in
@@ -546,6 +547,7 @@ extension WalletSettings {
     fileprivate static let closeString = NSLocalizedString("Close", comment: "")
 
     private func checkWallet(name:String) -> Bool {
+        
         let checkWallet = WalletStore.shared.find(name: name)
         
         if let wallet = checkWallet, let a = wallet.attributes, a.isActive {
@@ -590,6 +592,33 @@ extension WalletSettings {
         do {
             let n_name = currentNameQr ?? Date.currentTimeString
             let n_pk   = currentPrivateKeyQr ?? name
+            
+            Swift.print("..... >>>> \(n_name), \(n_pk)")
+            
+            if MileCsaKeys.validatePublic(n_pk) {
+                UIAlertController(title: NSLocalizedString("Wallet error", comment: ""),
+                                  message: NSLocalizedString("Wallet name or private key looks like a public", comment: ""),
+                                  preferredStyle: .actionSheet)
+                    .addAction(title: WalletSettings.closeString, style: .cancel){ action in
+                        close()
+                    }
+                    .present(by: self)
+                
+                return
+            }
+            
+            if MileCsaKeys.validatePublic(name) {
+                UIAlertController(title: NSLocalizedString("Wallet error", comment: ""),
+                                  message: NSLocalizedString("Wallet name looks like a public", comment: ""),
+                                  preferredStyle: .actionSheet)
+                    .addAction(title: WalletSettings.closeString, style: .cancel){ action in
+                        close()
+                    }
+                    .present(by: self)
+                
+                return
+            }
+            
             let fromPk =
                 try Wallet(name: n_name, privateKey: n_pk)
             
@@ -651,7 +680,7 @@ extension WalletSettings: ColorPickerDelegate {
     func colorPicker(_ colorPickerView: ColorPicker, didSelectCell cell: ColorPickerCell) {
         cell.layer.contents = Config.Images.colorPickerOn.cgImage
         cell.layer.contentsScale = 4
-        cell.layer.contentsGravity = kCAGravityCenter
+        cell.layer.contentsGravity = CALayerContentsGravity.center
         cell.layer.isGeometryFlipped = true
         cell.layer.shadowColor = UIColor.black.cgColor
         cell.layer.shadowOpacity = 0.16

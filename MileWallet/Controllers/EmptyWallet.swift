@@ -49,12 +49,12 @@ class EmptyWallet: WalletCell {
         header.minimumScaleFactor = 0.3
         
         let back = UIButton(type: .custom)
-        back.setTitle(NSLocalizedString("Add wallet", comment: ""), for: UIControlState.normal)
+        back.setTitle(NSLocalizedString("Add wallet", comment: ""), for: UIControl.State.normal)
         back.setTitleColor(UIColor.white, for: .normal)
         back.titleLabel?.font = Config.Fonts.caption
         back.backgroundColor = Config.Colors.blueButton
         back.layer.cornerRadius = Config.buttonRadius
-        back.addTarget(self, action: #selector(addHandler(sender:)), for: UIControlEvents.touchUpInside)
+        back.addTarget(self, action: #selector(addHandler(sender:)), for: UIControl.Event.touchUpInside)
         v.addSubview(back)
         back.snp.makeConstraints({ (m) in
             m.centerX.equalToSuperview()

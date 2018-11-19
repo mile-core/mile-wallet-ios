@@ -19,10 +19,10 @@ class WalletsSorter: Controller {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel,
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.cancel,
                                                            target: self, action: #selector(back(sender:)))
       
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done,
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.done,
                                                             target: self, action: #selector(done(sender:)))
         
         //contentView.addSubview(bg)
@@ -31,9 +31,9 @@ class WalletsSorter: Controller {
         //    m.edges.equalTo(view.snp.edges)
         //}
         
-        addChildViewController(_tableController)
+        addChild(_tableController)
         view.addSubview(_tableController.view)
-        _tableController.didMove(toParentViewController: self)
+        _tableController.didMove(toParent: self)
         
         _tableController.view.snp.makeConstraints { (m) in
             m.top.equalTo(view.safeAreaLayoutGuide.snp.top)
@@ -166,14 +166,14 @@ extension SortController {
         cell.xdrValue = 0
         cell.mileValue = 0
         
-        for k in balance.balance.keys {
+        for k in balance.available_assets {
             
-            let b = Float(balance.balance[k] ?? "0") ?? 0
+            let b = balance.amount(k) ?? 0 //Float(balance.balance[k] ?? "0") ?? 0
             
-            if chain.assets[k] == Asset.xdr.name {
+            if k == Asset.xdr.code {
                 cell.xdrValue = b
             }
-            else if chain.assets[k] == Asset.mile.name {
+            else if k == Asset.mile.code {
                 cell.mileValue = b
             }
         }
@@ -206,7 +206,7 @@ extension SortController {
         tableView.setEditing(!tableView.isEditing, animated: true)
     }
     
-    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         return .none
     }
     

@@ -48,7 +48,7 @@ public class WalletTableCell: UITableViewCell {
     private var mileAmountLabel:UILabel = UILabel()
     
     private func activityLoader(place:UIView)  -> UIActivityIndicatorView {
-        let a = UIActivityIndicatorView(activityIndicatorStyle: .white)
+        let a = UIActivityIndicatorView(style: .white)
         a.hidesWhenStopped = true
         place.addSubview(a)
         a.snp.makeConstraints { (make) in
@@ -70,7 +70,7 @@ public class WalletTableCell: UITableViewCell {
 
 //    private let bg = UIImageView(image: Config.Images.basePattern)
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
         

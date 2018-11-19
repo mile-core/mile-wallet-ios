@@ -21,9 +21,9 @@ class ArchivedWallets: Controller {
 
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.closeHandler(sender:)))
         
-        addChildViewController(_tableController)
+        addChild(_tableController)
         view.addSubview(_tableController.view)
-        _tableController.didMove(toParentViewController: self)
+        _tableController.didMove(toParent: self)
         
         _tableController.view.snp.makeConstraints { (m) in
             m.top.equalTo(view.safeAreaLayoutGuide.snp.top)
@@ -138,14 +138,14 @@ extension WalletsController {
         cell.xdrValue = 0
         cell.mileValue = 0
 
-        for k in balance.balance.keys {
+        for k in balance.available_assets {
             
-            let b = Float(balance.balance[k] ?? "0") ?? 0
-            
-            if chain.assets[k] == Asset.xdr.name {
+            let b = balance.amount(k) ?? 0
+        
+            if k == Asset.xdr.code {
                 cell.xdrValue = b
             }
-            else if chain.assets[k] == Asset.mile.name {
+            else if k == Asset.mile.code {
                 cell.mileValue = b
             }
         }
@@ -182,10 +182,10 @@ extension WalletsController {
                                           title: NSLocalizedString("Delete", comment: ""))
         { (action, indexPath) in
             self.tableView(tableView,
-                           commit: UITableViewCellEditingStyle.delete, forRowAt: indexPath)
+                           commit: UITableViewCell.EditingStyle.delete, forRowAt: indexPath)
         }
         
-        let restore = UITableViewRowAction(style: UITableViewRowActionStyle.default,
+        let restore = UITableViewRowAction(style: UITableViewRowAction.Style.default,
                                         title: NSLocalizedString("Restore", comment: ""))
         { (action, indexPath) in
             
@@ -193,9 +193,9 @@ extension WalletsController {
                               message: NSLocalizedString("Restore wallet", comment: ""),
                               preferredStyle: .actionSheet)
                 .addAction(title: NSLocalizedString("Cancel", comment: ""),
-                           style: UIAlertActionStyle.cancel)
+                           style: UIAlertAction.Style.cancel)
                 .addAction(title: NSLocalizedString("Restore!", comment: ""),
-                           style: UIAlertActionStyle.default, handler: { (action) in
+                           style: UIAlertAction.Style.default, handler: { (action) in
                             
                             if self.restore(wallet: wallet) {
                                 self.tableView.beginUpdates()
@@ -222,7 +222,7 @@ extension WalletsController {
         tableView.setEditing(!tableView.isEditing, animated: true)
     }
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
         if editingStyle == .delete {
 

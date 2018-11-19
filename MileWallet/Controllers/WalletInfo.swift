@@ -165,7 +165,7 @@ class WalletInfo: Controller {
     }()
     
     private func activityLoader(place:UIView)  -> UIActivityIndicatorView {
-        let a = UIActivityIndicatorView(activityIndicatorStyle: .white)
+        let a = UIActivityIndicatorView(style: .white)
         a.hidesWhenStopped = true
         place.addSubview(a)
         a.snp.makeConstraints { (make) in
@@ -194,19 +194,19 @@ class WalletInfo: Controller {
     public func update(balance: Balance) {
         DispatchQueue.main.async {
             
-            guard let chain = self.chainInfo else {return}
+            guard self.chainInfo != nil else {return}
             
             self.xdrAmountLabel.text = Asset.xdr.stringValue(0)
             self.mileAmountLabel.text = Asset.mile.stringValue(0)
             
             self.stopActivities()
             
-            for k in balance.balance.keys {
-                let b = Float(balance.balance[k] ?? "0") ?? 0
-                if chain.assets[k] == Asset.xdr.name {
+            for k in balance.available_assets {
+                let b = balance.amount(k) ?? 0
+                if k == Asset.xdr.code {
                     self.xdrAmountLabel.text = Asset.xdr.stringValue(b)
                 }
-                else if chain.assets[k] == Asset.mile.name {
+                else if k == Asset.mile.code {
                     self.mileAmountLabel.text = Asset.mile.stringValue(b)
                 }
             }
@@ -220,6 +220,8 @@ class WalletInfo: Controller {
             guard let w = self.wallet?.wallet else {return}
             
             Balance.update(wallet: w, error: { (error) in
+                
+                Swift.print("Network error: \(error)")
                 
                 self.stopActivities()
                 self.notifyNetworkStatus(reachable: false)

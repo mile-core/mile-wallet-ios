@@ -203,9 +203,9 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
         contentView.addSubview(balance)
         contentView.addSubview(copyAddressButton)
         
-        addChildViewController(_walletInfo)
+        addChild(_walletInfo)
         balance.addSubview(_walletInfo.view)
-        _walletInfo.didMove(toParentViewController: self)
+        _walletInfo.didMove(toParent: self)
         
         qrContent.snp.remakeConstraints { (m) in
             m.top.equalTo(contentView.snp.top).offset(Config.iPhoneX ? 20 : 0)
@@ -405,7 +405,7 @@ class WalletDetails: Controller, UIGestureRecognizerDelegate {
                 
                 ok.layer.contents = Config.Images.colorPickerOn.cgImage
                 ok.layer.contentsScale = 3.5
-                ok.layer.contentsGravity = kCAGravityCenter
+                ok.layer.contentsGravity = CALayerContentsGravity.center
                 ok.layer.isGeometryFlipped = true
                 ok.backgroundColor = Config.Colors.defaultColor
                 ok.layer.cornerRadius = ok.bounds.size.width/2

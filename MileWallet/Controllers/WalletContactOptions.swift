@@ -30,7 +30,7 @@ class WalletContactOptions: Controller, UITextFieldDelegate {
                 if let data = contact?.photo {
                     image = UIImage(data: data)
                 }
-                _tableController.loadButton.setImage(image, for: UIControlState.normal)
+                _tableController.loadButton.setImage(image, for: UIControl.State.normal)
                 _tableController.publicKey.isUserInteractionEnabled = false
             }
         }
@@ -47,9 +47,9 @@ class WalletContactOptions: Controller, UITextFieldDelegate {
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(doneHandler(_:)))
         
-        addChildViewController(_tableController)
+        addChild(_tableController)
         view.addSubview(_tableController.view)
-        _tableController.didMove(toParentViewController: self)
+        _tableController.didMove(toParent: self)
         
         _tableController.view.snp.makeConstraints { (m) in
             m.top.equalTo(view.safeAreaLayoutGuide.snp.top)
@@ -118,7 +118,7 @@ class WalletContactOptions: Controller, UITextFieldDelegate {
             contact.publicKey = publicKey
             
             if let avatar = _tableController.avatarImage {
-                let data = UIImageJPEGRepresentation(avatar, 0.85)
+                let data = avatar.jpegData(compressionQuality: 0.85)
                  contact.photo = data
             }
             
@@ -149,7 +149,7 @@ class WalletContactOptions: Controller, UITextFieldDelegate {
                 return
         }
         
-        guard MileCsaKeys.testPublicKey(publicKey) else {
+        guard MileCsaKeys.validatePublic(publicKey) else {
             UIAlertController(title: nil,
                               message: NSLocalizedString("Public key is not a MILE address", comment: ""),
                               preferredStyle: .actionSheet)
@@ -172,7 +172,7 @@ class WalletContactOptions: Controller, UITextFieldDelegate {
         newContact.name = name
         newContact.publicKey = publicKey
         if let avatar = _tableController.avatarImage {
-            let data = UIImageJPEGRepresentation(avatar, 0.85)
+            let data = avatar.jpegData(compressionQuality: 0.85)
             newContact.photo = data
         }
         
@@ -353,8 +353,8 @@ class PickerController: UIImagePickerController {
         navigationBar.backgroundColor = Config.Colors.defaultColor
 
         navigationBar.titleTextAttributes=[
-            NSAttributedStringKey.font : Config.Fonts.toolBar,
-            NSAttributedStringKey.foregroundColor : Config.Colors.button,
+            NSAttributedString.Key.font : Config.Fonts.toolBar,
+            NSAttributedString.Key.foregroundColor : Config.Colors.button,
         ]
     }
     
@@ -375,8 +375,9 @@ extension ContactController: UIImagePickerControllerDelegate, UINavigationContro
         picker.dismiss(animated: true)
     }
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        let image = info[UIImagePickerControllerOriginalImage] as! UIImage
+    func imagePickerController(_ picker: UIImagePickerController,
+                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        let image = info[UIImagePickerController.InfoKey.originalImage] as! UIImage
         
         let size =  CGSize(width: image.size.width/4, height: image.size.height/4)
         
