@@ -45,14 +45,14 @@ extension UIView {
             borderLayer.snp.makeConstraints { (m) in
                 m.left.equalToSuperview().offset(padding.left)
                 m.right.equalToSuperview().offset(-padding.right)
-                m.top.equalToSuperview()
+                m.top.equalToSuperview().offset(padding.top)
                 m.height.equalTo(width)
             }
         case .bottom:
             borderLayer.snp.makeConstraints { (m) in
                 m.left.equalToSuperview().offset(padding.left)
                 m.right.equalToSuperview().offset(-padding.right)
-                m.bottom.equalToSuperview().offset(-width)
+                m.bottom.equalToSuperview().offset(-width+padding.bottom)
                 m.height.equalTo(width)
             }
         }

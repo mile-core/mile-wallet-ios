@@ -19,7 +19,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.11</string>
+	<string>1.1.0</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -28,7 +28,7 @@
 			<key>CFBundleURLIconFile</key>
 			<string>00-03-logo-fill-blue</string>
 			<key>CFBundleURLName</key>
-			<string>global.mile.wallet</string>
+			<string>global.mile.wallet.app</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>mile-core</string>
@@ -36,7 +36,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1100</string>
+	<string>1201</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>

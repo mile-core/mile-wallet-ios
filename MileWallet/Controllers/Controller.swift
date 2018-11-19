@@ -173,7 +173,7 @@ class Controller: UIViewController {
         complete(chain)
     }
     
-    private let activiti = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+    private let activiti = UIActivityIndicatorView(style: .gray)
     private lazy var dimView = UIView(frame: self.view.bounds)
     
     private var passcodeScreen = PasscodeScreen()
@@ -192,7 +192,7 @@ class Controller: UIViewController {
                               message: NSLocalizedString("To avoid insecure access MILE Wallet please configure access with passcode", comment: ""),
                               preferredStyle: .actionSheet)
                 .addAction(title: NSLocalizedString("Cancel", comment: ""),
-                           style: UIAlertActionStyle.cancel) { (action) in
+                           style: UIAlertAction.Style.cancel) { (action) in
                             PasscodeScreen.isUnlocked = true
                 }
                 .addAction(title: NSLocalizedString("Open passcode settings", comment: ""),
@@ -232,13 +232,13 @@ public class NavigationController: UINavigationController {
         
         navigationBar
             .titleTextAttributes =
-            [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarTitle,
-             NSAttributedStringKey.font: Config.Fonts.navigationBarTitle]
+            [NSAttributedString.Key.foregroundColor: Config.Colors.navigationBarTitle,
+             NSAttributedString.Key.font: Config.Fonts.navigationBarTitle]
         
         navigationBar
             .largeTitleTextAttributes =
-            [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarLargeTitle,
-             NSAttributedStringKey.font: Config.Fonts.navigationBarLargeTitle]
+            [NSAttributedString.Key.foregroundColor: Config.Colors.navigationBarLargeTitle,
+             NSAttributedString.Key.font: Config.Fonts.navigationBarLargeTitle]
         
         navigationBar.barStyle = .default
         navigationBar.tintColor = UIColor.white

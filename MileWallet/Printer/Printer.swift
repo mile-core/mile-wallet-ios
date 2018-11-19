@@ -43,7 +43,7 @@ public class Printer {
     
     private lazy var printInfo:UIPrintInfo = {
         let p = UIPrintInfo(dictionary:nil)
-        p.outputType = UIPrintInfoOutputType.general
+        p.outputType = UIPrintInfo.OutputType.general
         p.duplex = .longEdge
         p.orientation = .portrait        
         p.jobName = NSLocalizedString("Wallet printer job", comment: "")

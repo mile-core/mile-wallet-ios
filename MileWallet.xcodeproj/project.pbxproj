@@ -33,6 +33,8 @@
 		316419832112077A00E6650E /* PasscodeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316419822112077A00E6650E /* PasscodeStore.swift */; };
 		3164FD8120C950ED00294A9F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3164FD8020C950ED00294A9F /* AppDelegate.swift */; };
 		3164FD8D20C950ED00294A9F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3164FD8B20C950ED00294A9F /* LaunchScreen.storyboard */; };
+		316C0B7B2153F60500F8C148 /* WalletTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316C0B7A2153F60500F8C148 /* WalletTableCell.swift */; };
+		318119D42153D1DF00BFC17F /* WalletsSorter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318119D32153D1DF00BFC17F /* WalletsSorter.swift */; };
 		3182CDC320D1C462000C3C68 /* HTMLTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3182CDC220D1C462000C3C68 /* HTMLTemplate.swift */; };
 		3182CDC520D1C481000C3C68 /* PDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3182CDC420D1C481000C3C68 /* PDF.swift */; };
 		31848E6D2110533D00C5A427 /* ContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31848E6C2110533D00C5A427 /* ContactView.swift */; };
@@ -50,6 +52,7 @@
 		31BAD73120EBA95700032E0E /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31BAD73020EBA95700032E0E /* Extensions.swift */; };
 		31BB792320EA703300AC301A /* Printer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31BB792220EA703300AC301A /* Printer.swift */; };
 		31BB792520EA787400AC301A /* WalletStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31BB792420EA787400AC301A /* WalletStore.swift */; };
+		31CE278821959F16008DC579 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 31CE278721959F15008DC579 /* Default-568h@2x.png */; };
 		31D1333420D9A1E200E2E8D9 /* LocalAuthentication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31D1333320D9A1E200E2E8D9 /* LocalAuthentication.framework */; };
 		31D26322210A74E600797080 /* WalletInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31D26321210A74E600797080 /* WalletInfo.swift */; };
 		31D7D1092113620500CC57C8 /* WalletsPager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31D7D1082113620400CC57C8 /* WalletsPager.swift */; };
@@ -93,6 +96,8 @@
 		3164FD8020C950ED00294A9F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3164FD8C20C950ED00294A9F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3164FD8E20C950ED00294A9F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		316C0B7A2153F60500F8C148 /* WalletTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletTableCell.swift; sourceTree = "<group>"; };
+		318119D32153D1DF00BFC17F /* WalletsSorter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletsSorter.swift; sourceTree = "<group>"; };
 		3182CDC220D1C462000C3C68 /* HTMLTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLTemplate.swift; sourceTree = "<group>"; };
 		3182CDC420D1C481000C3C68 /* PDF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDF.swift; sourceTree = "<group>"; };
 		31848E6C2110533D00C5A427 /* ContactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactView.swift; sourceTree = "<group>"; };
@@ -111,6 +116,7 @@
 		31BAD73020EBA95700032E0E /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		31BB792220EA703300AC301A /* Printer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Printer.swift; sourceTree = "<group>"; };
 		31BB792420EA787400AC301A /* WalletStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletStore.swift; sourceTree = "<group>"; };
+		31CE278721959F15008DC579 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		31D1333320D9A1E200E2E8D9 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = System/Library/Frameworks/LocalAuthentication.framework; sourceTree = SDKROOT; };
 		31D26321210A74E600797080 /* WalletInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletInfo.swift; sourceTree = "<group>"; };
 		31D7D1082113620400CC57C8 /* WalletsPager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WalletsPager.swift; sourceTree = "<group>"; };
@@ -170,6 +176,7 @@
 				31E4E06321076B0900ACE8FD /* WalletDetails.swift */,
 				3116D391210C724800C5C85F /* WalletSettings.swift */,
 				31B13C11210CB87C00446E9D /* WalletContacts.swift */,
+				318119D32153D1DF00BFC17F /* WalletsSorter.swift */,
 				3105B71B210CD6FB0047C2C0 /* WalletContactOptions.swift */,
 				31848E6E2110671700C5A427 /* ArchivedWallets.swift */,
 				3185C50E210F175E004E8717 /* CoinsOperation.swift */,
@@ -207,6 +214,7 @@
 		3164FD7420C950ED00294A9F = {
 			isa = PBXGroup;
 			children = (
+				31CE278721959F15008DC579 /* Default-568h@2x.png */,
 				3104930B20CC05D5006AB772 /* MyPlayground.playground */,
 				3164FD7F20C950ED00294A9F /* MileWallet */,
 				3164FD7E20C950ED00294A9F /* Products */,
@@ -257,6 +265,7 @@
 			isa = PBXGroup;
 			children = (
 				31848E6C2110533D00C5A427 /* ContactView.swift */,
+				316C0B7A2153F60500F8C148 /* WalletTableCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -351,6 +360,7 @@
 				TargetAttributes = {
 					3164FD7C20C950ED00294A9F = {
 						CreatedOnToolsVersion = 9.4;
+						LastSwiftMigration = 1000;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
 								enabled = 1;
@@ -405,6 +415,7 @@
 				31F7C1792114488D00CAEC80 /* SuccessController.xib in Resources */,
 				311D0A5E211C6B72004BFDDB /* MileLogo.svg in Resources */,
 				313F13DB20E3FA900074796D /* MileWallet-AASA in Resources */,
+				31CE278821959F16008DC579 /* Default-568h@2x.png in Resources */,
 				3100A2752112F46600FEC5E1 /* icon-launch-screen.png in Resources */,
 				3144B6662106727800ED27BF /* SF-Pro-Text-Regular.otf in Resources */,
 				3144B6652106727800ED27BF /* SF-Pro-Display-Bold.otf in Resources */,
@@ -469,7 +480,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-MileWallet/Pods-MileWallet-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-MileWallet/Pods-MileWallet-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/APIKit/APIKit.framework",
 				"${BUILT_PRODUCTS_DIR}/EFQRCode/EFQRCode.framework",
 				"${BUILT_PRODUCTS_DIR}/JSONRPCKit/JSONRPCKit.framework",
@@ -498,7 +509,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MileWallet/Pods-MileWallet-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MileWallet/Pods-MileWallet-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -520,6 +531,7 @@
 				316419812112054D00E6650E /* PasswordScreen.swift in Sources */,
 				31B6091C2109A2C500B66FD8 /* EmptyWallet.swift in Sources */,
 				31848E6D2110533D00C5A427 /* ContactView.swift in Sources */,
+				318119D42153D1DF00BFC17F /* WalletsSorter.swift in Sources */,
 				3185BBF621072918004CDBEF /* UIButton(App).swift in Sources */,
 				31B169142109A1BF0004DE8E /* WalletPreview.swift in Sources */,
 				316419832112077A00E6650E /* PasscodeStore.swift in Sources */,
@@ -536,6 +548,7 @@
 				3116D392210C724800C5C85F /* WalletSettings.swift in Sources */,
 				31B169102109A0570004DE8E /* WalletCell.swift in Sources */,
 				3105B71E210CE2C80047C2C0 /* UIView(Border).swift in Sources */,
+				316C0B7B2153F60500F8C148 /* WalletTableCell.swift in Sources */,
 				3144B6602106311E00ED27BF /* UImage(Gradient).swift in Sources */,
 				31F1C86B210C926600C1DF8E /* Model.swift in Sources */,
 				311A404A21088BAE0015952B /* UIColor(Hex).swift in Sources */,
@@ -681,16 +694,16 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = MileWallet/MileWallet.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = GHD7Y8FG8V;
+				DEVELOPMENT_TEAM = 43FJ7WY8BV;
 				INFOPLIST_FILE = MileWallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = global.mile.wallet;
+				PRODUCT_BUNDLE_IDENTIFIER = global.mile.wallet.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -702,16 +715,16 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = MileWallet/MileWallet.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = GHD7Y8FG8V;
+				DEVELOPMENT_TEAM = 43FJ7WY8BV;
 				INFOPLIST_FILE = MileWallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = global.mile.wallet;
+				PRODUCT_BUNDLE_IDENTIFIER = global.mile.wallet.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

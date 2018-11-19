@@ -65,7 +65,7 @@ public class PasscodeStrore {
     }
     
     private static let key = "wallet-passcode"
-    private static let appPasscodeService = "GHD7Y8FG8V.global.mile.wallet-passcode"
+    private static let appPasscodeService = "43FJ7WY8BV.global.mile.wallet.app-passcode"
     private let appPasscodeStore
         = Keychain(accessGroup: appPasscodeService)
             .synchronizable(Config.isWalletKeychainSynchronizable)

@@ -33,9 +33,9 @@ class SendCoinsChooser: Controller {
             m.edges.equalTo(view.snp.edges)
         }
         
-        addChildViewController(_tableController)
+        addChild(_tableController)
         view.addSubview(_tableController.view)
-        _tableController.didMove(toParentViewController: self)
+        _tableController.didMove(toParent: self)
         
         _tableController.view.snp.makeConstraints { (m) in
             m.top.equalTo(view.safeAreaLayoutGuide.snp.top)
@@ -53,14 +53,12 @@ class SendCoinsChooser: Controller {
         guard let a = wallet?.attributes else {
             return
         }
-        //navigationController?.navigationBar.prefersLargeTitles = true
         title = NSLocalizedString("Send coins", comment: "")
         bg.backgroundColor = UIColor(hex: a.color)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        //navigationController?.navigationBar.prefersLargeTitles = false
     }
     
     fileprivate lazy var _tableController = SendConisChooserController()
@@ -88,7 +86,7 @@ class CoinsChooserCell: UITableViewCell {
         }
     }
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(label)
         contentView.addSubview(textField)

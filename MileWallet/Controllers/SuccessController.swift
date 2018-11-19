@@ -22,6 +22,8 @@ class SuccessController: UIViewController {
     @IBOutlet fileprivate weak var amountLabel: UILabel!
     @IBOutlet fileprivate weak var messageLabel: UILabel!
     
+    @IBOutlet weak var publicKeyLabel: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         closeButton.layer.cornerRadius = Config.buttonRadius
@@ -43,8 +45,9 @@ class SuccessController: UIViewController {
         closeButton.setTitleColor(UIColor.black, for: .normal)
         amountLabel.text = amount
 
+        publicKeyLabel.text = ""
+
         guard let pk = publicKey else {
-            
             messageLabel.text = (asset?.name ?? "") + " " + NSLocalizedString("sent!", comment: "")
             defaultImageView.alpha = 1
             avatarImageView.alpha = 0
@@ -60,6 +63,10 @@ class SuccessController: UIViewController {
             defaultImageView.alpha = 0
             avatarImageView.alpha = 1
             avatarImageView.image = UIImage(data: photo)
+        }
+        else {
+            messageLabel.text = (asset?.name ?? "") + NSLocalizedString(" sent to ", comment: "")
+            publicKeyLabel.text = pk
         }
     }
     

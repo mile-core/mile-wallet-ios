@@ -52,7 +52,7 @@ class Button: UIButton {
 }
 
 class RoundButton: Button {    
-    override func setImage(_ image: UIImage?, for state: UIControlState) {
+    override func setImage(_ image: UIImage?, for state: UIControl.State) {
         super.setImage(image, for: state)
         imageView?.contentMode = .scaleAspectFill
         imageView?.layer.cornerRadius = (imageView?.frame.size.width ?? 0 )  / 2
@@ -124,7 +124,7 @@ class Separator: UIButton {
         super.init(frame: .zero)
         switch style {
         case .vertical:
-            setImage(UIImage(named: "icon-vertical-separator"), for: UIControlState.normal)
+            setImage(UIImage(named: "icon-vertical-separator"), for: UIControl.State.normal)
         default:
             break
         }
@@ -152,9 +152,9 @@ extension UIButton {
         app.imageView?.contentMode = .scaleAspectFit
         app.titleLabel?.adjustsFontSizeToFitWidth = true
         
-        app.setImage(image, for: UIControlState.normal)
+        app.setImage(image, for: UIControl.State.normal)
         app.setTitle(title, for: .normal)
-        app.addTarget(target, action:action, for: UIControlEvents.touchUpInside)
+        app.addTarget(target, action:action, for: UIControl.Event.touchUpInside)
 
         return app
     }
