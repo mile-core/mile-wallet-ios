@@ -44,9 +44,9 @@ class WalletContacts: Controller {
             m.edges.equalTo(view.snp.edges)
         }
         
-        addChildViewController(_tableController)
+        addChild(_tableController)
         contentView.addSubview(_tableController.view)
-        _tableController.didMove(toParentViewController: self)
+        _tableController.didMove(toParent: self)
         
         _tableController.view.snp.makeConstraints { (m) in
             m.top.equalTo(view.safeAreaLayoutGuide.snp.top)
@@ -79,11 +79,11 @@ class WalletContacts: Controller {
         
         navigationController?.navigationBar.prefersLargeTitles = true
         
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.cancel,
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.cancel,
                                                            target: self, action: #selector(back(sender:)))
         
         if !sendingConinsState {
-            navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.add,
+            navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.add,
                                                                 target: self,
                                                                 action: #selector(add(sender:)))
         }
@@ -238,10 +238,10 @@ extension ContactsController {
                                           title: NSLocalizedString("Delete", comment: ""))
         { (action, indexPath) in
             self.tableView(tableView,
-                           commit: UITableViewCellEditingStyle.delete, forRowAt: indexPath)
+                           commit: UITableViewCell.EditingStyle.delete, forRowAt: indexPath)
         }
         
-        let edit = UITableViewRowAction(style: UITableViewRowActionStyle.default,
+        let edit = UITableViewRowAction(style: UITableViewRowAction.Style.default,
                                           title: NSLocalizedString("Edit", comment: ""))
         { (action, indexPath) in
             self._walletContacts?.update(contact: self.list[indexPath.row])
@@ -250,7 +250,7 @@ extension ContactsController {
         edit.backgroundColor = Config.Colors.defaultColor
         
         
-        let send = UITableViewRowAction(style: UITableViewRowActionStyle.default,
+        let send = UITableViewRowAction(style: UITableViewRowAction.Style.default,
                                         title: NSLocalizedString("Send Coins", comment: ""))
         { (action, indexPath) in
             self.tableView(tableView, didSelectRowAt: indexPath)
@@ -266,7 +266,7 @@ extension ContactsController {
         return !isBook
     }
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
         if editingStyle == .delete {
 

@@ -12,7 +12,7 @@ import CoreData
 
 
 public class WalletUniversalLink {
- 
+    
     public typealias Invoice = (
         publicKey: String,
         assets: String?,
@@ -27,7 +27,7 @@ public class WalletUniversalLink {
 }
 
 extension UINavigationBar {
-    @objc public var substituteTitleColor : [NSAttributedStringKey : Any]? {
+    @objc public var substituteTitleColor : [NSAttributedString.Key : Any]? {
         get {
             return largeTitleTextAttributes
         }
@@ -47,15 +47,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
     var viewController:WalletsPager?
     
     var passcodeScreen = PasscodeScreen()
-
+    
     
     func application(_ application: UIApplication,
-                     didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         Config.isWalletKeychainSynchronizable = UserDefaults.standard.bool(forKey: Config.keychainSynchronizable)
         
+        Config.url = "https://wallet.testnet.mile.global"
+        
+        //        Config.url = "http://node002.testnet.mile.global"
+        //        Config.useBalancing = false
+        
         //
-        // Config.url = "https://wallet.testnet.mile.global"
         //
         
         WalletUniversalLink.shared.invoice = nil
@@ -63,8 +67,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
         var isUniversalLinkClick: Bool = false
         
         if let options = launchOptions {
-            if let activityDictionary = options[UIApplicationLaunchOptionsKey.userActivityDictionary] as? [AnyHashable: Any] {
-                isUniversalLinkClick = activityDictionary[UIApplicationLaunchOptionsKey.userActivityDictionary] as? NSUserActivity != nil
+            if let activityDictionary = options[UIApplication.LaunchOptionsKey.userActivityDictionary] as? [AnyHashable: Any] {
+                isUniversalLinkClick = activityDictionary[UIApplication.LaunchOptionsKey.userActivityDictionary] as? NSUserActivity != nil
             }
         }
         
@@ -74,31 +78,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
         } else {
             // set the initial viewcontroller
         }
-
+        
         
         UINavigationBar.appearance()
-            .titleTextAttributes = [NSAttributedStringKey.font: Config.Fonts.navigationBarTitle]
-      
+            .titleTextAttributes = [NSAttributedString.Key.font: Config.Fonts.navigationBarTitle]
+        
         UINavigationBar.appearance(whenContainedInInstancesOf: [Controller.self])
-            .titleTextAttributes = [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarTitle]
-
+            .titleTextAttributes = [NSAttributedString.Key.foregroundColor: Config.Colors.navigationBarTitle]
+        
         UINavigationBar.appearance(whenContainedInInstancesOf: [NavigationController.self])
-            .titleTextAttributes = [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarTitle]
-
+            .titleTextAttributes = [NSAttributedString.Key.foregroundColor: Config.Colors.navigationBarTitle]
+        
         
         UINavigationBar.appearance().substituteTitleColor =
-            [NSAttributedStringKey.foregroundColor: Config.Colors.navigationBarLargeTitle,
-             NSAttributedStringKey.font: Config.Fonts.navigationBarLargeTitle]
+            [NSAttributedString.Key.foregroundColor: Config.Colors.navigationBarLargeTitle,
+             NSAttributedString.Key.font: Config.Fonts.navigationBarLargeTitle]
         
         UIBarButtonItem.appearance()
-            .setTitleTextAttributes([NSAttributedStringKey.font: Config.Fonts.title], for: .normal)
-
+            .setTitleTextAttributes([NSAttributedString.Key.font: Config.Fonts.title], for: .normal)
+        
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [Controller.self])
-            .setTitleTextAttributes([NSAttributedStringKey.foregroundColor: Config.Colors.title], for: .normal)
-
+            .setTitleTextAttributes([NSAttributedString.Key.foregroundColor: Config.Colors.title], for: .normal)
+        
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [NavigationController.self])
-            .setTitleTextAttributes([NSAttributedStringKey.foregroundColor: Config.Colors.title], for: .normal)
-
+            .setTitleTextAttributes([NSAttributedString.Key.foregroundColor: Config.Colors.title], for: .normal)
+        
         
         UINavigationBar.appearance().prefersLargeTitles = true
         UINavigationBar.appearance().barStyle = .blackTranslucent
@@ -106,10 +110,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
         UINavigationBar.appearance().isTranslucent = true
         UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
         UINavigationBar.appearance().shadowImage = UIImage()
-
+        
         UIButton.appearance(whenContainedInInstancesOf: [UITableViewCell.self]).setTitleColor(UIColor.white, for: .normal)
         UIButton.appearance(whenContainedInInstancesOf: [UITableViewCell.self]).substituteFont = Config.Fonts.caption
-
+        
         UIButton.appearance().setTitleColor(Config.Colors.button, for: .normal)
         UIButton.appearance().adjustsImageWhenHighlighted = true
         UIButton.appearance().showsTouchWhenHighlighted = true
@@ -117,18 +121,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
         UIPageControl.appearance().pageIndicatorTintColor = UIColor.lightGray
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor.black
         UIPageControl.appearance().hidesForSinglePage = true
-
-        UIApplication.shared.statusBarStyle = .default
-
+        
+        //UIApplication.shared.statusBarStyle = .default
+        
         window = UIWindow(frame: UIScreen.main.bounds)
         
         window?.backgroundColor = Config.Colors.background
         
         viewController = WalletsPager()
-
+        
         navigationController = RootController()
         navigationController?.setViewControllers([viewController!], animated: true)
-
+        
         if PasscodeStrore.shared.isRegistered {
             window?.rootViewController = passcodeScreen
         }
@@ -137,23 +141,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
         }
         
         window?.makeKeyAndVisible()
-
+        
         passcodeScreen.didVerifyHandler = { controller in
             
             guard PasscodeStrore.shared.isRegistered else { return }
             
             self.navigationController?.view.alpha = 0
-
+            
             UIView.animate(withDuration: Config.animationDuration, animations: {
                 
                 self.passcodeScreen.view.alpha = 0
                 
             }, completion: { (flag) in
                 
-                self.passcodeScreen.removeFromParentViewController()
+                self.passcodeScreen.removeFromParent()
                 
                 self.window?.rootViewController = self.navigationController
-            
+                
                 UIView.animate(withDuration: Config.animationDuration, animations: {
                     
                     self.navigationController?.view.alpha = 1
@@ -188,8 +192,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
     func becomeActive()  {
         if WalletUniversalLink.shared.invoice != nil {
             
-            viewController?.removeFromParentViewController()
-            navigationController?.removeFromParentViewController()
+            viewController?.removeFromParent()
+            navigationController?.removeFromParent()
             navigationController = RootController()
             navigationController?.setViewControllers([viewController!], animated: true)
             
@@ -247,7 +251,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
     }
     
     func application(_ app: UIApplication, open url: URL,
-                     options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+                     options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         
         // Determine who sent the URL.
         // let sendingAppID = options[.sourceApplication]
@@ -260,9 +264,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
         return true
     }
     
-    func application(_ application: UIApplication,
-                     continue userActivity: NSUserActivity,
-                     restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+    private func application(_ application: UIApplication,
+                             continue userActivity: NSUserActivity,
+                             restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
         
         if userActivity.activityType == NSUserActivityTypeBrowsingWeb {
             
@@ -280,5 +284,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
             navigationController?.popToRootViewController(animated: false)
             WalletUniversalLink.shared.invoice = url.absoluteString.qrCodePayment
         }
-   }
+    }
 }

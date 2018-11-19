@@ -13,7 +13,7 @@ extension Config {
     
     public static let iPhoneX = (UIDevice().userInterfaceIdiom == .phone && UIScreen.main.nativeBounds.height == 2436)
     
-    public static let walletService = "GHD7Y8FG8V.global.mile.wallet"  //GHD7Y8FG8V
+    public static let walletService = "43FJ7WY8BV.global.mile.wallet.app"  //43FJ7WY8BV
     public static let keychainSynchronizable = "isWalletKeychainSynchronizable"
 
     public static var isWalletKeychainSynchronizable = true {

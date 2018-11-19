@@ -3,13 +3,25 @@
         "apps": [],
         "details": [
                     {
-                    "appID": "GHD7Y8FG8V.global.mile.wallet",
+                    "appID": "43FJ7WY8BV.global.mile.wallet",
                     "paths": [
                               "*"
                               ]
                     },
                     {
-                    "appID": "GHD7Y8FG8V.global.testnet.mile.wallet",
+                    "appID": "43FJ7WY8BV.global.mile.wallet.app",
+                    "paths": [
+                              "*"
+                              ]
+                    },
+                    {
+                    "appID": "43FJ7WY8BV.global.testnet.mile.wallet.app",
+                    "paths": [
+                              "*"
+                              ]
+                    },
+                    {
+                    "appID": "43FJ7WY8BV.global.testnet.mile.wallet",
                     "paths": [
                               "*"
                               ]

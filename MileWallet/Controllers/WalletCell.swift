@@ -79,7 +79,7 @@ class WalletCell: Controller {
         currentPushingCount = UserDefaults.standard.integer(forKey: WalletCell.shadowsPulseKey)
         
         NotificationCenter.default.addObserver(self, selector: #selector(resetCounters(notification:)),
-                                               name: Notification.Name.UIApplicationDidBecomeActive, object: nil)
+                                               name: UIApplication.didBecomeActiveNotification, object: nil)
     }
     
     @objc private func resetCounters(notification:Notification) {
@@ -154,7 +154,7 @@ class WalletCell: Controller {
         let pulseAnimation:CABasicAnimation = CABasicAnimation(keyPath: keyPath)
         pulseAnimation.duration = 0.12
         pulseAnimation.toValue = NSNumber(value: alpha)
-        pulseAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        pulseAnimation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
         pulseAnimation.autoreverses = true
         pulseAnimation.repeatCount = 3
         return pulseAnimation

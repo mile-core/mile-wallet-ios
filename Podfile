@@ -6,10 +6,12 @@ platform :ios, '11.0'
 #
 
 target 'MileWallet' do
-    #pod 'Socket.IO-Client-Swift', '~> 13.2.0'
-    pod 'SnapKit'
+    pod 'SnapKit', '~> 4.2.0'
+    pod 'ObjectMapper', :git => 'https://github.com/tristanhimmelman/ObjectMapper'
+    pod 'APIKit', :git => 'https://github.com/ishkawa/APIKit'
+    pod 'JSONRPCKit', :path => '../JSONRPCKit'
     pod 'QRCodeReader.swift', :path => '../QRCodeReader'
     pod 'SmileLock', :path => '../Smile-Lock'
-    pod 'MileCsaLight', :path => '../mile-cpp-api'
+    pod 'MileCsaLight', :path => '../mile-csa-api'
     pod 'MileWalletKit', :path => '../mile-wallet-ios-kit'
 end
