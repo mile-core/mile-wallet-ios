@@ -28,7 +28,7 @@ extension Config {
     public static let passcodeAttemptsLimit = 3
     public static let passcodeAttemptsTimer:TimeInterval = 60
 
-    public static let reloadTimerInterval:TimeInterval = 5
+    public static let reloadTimerInterval:TimeInterval = 10
     public static let pageControlsNumbers = 5
     public static let animationDuration:TimeInterval = 0.2
     public static let buttonRadius:CGFloat = 10
@@ -47,6 +47,7 @@ extension Config {
         public static let navigationBarTitle =  UIColor(hex: 0x283444)
         public static let navigationBarLargeTitle =  UIColor.white
         public static let name = UIColor.white
+        public static let nodeName =  UIColor(hex: 0xFFFFFF, alpha: 0.8)
         public static let title = name
         public static let button = UIColor(hex: 0xBCC3C3)
         public static let archivedCell = UIColor(hex: 0xBEC5CB)
@@ -54,6 +55,7 @@ extension Config {
         public static let redButton = UIColor(hex: 0xFF3B30)
         public static let back = UIColor(hex: 0x3E50CE)
         public static let line = UIColor(hex: 0xFFFFFF, alpha: 0.4)
+        public static let nodeLine = UIColor(hex: 0xffffff, alpha: 0.8)
         public static let separator = UIColor(hex: 0x000000, alpha: 0.1)
         public static let placeHolder =  UIColor(hex: 0x283444)
         public static let edit =  UIColor(hex: 0x283444)

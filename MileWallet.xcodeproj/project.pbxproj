@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3100A2732112F46600FEC5E1 /* icon-launch-screen@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3100A2702112F46500FEC5E1 /* icon-launch-screen@2x.png */; };
-		3100A2742112F46600FEC5E1 /* icon-launch-screen@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3100A2712112F46500FEC5E1 /* icon-launch-screen@3x.png */; };
-		3100A2752112F46600FEC5E1 /* icon-launch-screen.png in Resources */ = {isa = PBXBuildFile; fileRef = 3100A2722112F46600FEC5E1 /* icon-launch-screen.png */; };
 		3105B71C210CD6FB0047C2C0 /* WalletContactOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105B71B210CD6FB0047C2C0 /* WalletContactOptions.swift */; };
 		3105B71E210CE2C80047C2C0 /* UIView(Border).swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105B71D210CE2C80047C2C0 /* UIView(Border).swift */; };
 		3116D392210C724800C5C85F /* WalletSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3116D391210C724800C5C85F /* WalletSettings.swift */; };
@@ -44,6 +41,7 @@
 		3185C50F210F175E004E8717 /* CoinsOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3185C50E210F175E004E8717 /* CoinsOperation.swift */; };
 		318B694720EBCB1A00DCDDB1 /* TextField(App).swift in Sources */ = {isa = PBXBuildFile; fileRef = 318B694620EBCB1A00DCDDB1 /* TextField(App).swift */; };
 		3198353D210F6B4B00E7718F /* PrintContactTemplate.html in Resources */ = {isa = PBXBuildFile; fileRef = 3198353C210F6B4B00E7718F /* PrintContactTemplate.html */; };
+		31A6628D21B17B0D00827825 /* launch-screen.png in Resources */ = {isa = PBXBuildFile; fileRef = 3100A2712112F46500FEC5E1 /* launch-screen.png */; };
 		31A9FE9E20DBD2EB00779F60 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A9FE9D20DBD2EB00779F60 /* Config.swift */; };
 		31B13C12210CB87C00446E9D /* WalletContacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B13C11210CB87C00446E9D /* WalletContacts.swift */; };
 		31B169102109A0570004DE8E /* WalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B1690F2109A0570004DE8E /* WalletCell.swift */; };
@@ -52,7 +50,6 @@
 		31BAD73120EBA95700032E0E /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31BAD73020EBA95700032E0E /* Extensions.swift */; };
 		31BB792320EA703300AC301A /* Printer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31BB792220EA703300AC301A /* Printer.swift */; };
 		31BB792520EA787400AC301A /* WalletStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31BB792420EA787400AC301A /* WalletStore.swift */; };
-		31CE278821959F16008DC579 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 31CE278721959F15008DC579 /* Default-568h@2x.png */; };
 		31D1333420D9A1E200E2E8D9 /* LocalAuthentication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31D1333320D9A1E200E2E8D9 /* LocalAuthentication.framework */; };
 		31D26322210A74E600797080 /* WalletInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31D26321210A74E600797080 /* WalletInfo.swift */; };
 		31D7D1092113620500CC57C8 /* WalletsPager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31D7D1082113620400CC57C8 /* WalletsPager.swift */; };
@@ -66,9 +63,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		3100A2702112F46500FEC5E1 /* icon-launch-screen@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-launch-screen@2x.png"; sourceTree = "<group>"; };
-		3100A2712112F46500FEC5E1 /* icon-launch-screen@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-launch-screen@3x.png"; sourceTree = "<group>"; };
-		3100A2722112F46600FEC5E1 /* icon-launch-screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-launch-screen.png"; sourceTree = "<group>"; };
+		3100A2712112F46500FEC5E1 /* launch-screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "launch-screen.png"; sourceTree = "<group>"; };
 		3104930B20CC05D5006AB772 /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		3105B71B210CD6FB0047C2C0 /* WalletContactOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletContactOptions.swift; sourceTree = "<group>"; };
 		3105B71D210CE2C80047C2C0 /* UIView(Border).swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView(Border).swift"; sourceTree = "<group>"; };
@@ -116,7 +111,6 @@
 		31BAD73020EBA95700032E0E /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		31BB792220EA703300AC301A /* Printer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Printer.swift; sourceTree = "<group>"; };
 		31BB792420EA787400AC301A /* WalletStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletStore.swift; sourceTree = "<group>"; };
-		31CE278721959F15008DC579 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		31D1333320D9A1E200E2E8D9 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = System/Library/Frameworks/LocalAuthentication.framework; sourceTree = SDKROOT; };
 		31D26321210A74E600797080 /* WalletInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletInfo.swift; sourceTree = "<group>"; };
 		31D7D1082113620400CC57C8 /* WalletsPager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WalletsPager.swift; sourceTree = "<group>"; };
@@ -203,10 +197,9 @@
 		3164198821125A5300E6650E /* Icons */ = {
 			isa = PBXGroup;
 			children = (
+				3100A2712112F46500FEC5E1 /* launch-screen.png */,
+				31A6628C21B17A8D00827825 /* lounch screen */,
 				311D0A5F211C71CD004BFDDB /* PagePattern.png */,
-				3100A2722112F46600FEC5E1 /* icon-launch-screen.png */,
-				3100A2702112F46500FEC5E1 /* icon-launch-screen@2x.png */,
-				3100A2712112F46500FEC5E1 /* icon-launch-screen@3x.png */,
 			);
 			path = Icons;
 			sourceTree = "<group>";
@@ -214,7 +207,6 @@
 		3164FD7420C950ED00294A9F = {
 			isa = PBXGroup;
 			children = (
-				31CE278721959F15008DC579 /* Default-568h@2x.png */,
 				3104930B20CC05D5006AB772 /* MyPlayground.playground */,
 				3164FD7F20C950ED00294A9F /* MileWallet */,
 				3164FD7E20C950ED00294A9F /* Products */,
@@ -280,6 +272,13 @@
 				3105B71D210CE2C80047C2C0 /* UIView(Border).swift */,
 			);
 			path = "Views(Extension)";
+			sourceTree = "<group>";
+		};
+		31A6628C21B17A8D00827825 /* lounch screen */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "lounch screen";
 			sourceTree = "<group>";
 		};
 		31F1C869210C8F7C00C1DF8E /* Model */ = {
@@ -365,6 +364,9 @@
 							com.apple.ApplicationGroups.iOS = {
 								enabled = 1;
 							};
+							com.apple.BackgroundModes = {
+								enabled = 0;
+							};
 							com.apple.Keychain = {
 								enabled = 1;
 							};
@@ -373,6 +375,9 @@
 							};
 							com.apple.SafariKeychain = {
 								enabled = 1;
+							};
+							com.apple.Wallet = {
+								enabled = 0;
 							};
 							com.apple.iCloud = {
 								enabled = 1;
@@ -409,17 +414,14 @@
 				3164FD8D20C950ED00294A9F /* LaunchScreen.storyboard in Resources */,
 				3164197F2111F69100E6650E /* PasscodeScreen.xib in Resources */,
 				3144B6672106727800ED27BF /* SF-Pro-Text-Semibold.otf in Resources */,
-				3100A2742112F46600FEC5E1 /* icon-launch-screen@3x.png in Resources */,
 				3185BBF421071937004CDBEF /* Assets.xcassets in Resources */,
 				311D0A60211C71CE004BFDDB /* PagePattern.png in Resources */,
 				31F7C1792114488D00CAEC80 /* SuccessController.xib in Resources */,
 				311D0A5E211C6B72004BFDDB /* MileLogo.svg in Resources */,
 				313F13DB20E3FA900074796D /* MileWallet-AASA in Resources */,
-				31CE278821959F16008DC579 /* Default-568h@2x.png in Resources */,
-				3100A2752112F46600FEC5E1 /* icon-launch-screen.png in Resources */,
+				31A6628D21B17B0D00827825 /* launch-screen.png in Resources */,
 				3144B6662106727800ED27BF /* SF-Pro-Text-Regular.otf in Resources */,
 				3144B6652106727800ED27BF /* SF-Pro-Display-Bold.otf in Resources */,
-				3100A2732112F46600FEC5E1 /* icon-launch-screen@2x.png in Resources */,
 				3147A2D7211494E90074DF50 /* SF-Pro-Display-Regular.otf in Resources */,
 				3198353D210F6B4B00E7718F /* PrintContactTemplate.html in Resources */,
 			);

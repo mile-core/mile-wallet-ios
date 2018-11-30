@@ -8,13 +8,13 @@
 
 import UIKit
 import MileWalletKit
+import SnapKit
 
 class WalletInfo: Controller {
     
     private static var balancesCache:[String:Balance] = [:]
     
     public var wallet:WalletContainer?
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -68,6 +68,9 @@ class WalletInfo: Controller {
         DispatchQueue.global().async {
             self.apearanceUpdate()
         }
+        //DispatchQueue.main.async {
+            self.timerSetup()
+        //}
     }
     
     override func didNetworkChangeStatus(reachable: Bool) {
@@ -98,10 +101,6 @@ class WalletInfo: Controller {
                 self.update(timer: nil)
                 self.firstTime = false
             }
-        }
-        
-        DispatchQueue.main.async {
-            self.timerSetup()
         }
     }
     
@@ -201,6 +200,21 @@ class WalletInfo: Controller {
             
             self.stopActivities()
             
+            if balance.isNode {
+                self.xdrAmountLabel.textColor = Config.Colors.nodeName
+                self.line.backgroundColor = Config.Colors.nodeLine
+                self.line.snp.updateConstraints { (m) in
+                    m.height.equalTo(1.5)
+                }
+            }
+            else {
+                self.xdrAmountLabel.textColor = Config.Colors.name
+                self.line.backgroundColor =  Config.Colors.line
+                self.line.snp.updateConstraints { (m) in
+                    m.height.equalTo(1)
+                }
+            }
+            
             for k in balance.available_assets {
                 let b = balance.amount(k) ?? 0
                 if k == Asset.xdr.code {
@@ -220,9 +234,7 @@ class WalletInfo: Controller {
             guard let w = self.wallet?.wallet else {return}
             
             Balance.update(wallet: w, error: { (error) in
-                
-                Swift.print("Network error: \(error)")
-                
+                                
                 self.stopActivities()
                 self.notifyNetworkStatus(reachable: false)
 
