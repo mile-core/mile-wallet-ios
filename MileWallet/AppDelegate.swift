@@ -10,7 +10,6 @@ import UIKit
 import MileWalletKit
 import CoreData
 
-
 public class WalletUniversalLink {
     
     public typealias Invoice = (
@@ -48,18 +47,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
     
     var passcodeScreen = PasscodeScreen()
     
+    func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        return true
+    }
     
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         Config.isWalletKeychainSynchronizable = UserDefaults.standard.bool(forKey: Config.keychainSynchronizable)
         
-        Config.url = "https://wallet.testnet.mile.global"
-        
-        //        Config.url = "http://node002.testnet.mile.global"
-        //        Config.useBalancing = false
-        
         //
+        //
+        // Config.url = "https://wallet.testnet.mile.global"
         //
         
         WalletUniversalLink.shared.invoice = nil
@@ -73,7 +72,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
         }
         
         if isUniversalLinkClick {
-            Swift.print(" UNIVERSAL LINK!!!  ")
             // app opened via clicking a universal link.
         } else {
             // set the initial viewcontroller
@@ -190,6 +188,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
     }
     
     func becomeActive()  {
+        
         if WalletUniversalLink.shared.invoice != nil {
             
             viewController?.removeFromParent()
@@ -254,7 +253,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
                      options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         
         // Determine who sent the URL.
-        // let sendingAppID = options[.sourceApplication]
+        let sendingAppID = options[.sourceApplication]
         
         // Process the URL.
         let newUrl = url.absoluteString.replacingOccurrences(of: Config.appSchema, with: "https:")
@@ -264,9 +263,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
         return true
     }
     
-    private func application(_ application: UIApplication,
-                             continue userActivity: NSUserActivity,
-                             restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+    func application(_ application: UIApplication, willContinueUserActivityWithType userActivityType: String) -> Bool {
+        return true
+    }
+    
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         
         if userActivity.activityType == NSUserActivityTypeBrowsingWeb {
             
@@ -277,6 +278,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UIToolbarDelegate {
         }
         return true
     }
+    
     
     private func updateUniversalLinkClick(url:URL) {
         if  url.absoluteString.qrCodePayment != nil {

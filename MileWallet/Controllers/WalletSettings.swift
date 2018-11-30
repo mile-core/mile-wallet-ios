@@ -592,9 +592,7 @@ extension WalletSettings {
         do {
             let n_name = currentNameQr ?? Date.currentTimeString
             let n_pk   = currentPrivateKeyQr ?? name
-            
-            Swift.print("..... >>>> \(n_name), \(n_pk)")
-            
+                        
             if MileCsaKeys.validatePublic(n_pk) {
                 UIAlertController(title: NSLocalizedString("Wallet error", comment: ""),
                                   message: NSLocalizedString("Wallet name or private key looks like a public", comment: ""),
